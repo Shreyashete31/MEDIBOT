@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Natural Remedies - HealthHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #009688;
+      --primary-dark: #00796b;
+      --secondary-color: #4caf50;
+      --accent-color: #ff5722;
+      --warning-color: #ff9800;
+      --text-primary: #212121;
+      --text-secondary: #757575;
+      --background: #fafafa;
+      --surface: #ffffff;
+      --border-color: #e0e0e0;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
+      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #2e7d32);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .app-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .user-info:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--surface);
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: var(--background);
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    nav a:hover, nav a.active {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Main Container */
+    .container {
+      padding: 2rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Search and Filters */
+    .search-section {
+      background: var(--surface);
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+
+    .search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .search-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .results-count {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .search-filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      position: relative;
+    }
+
+    .search-input input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 3rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--surface);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    .search-input input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0,150,136,0.1);
+    }
+
+    .search-input i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .filter-select {
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-select:focus {
+      border-color: var(--primary-color);
+    }
+
+    .sort-select {
+      padding: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 1rem;
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .sort-select:focus {
+      border-color: var(--primary-color);
+    }
+
+    /* Remedy Cards */
+    .remedies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .remedy-card {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .remedy-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+
+    .remedy-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .remedy-category {
+      display: inline-block;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .remedy-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .remedy-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0 0 1rem;
+    }
+
+    .remedy-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .remedy-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .stars {
+      color: var(--warning-color);
+    }
+
+    .remedy-difficulty {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .difficulty-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--secondary-color);
+    }
+
+    .difficulty-indicator.medium {
+      background: var(--warning-color);
+    }
+
+    .difficulty-indicator.hard {
+      background: var(--accent-color);
+    }
+
+    .remedy-actions {
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .action-btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .action-btn.secondary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .action-btn.secondary:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .favorite-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: color 0.3s ease;
+      padding: 0.5rem;
+      border-radius: 50%;
+    }
+
+    .favorite-btn:hover, .favorite-btn.active {
+      color: var(--accent-color);
+    }
+
+    .remedy-details {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      background: rgba(0,150,136,0.02);
+    }
+
+    .details-section {
+      margin-bottom: 1rem;
+    }
+
+    .details-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .details-content {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .ingredients-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .ingredients-list li {
+      padding: 0.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ingredients-list li:before {
+      content: "•";
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .instructions-list {
+      counter-reset: step-counter;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .instructions-list li {
+      counter-increment: step-counter;
+      padding: 0.5rem 0 0.5rem 2rem;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .instructions-list li:before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      background: var(--primary-color);
+      color: white;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: modalSlide 0.3s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--border-color);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .search-filters {
+        grid-template-columns: 1fr;
+      }
+
+      .remedies-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .remedy-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app-header {
+        padding: 1rem;
+      }
+
+      .header-title {
+        font-size: 1.2rem;
+      }
+
+      .search-section {
+        padding: 1rem;
+      }
+
+      .remedy-header {
+        padding: 1rem;
+      }
+
+      .remedy-actions {
+        padding: 1rem;
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --background: #121212;
+        --surface: #1e1e1e;
+        --border-color: #333333;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="header-title">Natural Remedies</h1>
+    </div>
+    
+    <div class="header-right">
+      <div class="user-info" onclick="toggleUserMenu()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="3 home.html">Home</a>
+    <a href="remedies.html" class="active">Remedies</a>
+    <a href="firstaid.html">First Aid</a>
+    <a href="suggestions.html">Suggestions</a>
+    <a href="emergency.html">Emergency</a>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-header">
+        <h2 class="search-title">Find Your Perfect Remedy</h2>
+        <div class="results-count" id="resultsCount">0 remedies found</div>
+      </div>
+      
+      <div class="search-filters">
+        <div class="search-input">
+          <i class="fas fa-search"></i>
+          <input type="text" id="remedySearch" placeholder="Search remedies, symptoms, or ingredients..." />
+        </div>
+        
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+          <option value="Skin">Skin Care</option>
+          <option value="Digestion">Digestion</option>
+          <option value="Immunity">Immunity</option>
+          <option value="Respiratory">Respiratory</option>
+          <option value="Pain">Pain Relief</option>
+          <option value="General">General Health</option>
+          <option value="Beauty">Beauty</option>
+        </select>
+        
+        <select id="sortFilter" class="sort-select">
+          <option value="name">Sort by Name</option>
+          <option value="rating">Sort by Rating</option>
+          <option value="difficulty">Sort by Difficulty</option>
+          <option value="category">Sort by Category</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Remedies Grid -->
+    <div class="remedies-grid" id="remediesGrid">
+      <!-- Remedies will be populated by JavaScript -->
+    </div>
+  </main>
+
+  <!-- Remedy Detail Modal -->
+  <div class="modal" id="remedyModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Remedy Details</h2>
+        <button class="modal-close" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let userFavorites = [];
+    let allRemedies = [];
+    let filteredRemedies = [];
+
+    // Comprehensive remedies database
+    const remediesData = [
+      {
+        id: "honey-cough",
+        title: "Honey for Cough",
+        description: "Natural cough suppressant that soothes throat irritation and reduces coughing.",
+        category: "Respiratory",
+        difficulty: "easy",
+        rating: 4.8,
+        prepTime: "2 minutes",
+        ingredients: ["1-2 tsp Raw Honey", "1 cup Warm Water (optional)", "Lemon juice (optional)"],
+        instructions: [
+          "Take 1-2 teaspoons of raw honey directly",
+          "Allow it to coat your throat for relief",
+          "Repeat every 2-3 hours as needed",
+          "For enhanced effect, mix with warm water and lemon"
+        ],
+        benefits: "Soothes throat, reduces coughing, natural antibacterial properties",
+        warnings: "Not suitable for children under 1 year",
+        image: "🍯"
+      },
+      {
+        id: "turmeric-milk",
+        title: "Turmeric Golden Milk",
+        description: "Anti-inflammatory drink that boosts immunity and reduces inflammation.",
+        category: "Immunity",
+        difficulty: "easy",
+        rating: 4.7,
+        prepTime: "5 minutes",
+        ingredients: ["1 tsp Turmeric powder", "1 cup Milk (or plant milk)", "1 tsp Honey", "Pinch of black pepper", "1/2 tsp Ginger powder"],
+        instructions: [
+          "Heat milk in a saucepan over medium heat",
+          "Add turmeric, ginger, and black pepper",
+          "Stir well and bring to a gentle boil",
+          "Reduce heat and simmer for 2-3 minutes",
+          "Remove from heat and add honey",
+          "Strain and drink warm before bed"
+        ],
+        benefits: "Anti-inflammatory, immune boosting, improves sleep quality",
+        warnings: "May interact with blood thinners",
+        image: "🥛"
+      },
+      {
+        id: "ginger-tea",
+        title: "Ginger Tea",
+        description: "Digestive aid that relieves nausea, cold symptoms, and improves circulation.",
+        category: "Digestion",
+        difficulty: "easy",
+        rating: 4.9,
+        prepTime: "10 minutes",
+        ingredients: ["1 inch Fresh ginger root", "2 cups Water", "1-2 tsp Honey", "Lemon slice (optional)"],
+        instructions: [
+          "Peel and slice fresh ginger root",
+          "Boil water in a saucepan",
+          "Add ginger slices and simmer for 5-10 minutes",
+          "Strain the tea into a cup",
+          "Add honey and lemon to taste",
+          "Drink warm for best results"
+        ],
+        benefits: "Relieves nausea, aids digestion, boosts immunity, reduces inflammation",
+        warnings: "Avoid during pregnancy if you have a history of miscarriage",
+        image: "🫖"
+      },
+      {
+        id: "aloe-vera-burns",
+        title: "Aloe Vera for Burns",
+        description: "Natural cooling agent that heals minor burns and soothes skin irritation.",
+        category: "Skin",
+        difficulty: "easy",
+        rating: 4.6,
+        prepTime: "2 minutes",
+        ingredients: ["Fresh aloe vera leaf", "Clean water"],
+        instructions: [
+          "Cut a fresh aloe vera leaf",
+          "Extract the gel from inside the leaf",
+          "Apply the gel directly to the burn",
+          "Leave it on for 15-20 minutes",
+          "Rinse with cool water",
+          "Repeat 2-3 times daily"
+        ],
+        benefits: "Cooling effect, promotes healing, reduces inflammation, prevents infection",
+        warnings: "Only for minor burns, seek medical help for serious burns",
+        image: "🌿"
+      },
+      {
+        id: "neem-paste-acne",
+        title: "Neem Paste for Acne",
+        description: "Antibacterial paste that reduces acne inflammation and prevents breakouts.",
+        category: "Skin",
+        difficulty: "medium",
+        rating: 4.5,
+        prepTime: "15 minutes",
+        ingredients: ["2 tbsp Neem powder", "1 tbsp Rose water", "1 tsp Honey", "1 tsp Turmeric powder"],
+        instructions: [
+          "Mix neem powder with rose water to form a paste",
+          "Add honey and turmeric powder",
+          "Apply to clean, dry skin",
+          "Leave on for 15-20 minutes",
+          "Rinse with lukewarm water",
+          "Apply 2-3 times per week"
+        ],
+        benefits: "Antibacterial, reduces acne, brightens skin, anti-inflammatory",
+        warnings: "May cause dryness, do a patch test first",
+        image: "🍃"
+      },
+      {
+        id: "tulsi-fever",
+        title: "Tulsi Leaves for Fever",
+        description: "Natural antipyretic that helps reduce fever and boosts immune system.",
+        category: "Immunity",
+        difficulty: "easy",
+        rating: 4.4,
+        prepTime: "5 minutes",
+        ingredients: ["10-15 Fresh tulsi leaves", "2 cups Water", "1 tsp Honey", "1/2 tsp Ginger powder"],
+        instructions: [
+          "Wash fresh tulsi leaves thoroughly",
+          "Boil water in a saucepan",
+          "Add tulsi leaves and ginger powder",
+          "Simmer for 5-7 minutes",
+          "Strain the tea",
+          "Add honey and drink warm"
+        ],
+        benefits: "Reduces fever, boosts immunity, antibacterial, antiviral",
+        warnings: "Consult doctor for high fever or persistent symptoms",
+        image: "🌿"
+      }
+    ];
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeUser();
+      initializeRemedies();
+      initializeSearch();
+      initializeFilters();
+      checkURLSearch();
+    });
+
+    // User initialization
+    function initializeUser() {
+      currentUser = localStorage.getItem('loggedInUser');
+      
+      if (currentUser && currentUser !== 'guest') {
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        const userData = users[currentUser];
+        
+        if (userData) {
+          document.getElementById('userName').textContent = currentUser;
+          document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
+          userFavorites = userData.favorites || [];
+        }
+      } else {
+        document.getElementById('userName').textContent = 'Guest';
+        document.getElementById('userAvatar').textContent = 'G';
+      }
+    }
+
+    // Initialize remedies
+    function initializeRemedies() {
+      allRemedies = remediesData;
+      filteredRemedies = [...allRemedies];
+      renderRemedies(filteredRemedies);
+    }
+
+    // Render remedies
+    function renderRemedies(remedies) {
+      const grid = document.getElementById('remediesGrid');
+      const resultsCount = document.getElementById('resultsCount');
+      
+      resultsCount.textContent = `${remedies.length} remedies found`;
+
+      if (remedies.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <i class="fas fa-search"></i>
+            <h3>No remedies found</h3>
+            <p>Try adjusting your search terms or filters</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = remedies.map(remedy => `
+        <div class="remedy-card">
+          <div class="remedy-header">
+            <div class="remedy-category">${remedy.category}</div>
+            <h3 class="remedy-title">${remedy.image} ${remedy.title}</h3>
+            <p class="remedy-description">${remedy.description}</p>
+            <div class="remedy-meta">
+              <div class="remedy-rating">
+                <div class="stars">
+                  ${generateStars(remedy.rating)}
+                </div>
+                <span>(${remedy.rating})</span>
+              </div>
+              <div class="remedy-difficulty">
+                <div class="difficulty-indicator ${remedy.difficulty}"></div>
+                <span>${remedy.difficulty.charAt(0).toUpperCase() + remedy.difficulty.slice(1)}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="remedy-details">
+            <div class="details-section">
+              <div class="details-title">
+                <i class="fas fa-clock"></i>
+                Preparation Time
+              </div>
+              <div class="details-content">${remedy.prepTime}</div>
+            </div>
+            
+            <div class="details-section">
+              <div class="details-title">
+                <i class="fas fa-list"></i>
+                Key Ingredients
+              </div>
+              <div class="details-content">
+                <ul class="ingredients-list">
+                  ${remedy.ingredients.slice(0, 3).map(ingredient => `<li>${ingredient}</li>`).join('')}
+                  ${remedy.ingredients.length > 3 ? `<li>+${remedy.ingredients.length - 3} more</li>` : ''}
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="remedy-actions">
+            <button class="action-btn" onclick="viewRemedyDetails('${remedy.id}')">
+              <i class="fas fa-eye"></i>
+              View Details
+            </button>
+            <button class="favorite-btn ${userFavorites.includes(remedy.id) ? 'active' : ''}" 
+                    onclick="toggleFavorite('${remedy.id}')">
+              <i class="fas ${userFavorites.includes(remedy.id) ? 'fa-heart' : 'fa-heart'}"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Generate star rating
+    function generateStars(rating) {
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 !== 0;
+      let stars = '';
+      
+      for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
+      }
+      
+      if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+      }
+      
+      const emptyStars = 5 - Math.ceil(rating);
+      for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
+      }
+      
+      return stars;
+    }
+
+    // Search functionality
+    function initializeSearch() {
+      const searchInput = document.getElementById('remedySearch');
+      
+      searchInput.addEventListener('input', function() {
+        applyFilters();
+      });
+    }
+
+    // Filter functionality
+    function initializeFilters() {
+      const categoryFilter = document.getElementById('categoryFilter');
+      const sortFilter = document.getElementById('sortFilter');
+      
+      categoryFilter.addEventListener('change', applyFilters);
+      sortFilter.addEventListener('change', applyFilters);
+    }
+
+    // Apply filters and search
+    function applyFilters() {
+      const query = document.getElementById('remedySearch').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const sortBy = document.getElementById('sortFilter').value;
+      
+      filteredRemedies = allRemedies.filter(remedy => {
+        const matchesSearch = remedy.title.toLowerCase().includes(query) ||
+                            remedy.description.toLowerCase().includes(query) ||
+                            remedy.ingredients.some(ingredient => ingredient.toLowerCase().includes(query)) ||
+                            remedy.benefits.toLowerCase().includes(query);
+        
+        const matchesCategory = category === '' || remedy.category === category;
+        
+        return matchesSearch && matchesCategory;
+      });
+      
+      // Sort results
+      filteredRemedies.sort((a, b) => {
+        switch (sortBy) {
+          case 'name':
+            return a.title.localeCompare(b.title);
+          case 'rating':
+            return b.rating - a.rating;
+          case 'difficulty':
+            const difficultyOrder = { 'easy': 1, 'medium': 2, 'hard': 3 };
+            return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
+          case 'category':
+            return a.category.localeCompare(b.category);
+          default:
+            return 0;
+        }
+      });
+      
+      renderRemedies(filteredRemedies);
+    }
+
+    // Check URL search parameter
+    function checkURLSearch() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get('search');
+      
+      if (searchQuery) {
+        document.getElementById('remedySearch').value = searchQuery;
+        applyFilters();
+      }
+    }
+
+    // Toggle favorite
+    function toggleFavorite(remedyId) {
+      if (currentUser === 'guest') {
+        alert('Please log in to save favorites');
+        return;
+      }
+
+      const favoriteBtn = event.target.closest('.favorite-btn');
+      const icon = favoriteBtn.querySelector('i');
+      
+      if (userFavorites.includes(remedyId)) {
+        userFavorites = userFavorites.filter(id => id !== remedyId);
+        icon.className = 'fas fa-heart';
+        favoriteBtn.classList.remove('active');
+      } else {
+        userFavorites.push(remedyId);
+        icon.className = 'fas fa-heart';
+        favoriteBtn.classList.add('active');
+      }
+
+      // Update localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (users[currentUser]) {
+        users[currentUser].favorites = userFavorites;
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+    }
+
+    // View remedy details
+    function viewRemedyDetails(remedyId) {
+      const remedy = allRemedies.find(r => r.id === remedyId);
+      if (!remedy) return;
+
+      const modal = document.getElementById('remedyModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+
+      modalTitle.textContent = `${remedy.image} ${remedy.title}`;
+      
+      modalBody.innerHTML = `
+        <div style="margin-bottom: 1.5rem;">
+          <div style="background: var(--gradient-primary); color: white; padding: 0.5rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem;">
+            ${remedy.category}
+          </div>
+          <p style="color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.6;">${remedy.description}</p>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="text-align: center; padding: 1rem; background: var(--background); border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-color);">${remedy.rating}</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Rating</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--background); border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-color);">${remedy.prepTime}</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Prep Time</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--background); border-radius: 8px;">
+              <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-color);">${remedy.difficulty.charAt(0).toUpperCase() + remedy.difficulty.slice(1)}</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Difficulty</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-list"></i>
+            Ingredients
+          </h4>
+          <ul class="ingredients-list">
+            ${remedy.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-list-ol"></i>
+            Instructions
+          </h4>
+          <ol class="instructions-list">
+            ${remedy.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+          </ol>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="margin: 0 0 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-heart"></i>
+            Benefits
+          </h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">${remedy.benefits}</p>
+        </div>
+
+        <div style="background: rgba(255, 193, 7, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning-color);">
+          <h4 style="margin: 0 0 0.5rem; color: var(--warning-color); display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-exclamation-triangle"></i>
+            Important Notes
+          </h4>
+          <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">${remedy.warnings}</p>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+          <button class="action-btn" onclick="toggleFavorite('${remedy.id}'); closeModal();" style="flex: 1;">
+            <i class="fas ${userFavorites.includes(remedy.id) ? 'fa-heart-broken' : 'fa-heart'}"></i>
+            ${userFavorites.includes(remedy.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
+          <button class="action-btn secondary" onclick="shareRemedy('${remedy.id}')" style="flex: 1;">
+            <i class="fas fa-share"></i>
+            Share
+          </button>
+        </div>
+      `;
+
+      modal.classList.add('show');
+    }
+
+    // Close modal
+    function closeModal() {
+      const modal = document.getElementById('remedyModal');
+      modal.classList.remove('show');
+    }
+
+    // Share remedy
+    function shareRemedy(remedyId) {
+      const remedy = allRemedies.find(r => r.id === remedyId);
+      if (!remedy) return;
+
+      const shareText = `Check out this natural remedy: ${remedy.title} - ${remedy.description}`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: remedy.title,
+          text: shareText,
+          url: window.location.href
+        });
+      } else {
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert('Remedy details copied to clipboard!');
+        });
+      }
+    }
+
+    // Navigation functions
+    function goBack() {
+      window.history.back();
+    }
+
+    function toggleUserMenu() {
+      const menu = document.createElement('div');
+      menu.style.cssText = `
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 0.5rem 0;
+        min-width: 200px;
+        z-index: 1000;
+      `;
+
+      const items = [
+        { icon: 'fas fa-user', text: 'Profile', page: 'profile.html' },
+        { icon: 'fas fa-cog', text: 'Settings', page: 'settings.html' },
+        { icon: 'fas fa-info-circle', text: 'About Us', page: 'about.html' },
+        { icon: 'fas fa-sign-out-alt', text: 'Logout', action: logout }
+      ];
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.style.cssText = 'padding: 0.75rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s; color: #000;';
+        row.addEventListener('mouseenter', () => { row.style.background = '#f5f5f5'; });
+        row.addEventListener('mouseleave', () => { row.style.background = 'white'; });
+
+        const icon = document.createElement('i');
+        icon.className = item.icon;
+        const label = document.createElement('span');
+        label.textContent = item.text;
+
+        row.appendChild(icon);
+        row.appendChild(label);
+
+        row.addEventListener('click', () => {
+          if (item.page) {
+            if (typeof navigateTo === 'function') {
+              navigateTo(item.page);
+            } else {
+              window.location.href = item.page;
+            }
+          } else if (item.action && typeof item.action === 'function') {
+            item.action();
+          }
+        });
+
+        menu.appendChild(row);
+      });
+
+      const existingMenu = document.querySelector('.user-menu');
+      if (existingMenu) existingMenu.remove();
+
+      menu.className = 'user-menu';
+      const anchor = document.querySelector('.user-info');
+      if (anchor) anchor.appendChild(menu);
+
+      setTimeout(() => {
+        document.addEventListener('click', function closeMenu(e) {
+          if (!e.target.closest('.user-info')) {
+            menu.remove();
+            document.removeEventListener('click', closeMenu);
+          }
+        });
+      }, 100);
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = '2 login.html';
+      }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('remedyModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

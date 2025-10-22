@@ -1,0 +1,67 @@
+[
+  {
+    "id": "fever",
+    "name": "Fever",
+    "category": "General",
+    "severity_levels": ["Mild", "Moderate", "High"],
+    "common_causes": ["Viral infections", "Bacterial infections", "Inflammation"],
+    "symptoms": ["Elevated temperature", "Chills", "Sweats", "Headache"],
+    "home_remedies": ["Hydration", "Rest", "Acetaminophen or ibuprofen as directed"],
+    "when_to_seek_help": "Temperature ≥39.4°C (103°F), persistent >3 days, confusion, stiff neck, severe headache, difficulty breathing, or immunocompromised.",
+    "keywords": ["fever", "high temperature", "pyrexia", "hot", "chills"],
+    "sources": [
+      {"name": "Mayo Clinic", "url": "https://www.mayoclinic.org/symptoms/fever/basics/definition/sym-20050958"},
+      {"name": "WHO", "url": "https://www.who.int/health-topics/fever"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  },
+  {
+    "id": "cough",
+    "name": "Cough",
+    "category": "Respiratory",
+    "severity_levels": ["Mild", "Persistent", "Severe"],
+    "common_causes": ["Viral infections", "Asthma", "GERD", "Allergies"],
+    "symptoms": ["Dry or productive cough", "Throat irritation", "Chest discomfort"],
+    "home_remedies": ["Warm fluids", "Honey (age ≥1)", "Humidifier"],
+    "when_to_seek_help": "Shortness of breath, chest pain, blood in sputum, high fever, or cough >3 weeks.",
+    "keywords": ["cough", "coughing", "phlegm", "dry cough"],
+    "sources": [
+      {"name": "WebMD", "url": "https://www.webmd.com/cold-and-flu/qa/what-causes-a-cough"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  },
+  {
+    "id": "headache",
+    "name": "Headache",
+    "category": "Neurology",
+    "severity_levels": ["Mild", "Moderate", "Severe"],
+    "common_causes": ["Tension", "Migraine", "Dehydration", "Sinusitis"],
+    "symptoms": ["Pain in head", "Pressure", "Sensitivity to light"],
+    "home_remedies": ["Hydration", "Rest in a dark, quiet room", "Temperature therapy (cold/warm)"],
+    "when_to_seek_help": "Thunderclap headache, neurological deficits, head injury, persistent vomiting, or new headache in age >50.",
+    "keywords": ["headache", "migraine", "tension headache", "sinus"],
+    "sources": [
+      {"name": "Mayo Clinic", "url": "https://www.mayoclinic.org/symptoms/headache/basics/definition/sym-20050800"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  },
+  {
+    "id": "shortness-of-breath",
+    "name": "Shortness of Breath (Dyspnea)",
+    "category": "Respiratory",
+    "severity_levels": ["Mild", "Moderate", "Severe"],
+    "common_causes": ["Asthma", "COPD", "Heart failure", "Anxiety"],
+    "symptoms": ["Breathlessness", "Chest tightness", "Rapid breathing"],
+    "home_remedies": ["Pursed-lip breathing", "Positioning (tripod)", "Avoid triggers"],
+    "when_to_seek_help": "Severe breathlessness, cyanosis, chest pain, confusion, or rapid onset.",
+    "keywords": ["shortness of breath", "dyspnea", "breathless", "difficulty breathing"],
+    "sources": [
+      {"name": "WebMD", "url": "https://www.webmd.com/lung/qa/what-causes-shortness-of-breath"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  }
+]

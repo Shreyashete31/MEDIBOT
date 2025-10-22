@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>User Profile - HealthHub</title>
+  <meta name="description" content="Manage your health profile, track symptoms, and view health statistics">
+  <meta name="theme-color" content="#009688">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HealthHub">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="accessibility.js"></script>
+  <style>
+    :root {
+      --primary-color: #F8FBFF;
+      --primary-dark: #29b6f6;
+      --secondary-color: #81c784; /* Light green */
+      --accent-color: #ff8a65; /* Light coral */
+      --warning-color: #ffb74d;
+      --text-primary: #2c3e50;
+      --text-secondary: #5d6d7e;
+      --background: #f8fffe;
+      --surface: #ffffff;
+      --border-color: #e8f4f8;
+      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
+      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
+      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f8ff 0%, #f0fff4 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .app-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Main Container */
+    .container {
+      padding: 2rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Profile Header */
+    .profile-header {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: white;
+      margin: 0 auto 1rem;
+      font-weight: 600;
+    }
+
+    .profile-name {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .profile-email {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin: 0 0 1rem;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: var(--background);
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0 0 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      min-width: 120px;
+    }
+
+    .tab.active {
+      background: var(--gradient-primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .card-action {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .card-action:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Health Tracking */
+    .health-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: var(--background);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .metric-details h4 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .metric-details p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    /* Symptom History */
+    .symptom-entry {
+      background: var(--background);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .symptom-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .symptom-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .symptom-date {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .symptom-details {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Settings Form */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: var(--surface);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .form-select:focus {
+      border-color: var(--primary-color);
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+
+    .form-textarea:focus {
+      border-color: var(--primary-color);
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .btn.secondary:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn.danger {
+      background: var(--accent-color);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .profile-header {
+        padding: 1.5rem;
+      }
+
+      .profile-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .health-metric {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .metric-info {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* No dark theme per design requirements */
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="header-title">My Profile</h1>
+    </div>
+    
+    <div class="header-right">
+      <div class="user-avatar" id="headerAvatar">U</div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <!-- Profile Header -->
+    <section class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">U</div>
+      <h2 class="profile-name" id="profileName">User Name</h2>
+      <p class="profile-email" id="profileEmail">user@example.com</p>
+      
+      <div class="profile-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="totalRemedies">0</div>
+          <div class="stat-label">Remedies Used</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="symptomsTracked">0</div>
+          <div class="stat-label">Symptoms Tracked</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="healthScore">85</div>
+          <div class="stat-label">Health Score</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="quizPoints">0</div>
+          <div class="stat-label">Quiz Points</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="daysActive">7</div>
+          <div class="stat-label">Days Active</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('health')">
+        <i class="fas fa-heartbeat"></i> Health
+      </div>
+      <div class="tab" onclick="switchTab('history')">
+        <i class="fas fa-history"></i> History
+      </div>
+      <div class="tab" onclick="switchTab('settings')">
+        <i class="fas fa-cog"></i> Settings
+      </div>
+      <div class="tab" onclick="switchTab('about')">
+        <i class="fas fa-info-circle"></i> About Us
+      </div>
+    </div>
+
+    <!-- Health Tab -->
+    <div id="healthTab" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">User Info</h3>
+        </div>
+        <div id="userInfoSummary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Health Metrics</h3>
+          <button class="card-action" onclick="addHealthMetric()">
+            <i class="fas fa-plus"></i> Add Metric
+          </button>
+        </div>
+
+    <!-- About Tab -->
+    <div id="aboutTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">About HealthHub</h3>
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          HealthHub is a wellness companion app focused on accessible first aid, natural remedies, and emergency readiness. All first-aid steps and remedy summaries are curated from reputable sources and reviewed for clarity. This app does not replace professional medical advice.
+        </p>
+        <div class="card" style="margin-top: 1rem;">
+          <h4 class="card-title">Verification Sources and Credits</h4>
+          <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary); line-height: 1.6;">
+            <li>WHO (World Health Organization)</li>
+            <li>Red Cross First Aid Guidelines</li>
+            <li>NIH MedlinePlus</li>
+            <li>AIIMS (All India Institute of Medical Sciences) Poison Control Helpline</li>
+          </ul>
+          <p style="margin-top: 0.75rem; color: var(--text-secondary);">Design accents: mint, sky, and coral. Built with love for brighter, accessible UI.</p>
+        </div>
+      </div>
+    </div>
+        
+        <div id="healthMetrics">
+          <!-- Health metrics will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Recent Symptoms</h3>
+          <button class="card-action" onclick="trackSymptom()">
+            <i class="fas fa-plus"></i> Track Symptom
+          </button>
+        </div>
+        
+        <div id="recentSymptoms">
+          <!-- Recent symptoms will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div id="historyTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Symptom History</h3>
+          <button class="card-action" onclick="exportData()">
+            <i class="fas fa-download"></i> Export
+          </button>
+        </div>
+        
+        <div id="symptomHistory">
+          <!-- Symptom history will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Remedy Usage</h3>
+        </div>
+        
+        <div id="remedyHistory">
+          <!-- Remedy history will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settingsTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Personal Information</h3>
+        </div>
+        
+        <form id="profileForm">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="fullName" placeholder="Enter your full name">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="email" placeholder="Enter your email">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-input" id="dateOfBirth">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="gender">
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+              <option value="prefer-not-to-say">Prefer not to say</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Blood Type</label>
+            <select class="form-select" id="bloodType">
+              <option value="">Select blood type</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Allergies</label>
+            <textarea class="form-textarea" id="allergies" placeholder="List any allergies or medical conditions"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Emergency Contact</label>
+            <input type="text" class="form-input" id="emergencyContact" placeholder="Emergency contact name and number">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Height (cm)</label>
+            <input type="number" class="form-input" id="heightCm" placeholder="Enter your height in cm">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Weight (kg)</label>
+            <input type="number" class="form-input" id="weightKg" placeholder="Enter your weight in kg">
+          </div>
+          
+          <button type="submit" class="btn">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Data Management</h3>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button class="btn secondary" onclick="exportAllData()">
+            <i class="fas fa-download"></i> Export All Data
+          </button>
+          <button class="btn secondary" onclick="importData()">
+            <i class="fas fa-upload"></i> Import Data
+          </button>
+          <button class="btn danger" onclick="deleteAccount()">
+            <i class="fas fa-trash"></i> Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let userProfile = {};
+    let currentTab = 'health';
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeUser();
+      initializeProfile();
+      loadUserData();
+      switchTab('health');
+    });
+
+    // User initialization
+    function initializeUser() {
+      currentUser = localStorage.getItem('loggedInUser') || 'guest';
+
+      // Load user profile
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      const userData = users[currentUser];
+      
+      if (userData) {
+        userProfile = userData.profile || {};
+        document.getElementById('profileName').textContent = currentUser;
+        document.getElementById('profileEmail').textContent = userData.email || 'No email provided';
+        document.getElementById('headerAvatar').textContent = currentUser.charAt(0).toUpperCase();
+        document.getElementById('profileAvatar').textContent = currentUser.charAt(0).toUpperCase();
+      }
+    }
+
+    // Initialize profile data
+    function initializeProfile() {
+      // Initialize default profile if none exists
+      if (!userProfile.name) {
+        userProfile = {
+          name: currentUser,
+          email: '',
+          dateOfBirth: '',
+          gender: '',
+          bloodType: '',
+          allergies: '',
+          emergencyContact: '',
+          heightCm: '',
+          weightKg: '',
+          healthMetrics: [],
+          symptomHistory: [],
+          remedyHistory: [],
+          quizPoints: 0
+        };
+      }
+    }
+
+    // Load user data
+    function loadUserData() {
+      // Load profile form data
+      document.getElementById('fullName').value = userProfile.name || '';
+      document.getElementById('email').value = userProfile.email || '';
+      document.getElementById('dateOfBirth').value = userProfile.dateOfBirth || '';
+      document.getElementById('gender').value = userProfile.gender || '';
+      document.getElementById('bloodType').value = userProfile.bloodType || '';
+      document.getElementById('allergies').value = userProfile.allergies || '';
+      document.getElementById('emergencyContact').value = userProfile.emergencyContact || '';
+      document.getElementById('heightCm').value = userProfile.heightCm || '';
+      document.getElementById('weightKg').value = userProfile.weightKg || '';
+
+      // Load statistics
+      document.getElementById('totalRemedies').textContent = userProfile.remedyHistory?.length || 0;
+      document.getElementById('symptomsTracked').textContent = userProfile.symptomHistory?.length || 0;
+      document.getElementById('healthScore').textContent = calculateHealthScore();
+      document.getElementById('daysActive').textContent = calculateDaysActive();
+      document.getElementById('quizPoints').textContent = userProfile.quizPoints || 0;
+
+      // Load health metrics
+      loadHealthMetrics();
+      loadRecentSymptoms();
+      loadSymptomHistory();
+      loadRemedyHistory();
+      renderUserInfoSummary();
+    }
+
+    function renderUserInfoSummary() {
+      const summary = document.getElementById('userInfoSummary');
+      if (!summary) return;
+
+      const name = userProfile.name || currentUser;
+      const quizPoints = userProfile.quizPoints || 0;
+
+      // Calculate age from dateOfBirth
+      const age = (() => {
+        if (!userProfile.dateOfBirth) return 'Not set';
+        const dob = new Date(userProfile.dateOfBirth);
+        if (isNaN(dob)) return 'Not set';
+        const diff = Date.now() - dob.getTime();
+        const ageDate = new Date(diff);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+      })();
+
+      const height = userProfile.heightCm || 'Not set';
+      const weight = userProfile.weightKg || 'Not set';
+
+      summary.innerHTML = `
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon"><i class="fas fa-user"></i></div>
+            <div class="metric-details">
+              <h4>Name</h4>
+              <p>${name}</p>
+            </div>
+          </div>
+          <div class="metric-value"></div>
+        </div>
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon"><i class="fas fa-birthday-cake"></i></div>
+            <div class="metric-details">
+              <h4>Age</h4>
+              <p>Calculated from Date of Birth</p>
+            </div>
+          </div>
+          <div class="metric-value">${age}</div>
+        </div>
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon"><i class="fas fa-ruler-vertical"></i></div>
+            <div class="metric-details">
+              <h4>Height</h4>
+              <p>Centimeters</p>
+            </div>
+          </div>
+          <div class="metric-value">${height}</div>
+        </div>
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon"><i class="fas fa-weight"></i></div>
+            <div class="metric-details">
+              <h4>Weight</h4>
+              <p>Kilograms</p>
+            </div>
+          </div>
+          <div class="metric-value">${weight}</div>
+        </div>
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon"><i class="fas fa-star"></i></div>
+            <div class="metric-details">
+              <h4>Quiz Points</h4>
+              <p>Total accumulated points</p>
+            </div>
+          </div>
+          <div class="metric-value">${quizPoints}</div>
+        </div>
+      `;
+    }
+
+    // Switch tabs
+    function switchTab(tabName) {
+      // Remove active class from all tabs and contents
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Add active class to selected tab and content
+      event.target.classList.add('active');
+      document.getElementById(tabName + 'Tab').classList.add('active');
+      
+      currentTab = tabName;
+    }
+
+    // Calculate health score
+    function calculateHealthScore() {
+      const baseScore = 85;
+      const symptomCount = userProfile.symptomHistory?.length || 0;
+      const recentSymptoms = userProfile.symptomHistory?.filter(s => {
+        const symptomDate = new Date(s.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return symptomDate > weekAgo;
+      }).length || 0;
+      
+      return Math.max(0, Math.min(100, baseScore - (recentSymptoms * 5) - (symptomCount * 0.1)));
+    }
+
+    // Calculate days active
+    function calculateDaysActive() {
+      const lastLogin = localStorage.getItem('lastLogin');
+      if (!lastLogin) return 1;
+      
+      const lastLoginDate = new Date(parseInt(lastLogin));
+      const today = new Date();
+      const diffTime = Math.abs(today - lastLoginDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      return Math.min(diffDays, 30); // Cap at 30 days
+    }
+
+    // Load health metrics
+    function loadHealthMetrics() {
+      const container = document.getElementById('healthMetrics');
+      const metrics = userProfile.healthMetrics || [];
+      
+      if (metrics.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-heartbeat"></i>
+            <h3>No Health Metrics</h3>
+            <p>Start tracking your health metrics to see insights here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = metrics.map(metric => `
+        <div class="health-metric">
+          <div class="metric-info">
+            <div class="metric-icon">
+              <i class="fas fa-${metric.icon || 'heartbeat'}"></i>
+            </div>
+            <div class="metric-details">
+              <h4>${metric.name}</h4>
+              <p>Last updated: ${new Date(metric.date).toLocaleDateString()}</p>
+            </div>
+          </div>
+          <div class="metric-value">${metric.value} ${metric.unit}</div>
+        </div>
+      `).join('');
+    }
+
+    // Load recent symptoms
+    function loadRecentSymptoms() {
+      const container = document.getElementById('recentSymptoms');
+      const symptoms = userProfile.symptomHistory || [];
+      const recentSymptoms = symptoms.slice(-5).reverse();
+      
+      if (recentSymptoms.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-stethoscope"></i>
+            <h3>No Symptoms Tracked</h3>
+            <p>Start tracking your symptoms to see them here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = recentSymptoms.map(symptom => `
+        <div class="symptom-entry">
+          <div class="symptom-header">
+            <h4 class="symptom-title">${symptom.name}</h4>
+            <span class="symptom-date">${new Date(symptom.date).toLocaleDateString()}</span>
+          </div>
+          <p class="symptom-details">Severity: ${symptom.severity} | Duration: ${symptom.duration}</p>
+        </div>
+      `).join('');
+    }
+
+    // Load symptom history
+    function loadSymptomHistory() {
+      const container = document.getElementById('symptomHistory');
+      const symptoms = userProfile.symptomHistory || [];
+      
+      if (symptoms.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <h3>No Symptom History</h3>
+            <p>Your tracked symptoms will appear here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = symptoms.reverse().map(symptom => `
+        <div class="symptom-entry">
+          <div class="symptom-header">
+            <h4 class="symptom-title">${symptom.name}</h4>
+            <span class="symptom-date">${new Date(symptom.date).toLocaleDateString()}</span>
+          </div>
+          <p class="symptom-details">Severity: ${symptom.severity} | Duration: ${symptom.duration} | Notes: ${symptom.notes || 'None'}</p>
+        </div>
+      `).join('');
+    }
+
+    // Load remedy history
+    function loadRemedyHistory() {
+      const container = document.getElementById('remedyHistory');
+      const remedies = userProfile.remedyHistory || [];
+      
+      if (remedies.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-leaf"></i>
+            <h3>No Remedy History</h3>
+            <p>Your used remedies will appear here</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = remedies.reverse().map(remedy => `
+        <div class="symptom-entry">
+          <div class="symptom-header">
+            <h4 class="symptom-title">${remedy.name}</h4>
+            <span class="symptom-date">${new Date(remedy.date).toLocaleDateString()}</span>
+          </div>
+          <p class="symptom-details">Effectiveness: ${remedy.effectiveness}/5 | Notes: ${remedy.notes || 'None'}</p>
+        </div>
+      `).join('');
+    }
+
+    // Add health metric
+    function addHealthMetric() {
+      const name = prompt('Enter metric name (e.g., Blood Pressure, Weight):');
+      if (!name) return;
+      
+      const value = prompt('Enter value:');
+      if (!value) return;
+      
+      const unit = prompt('Enter unit (e.g., mmHg, kg, °F):');
+      if (!unit) return;
+      
+      const metric = {
+        id: Date.now(),
+        name: name,
+        value: value,
+        unit: unit,
+        date: new Date().toISOString()
+      };
+      
+      userProfile.healthMetrics = userProfile.healthMetrics || [];
+      userProfile.healthMetrics.push(metric);
+      
+      saveUserProfile();
+      loadHealthMetrics();
+    }
+
+    // Track symptom
+    function trackSymptom() {
+      const name = prompt('Enter symptom name:');
+      if (!name) return;
+      
+      const severity = prompt('Enter severity (1-10):');
+      if (!severity) return;
+      
+      const duration = prompt('Enter duration (e.g., 2 hours, 1 day):');
+      if (!duration) return;
+      
+      const notes = prompt('Enter notes (optional):') || '';
+      
+      const symptom = {
+        id: Date.now(),
+        name: name,
+        severity: severity,
+        duration: duration,
+        notes: notes,
+        date: new Date().toISOString()
+      };
+      
+      userProfile.symptomHistory = userProfile.symptomHistory || [];
+      userProfile.symptomHistory.push(symptom);
+      
+      saveUserProfile();
+      loadRecentSymptoms();
+      loadSymptomHistory();
+      
+      // Update statistics
+      document.getElementById('symptomsTracked').textContent = userProfile.symptomHistory.length;
+      document.getElementById('healthScore').textContent = calculateHealthScore();
+    }
+
+    // Save user profile
+    function saveUserProfile() {
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (users[currentUser]) {
+        users[currentUser].profile = userProfile;
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+    }
+
+    // Export data
+    function exportData() {
+      const data = {
+        userProfile: userProfile,
+        exportDate: new Date().toISOString(),
+        version: '1.0.0'
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `healthhub-data-${currentUser}-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Export all data
+    function exportAllData() {
+      const allData = {
+        userProfile: userProfile,
+        emergencyContacts: JSON.parse(localStorage.getItem('emergencyContacts') || '[]'),
+        readFirstAid: JSON.parse(localStorage.getItem('readFirstAid') || '[]'),
+        accessibilitySettings: JSON.parse(localStorage.getItem('accessibilitySettings') || '{}'),
+        exportDate: new Date().toISOString(),
+        version: '1.0.0'
+      };
+      
+      const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `healthhub-complete-data-${currentUser}-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Import data
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const data = JSON.parse(e.target.result);
+              if (confirm('This will overwrite your current data. Continue?')) {
+                userProfile = data.userProfile || userProfile;
+                saveUserProfile();
+                loadUserData();
+                alert('Data imported successfully!');
+              }
+            } catch (error) {
+              alert('Error importing data: ' + error.message);
+            }
+          };
+          reader.readAsText(file);
+        }
+      };
+      input.click();
+    }
+
+    // Delete account
+    function deleteAccount() {
+      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        if (confirm('This will permanently delete all your data. Type "DELETE" to confirm.')) {
+          const users = JSON.parse(localStorage.getItem('users') || '{}');
+          delete users[currentUser];
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.removeItem('loggedInUser');
+          alert('Account deleted successfully.');
+          window.location.href = '2 login.html';
+        }
+      }
+    }
+
+    // Profile form submission
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      userProfile.name = document.getElementById('fullName').value;
+      userProfile.email = document.getElementById('email').value;
+      userProfile.dateOfBirth = document.getElementById('dateOfBirth').value;
+      userProfile.gender = document.getElementById('gender').value;
+      userProfile.bloodType = document.getElementById('bloodType').value;
+      userProfile.allergies = document.getElementById('allergies').value;
+      userProfile.emergencyContact = document.getElementById('emergencyContact').value;
+      userProfile.heightCm = document.getElementById('heightCm').value;
+      userProfile.weightKg = document.getElementById('weightKg').value;
+      
+      saveUserProfile();
+      
+      // Update display
+      document.getElementById('profileName').textContent = userProfile.name;
+      document.getElementById('profileEmail').textContent = userProfile.email;
+      renderUserInfoSummary();
+      
+      alert('Profile updated successfully!');
+    });
+
+    // Navigation
+    function goBack() {
+      window.location.href = '3 home.html';
+    }
+  </script>
+</body>
+</html>

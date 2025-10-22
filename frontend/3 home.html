@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home Remedies & First Aid App</title>
+  <meta name="description" content="Comprehensive health app with natural remedies, first aid guides, and emergency tools">
+  <meta name="theme-color" content="#009688">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HealthHub">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="accessibility.js"></script>
+  <script src="dark-mode.js"></script>
+  <script src="offline-manager.js"></script>
+  <style>
+    :root {
+      --primary-color: #4fc3f7; /* Light blue */
+      --primary-dark: #29b6f6;
+      --secondary-color: #81c784; /* Light green */
+      --accent-color: #ff8a65; /* Light coral */
+      --text-primary: #2c3e50;
+      --text-secondary: #5d6d7e;
+      --background: #f8fffe;
+      --surface: #ffffff;
+      --border-color: #e8f4f8;
+      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
+      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
+      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #66bb6a);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f8ff 0%, #f0fff4 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .app-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo i {
+      font-size: 1.2rem;
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .user-info:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .search-container {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 200px;
+    }
+
+    .search-container input {
+      background: none;
+      border: none;
+      color: white;
+      outline: none;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+
+    .search-container input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      padding: 2rem 1.5rem 1rem;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary);
+      border: 2px solid transparent;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .action-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+    }
+
+    .action-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Dashboard Stats */
+    .dashboard-stats {
+      padding: 1rem 1.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0.25rem 0 0;
+    }
+
+    /* Featured Remedies */
+    .featured-section {
+      padding: 1rem 1.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .view-all {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .featured-card {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .featured-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .featured-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .featured-content {
+      padding: 1rem;
+    }
+
+    .featured-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .featured-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0 0 1rem;
+    }
+
+    .featured-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.8rem;
+      color: var(--warning-color);
+    }
+
+    .favorite-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .favorite-btn.active {
+      color: var(--accent-color);
+    }
+
+    /* Daily Tip */
+    .daily-tip {
+      margin: 2rem 1.5rem;
+      background: var(--gradient-secondary);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .tip-content {
+      font-size: 1.1rem;
+      font-style: italic;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* Favorites */
+    .favorites-section {
+      padding: 1rem 1.5rem;
+    }
+
+    .favorites-list {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .favorite-item {
+      background: rgba(0,150,136,0.05);
+      border: 1px solid rgba(0,150,136,0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .favorite-item:hover {
+      background: rgba(0,150,136,0.1);
+      transform: translateY(-2px);
+    }
+
+    .favorite-name {
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .favorite-category {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .app-header {
+        padding: 1rem;
+      }
+
+      .header-title {
+        font-size: 1.2rem;
+      }
+
+      .search-container {
+        min-width: 150px;
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .favorites-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-right {
+        gap: 0.5rem;
+      }
+
+      .user-info {
+        padding: 0.25rem 0.75rem;
+      }
+
+      .search-container {
+        display: none;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --background: #121212;
+        --surface: #1e1e1e;
+        --border-color: #333333;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      }
+    }
+
+    /* Primary color system (Home) */
+    :root {
+      /* Ensure the base variables exist; allow overrides elsewhere */
+      --primary-color: #4fc3f7;
+      --primary-dark: #29b6f6;
+      --primary-hover: #3bb8f2;
+      --primary-active: #2aa6e3;
+      --on-primary: #063a46; /* WCAG-friendly text on #4fc3f7 */
+    }
+
+    /* Links and text using primary color */
+    a, .primary-text, .view-all {
+      color: var(--primary-color, #4fc3f7);
+    }
+    a:hover, a:focus, .view-all:hover {
+      color: var(--primary-hover, #3bb8f2);
+    }
+    a:active, .view-all:active {
+      color: var(--primary-active, #2aa6e3);
+    }
+
+    /* Primary buttons and interactive controls */
+    .btn-primary, .card-action {
+      background: var(--primary-color, #4fc3f7);
+      color: var(--on-primary, #063a46);
+      border: 1px solid var(--primary-color, #4fc3f7);
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-primary:hover, .card-action:hover {
+      background: var(--primary-hover, #3bb8f2);
+      border-color: var(--primary-hover, #3bb8f2);
+    }
+    .btn-primary:active, .card-action:active {
+      background: var(--primary-active, #2aa6e3);
+      border-color: var(--primary-active, #2aa6e3);
+      filter: none;
+    }
+    .btn-primary:focus-visible, .card-action:focus-visible {
+      outline: 2px solid var(--primary-dark, #29b6f6);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.25);
+    }
+    .btn-primary[disabled], .card-action[disabled], .btn-disabled {
+      background: var(--primary-color, #4fc3f7);
+      border-color: var(--primary-color, #4fc3f7);
+      color: var(--on-primary, #063a46);
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+      filter: grayscale(0.3);
+    }
+
+    /* Borders */
+    .border-primary {
+      border: 2px solid var(--primary-color, #4fc3f7) !important;
+    }
+
+    /* Allow variable overrides via more specific rule */
+    body[data-theme="custom"] {
+      --primary-color: var(--custom-primary, #4fc3f7);
+      --primary-dark: var(--custom-primary-dark, #29b6f6);
+      --primary-hover: var(--custom-primary-hover, #3bb8f2);
+      --primary-active: var(--custom-primary-active, #2aa6e3);
+      --on-primary: var(--custom-on-primary, #063a46);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+      </div>
+      <h1 class="header-title">HealthHub</h1>
+    </div>
+    
+    <div class="header-right">
+      <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search remedies..." id="globalSearch">
+      </div>
+      
+      <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <i class="fas fa-moon"></i>
+      </button>
+      
+      <div class="user-info" onclick="toggleUserMenu()">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userName">User</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="actions-grid">
+      <a href="remedies.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-pills"></i>
+        </div>
+        <h3 class="action-title">Remedies</h3>
+        <p class="action-desc">Natural home treatments</p>
+      </a>
+      
+      <a href="firstaid.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-first-aid"></i>
+        </div>
+        <h3 class="action-title">First Aid</h3>
+        <p class="action-desc">Emergency care guide</p>
+      </a>
+      
+      <a href="suggestions.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-stethoscope"></i>
+        </div>
+        <h3 class="action-title">Symptom Checker</h3>
+        <p class="action-desc">AI-powered diagnosis</p>
+      </a>
+      
+      <a href="chat.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <h3 class="action-title">AI Chat Assistant</h3>
+        <p class="action-desc">Chat with health AI</p>
+      </a>
+      
+      <a href="quiz.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <h3 class="action-title">First Aid Quiz</h3>
+        <p class="action-desc">Test your knowledge</p>
+      </a>
+      
+      <a href="emergency.html" class="action-card">
+        <div class="action-icon">
+          <i class="fas fa-phone-alt"></i>
+        </div>
+        <h3 class="action-title">Emergency</h3>
+        <p class="action-desc">Emergency contacts</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Dashboard Stats -->
+  <section class="dashboard-stats">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalRemedies">0</div>
+        <div class="stat-label">Remedies Saved</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number" id="weeklyUsage">0</div>
+        <div class="stat-label">This Week</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number" id="favoriteCount">0</div>
+        <div class="stat-label">Favorites</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-number" id="healthScore">85</div>
+        <div class="stat-label">Health Score</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Remedies -->
+  <section class="featured-section">
+    <div class="section-header">
+      <h2 class="section-title">🌿 Featured Remedies</h2>
+      <a href="remedies.html" class="view-all">View All</a>
+    </div>
+    
+    <div class="featured-grid">
+      <div class="featured-card">
+        <img src="honey and turmeric.jpg" alt="Turmeric & Honey" class="featured-image">
+        <div class="featured-content">
+          <h3 class="featured-title">Turmeric & Honey</h3>
+          <p class="featured-desc">Natural remedy for sore throat and inflammation</p>
+          <div class="featured-actions">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <span>(4.8)</span>
+            </div>
+            <button class="favorite-btn" onclick="toggleFavorite('turmeric-honey')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="featured-card">
+        <img src="ginger tea.jpeg" alt="Ginger Tea" class="featured-image">
+        <div class="featured-content">
+          <h3 class="featured-title">Ginger Tea</h3>
+          <p class="featured-desc">Digestive aid and nausea relief</p>
+          <div class="featured-actions">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <span>(4.9)</span>
+            </div>
+            <button class="favorite-btn" onclick="toggleFavorite('ginger-tea')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="featured-card">
+        <div class="featured-image" style="background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <div class="featured-content">
+          <h3 class="featured-title">Aloe Vera Gel</h3>
+          <p class="featured-desc">Skin healing and sunburn relief</p>
+          <div class="featured-actions">
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+              <span>(4.6)</span>
+            </div>
+            <button class="favorite-btn" onclick="toggleFavorite('aloe-vera')">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Daily Tip -->
+  <div class="daily-tip">
+    <div class="tip-content" id="dailyTip">💡 Loading daily tip...</div>
+  </div>
+
+  <!-- Favorites -->
+  <section class="favorites-section">
+    <div class="section-header">
+      <h2 class="section-title">⭐ Your Favorites</h2>
+      <a href="#" class="view-all" onclick="clearAllFavorites()">Clear All</a>
+    </div>
+    
+    <div class="favorites-list">
+      <div id="favoritesContainer">
+        <div class="empty-state">
+          <i class="fas fa-heart"></i>
+          <p>No favorites yet. Start exploring remedies!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Global variables
+    let currentUser = null;
+    let userFavorites = [];
+    let userStats = {};
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeUser();
+      initializeDailyTip();
+      initializeFavorites();
+      initializeStats();
+      initializeSearch();
+      initializeUserMenu();
+    });
+
+    // User initialization
+    function initializeUser() {
+      currentUser = localStorage.getItem('loggedInUser');
+      
+      if (!currentUser || currentUser === 'guest') {
+        // Redirect to login if not logged in
+        if (currentUser !== 'guest') {
+          window.location.href = '2 login.html';
+          return;
+        }
+        document.getElementById('userName').textContent = 'Guest';
+        document.getElementById('userAvatar').textContent = 'G';
+      } else {
+        // Get user data
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        const userData = users[currentUser];
+        
+        if (userData) {
+          document.getElementById('userName').textContent = currentUser;
+          document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
+          
+          // Initialize user favorites
+          userFavorites = userData.favorites || [];
+        }
+      }
+    }
+
+    // Daily tip system
+    function initializeDailyTip() {
+      const tips = [
+        "💧 Stay hydrated! Aim for 8 glasses of water daily for optimal health.",
+        "🌱 Prevention is better than cure - maintain a healthy lifestyle daily.",
+        "😴 Quality sleep is essential for immune system function and recovery.",
+        "🧘 Practice mindfulness and stress management for overall wellness.",
+        "🥗 Include colorful fruits and vegetables in your diet for nutrients.",
+        "🏃 Regular exercise boosts immunity and improves mental health.",
+        "🧼 Wash your hands frequently to prevent the spread of germs.",
+        "🌞 Get adequate sunlight for vitamin D and mood enhancement.",
+        "📱 Limit screen time before bed for better sleep quality.",
+        "🤝 Stay connected with loved ones for emotional well-being."
+      ];
+
+      // Get tip based on current date for consistency
+      const today = new Date().getDate();
+      const tipIndex = today % tips.length;
+      
+      document.getElementById('dailyTip').textContent = tips[tipIndex];
+    }
+
+    // Favorites management
+    function initializeFavorites() {
+      updateFavoritesDisplay();
+    }
+
+    function toggleFavorite(remedyId) {
+      if (currentUser === 'guest') {
+        alert('Please log in to save favorites');
+        return;
+      }
+
+      const favoriteBtn = event.target.closest('.favorite-btn');
+      const icon = favoriteBtn.querySelector('i');
+      
+      if (userFavorites.includes(remedyId)) {
+        // Remove from favorites
+        userFavorites = userFavorites.filter(id => id !== remedyId);
+        icon.className = 'far fa-heart';
+        favoriteBtn.classList.remove('active');
+      } else {
+        // Add to favorites
+        userFavorites.push(remedyId);
+        icon.className = 'fas fa-heart';
+        favoriteBtn.classList.add('active');
+      }
+
+      // Update localStorage
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      if (users[currentUser]) {
+        users[currentUser].favorites = userFavorites;
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+
+      updateFavoritesDisplay();
+      updateStats();
+    }
+
+    function updateFavoritesDisplay() {
+      const container = document.getElementById('favoritesContainer');
+      
+      if (userFavorites.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-heart"></i>
+            <p>No favorites yet. Start exploring remedies!</p>
+          </div>
+        `;
+      } else {
+        const favoriteData = {
+          'turmeric-honey': { name: 'Turmeric & Honey', category: 'Respiratory' },
+          'ginger-tea': { name: 'Ginger Tea', category: 'Digestion' },
+          'aloe-vera': { name: 'Aloe Vera Gel', category: 'Skin Care' },
+          'honey-cough': { name: 'Honey for Cough', category: 'Respiratory' },
+          'neem-paste': { name: 'Neem Paste', category: 'Skin Care' },
+          'tulsi-leaves': { name: 'Tulsi Leaves', category: 'Immunity' }
+        };
+
+        container.innerHTML = `
+          <div class="favorites-grid">
+            ${userFavorites.map(id => {
+              const remedy = favoriteData[id] || { name: id, category: 'General' };
+              return `
+                <div class="favorite-item">
+                  <div class="favorite-name">${remedy.name}</div>
+                  <div class="favorite-category">${remedy.category}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+    }
+
+    function clearAllFavorites() {
+      if (confirm('Are you sure you want to clear all favorites?')) {
+        userFavorites = [];
+        
+        // Update localStorage
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        if (users[currentUser]) {
+          users[currentUser].favorites = [];
+          localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        updateFavoritesDisplay();
+        updateStats();
+        
+        // Reset favorite buttons
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+          const icon = btn.querySelector('i');
+          icon.className = 'far fa-heart';
+          btn.classList.remove('active');
+        });
+      }
+    }
+
+    // Stats management
+    function initializeStats() {
+      userStats = JSON.parse(localStorage.getItem('userStats') || '{}');
+      updateStats();
+    }
+
+    function updateStats() {
+      // Update favorite count
+      document.getElementById('favoriteCount').textContent = userFavorites.length;
+      
+      // Update other stats
+      document.getElementById('totalRemedies').textContent = userFavorites.length;
+      
+      // Weekly usage (simulate based on stored data)
+      const weeklyUsage = userStats.weeklyUsage || Math.floor(Math.random() * 10) + 1;
+      document.getElementById('weeklyUsage').textContent = weeklyUsage;
+      
+      // Health score (calculate based on various factors)
+      const healthScore = calculateHealthScore();
+      document.getElementById('healthScore').textContent = healthScore;
+    }
+
+    function calculateHealthScore() {
+      let score = 85; // Base score
+      
+      // Adjust based on favorites (more favorites = better health awareness)
+      score += Math.min(userFavorites.length * 2, 10);
+      
+      // Adjust based on recent activity
+      const lastLogin = localStorage.getItem('lastLogin');
+      if (lastLogin) {
+        const daysSinceLogin = Math.floor((Date.now() - new Date(lastLogin)) / (1000 * 60 * 60 * 24));
+        if (daysSinceLogin <= 1) score += 5;
+        else if (daysSinceLogin <= 3) score += 2;
+        else if (daysSinceLogin > 7) score -= 5;
+      }
+      
+      return Math.max(0, Math.min(100, score));
+    }
+
+    // Search functionality
+    function initializeSearch() {
+      const searchInput = document.getElementById('globalSearch');
+      
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        if (query.length > 2) {
+          // In a real app, this would search through remedies
+          console.log('Searching for:', query);
+        }
+      });
+
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const query = this.value.toLowerCase();
+          if (query.length > 0) {
+            // Redirect to remedies page with search query
+            window.location.href = `remedies.html?search=${encodeURIComponent(query)}`;
+          }
+        }
+      });
+    }
+
+    // User menu
+    function initializeUserMenu() {
+      // Add user menu functionality
+    }
+
+    function toggleUserMenu() {
+      // Create dropdown menu
+      const menu = document.createElement('div');
+      menu.style.cssText = `
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 0.5rem 0;
+        min-width: 200px;
+        z-index: 1000;
+      `;
+
+      const items = [
+        { icon: 'fas fa-user', text: 'Profile', page: 'profile.html' },
+        { icon: 'fas fa-cog', text: 'Settings', page: 'settings.html' },
+        { icon: 'fas fa-info-circle', text: 'About Us', page: 'about.html' },
+        { icon: 'fas fa-sign-out-alt', text: 'Logout', action: logout }
+      ];
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.style.cssText = 'padding: 0.75rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: background 0.2s; color: #000;';
+        row.addEventListener('mouseenter', () => { row.style.background = '#f0f0f0'; });
+        row.addEventListener('mouseleave', () => { row.style.background = 'white'; });
+
+        const icon = document.createElement('i');
+        icon.className = item.icon;
+        const label = document.createElement('span');
+        label.textContent = item.text;
+
+        row.appendChild(icon);
+        row.appendChild(label);
+
+        row.addEventListener('click', () => {
+          if (item.page) {
+            if (typeof navigateTo === 'function') {
+              navigateTo(item.page);
+            } else {
+              window.location.href = item.page;
+            }
+          } else if (item.action && typeof item.action === 'function') {
+            item.action();
+          }
+        });
+
+        menu.appendChild(row);
+      });
+
+      // Remove existing menu if any
+      const existingMenu = document.querySelector('.user-menu');
+      if (existingMenu) {
+        existingMenu.remove();
+      }
+
+      menu.className = 'user-menu';
+      const anchor = document.querySelector('.user-info');
+      if (anchor) {
+        anchor.appendChild(menu);
+      }
+
+      // Close menu when clicking outside
+      setTimeout(() => {
+        document.addEventListener('click', function closeMenu(e) {
+          if (!e.target.closest('.user-info')) {
+            menu.remove();
+            document.removeEventListener('click', closeMenu);
+          }
+        });
+      }, 100);
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('loggedInUser');
+        localStorage.setItem('lastLogin', Date.now().toString());
+        window.location.href = '2 login.html';
+      }
+    }
+
+    // Check if favorites are already saved for featured remedies
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check and update favorite button states
+      document.querySelectorAll('.favorite-btn').forEach(btn => {
+        const remedyId = btn.onclick.toString().match(/'([^']+)'/)[1];
+        if (userFavorites.includes(remedyId)) {
+          const icon = btn.querySelector('i');
+          icon.className = 'fas fa-heart';
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    // Track page usage
+    localStorage.setItem('lastLogin', Date.now().toString());
+    
+    // Update weekly usage stats
+    const today = new Date().toISOString().split('T')[0];
+    const weeklyStats = userStats.weeklyStats || {};
+    weeklyStats[today] = (weeklyStats[today] || 0) + 1;
+    userStats.weeklyStats = weeklyStats;
+    userStats.weeklyUsage = Object.values(weeklyStats).reduce((sum, count) => sum + count, 0);
+    localStorage.setItem('userStats', JSON.stringify(userStats));
+
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+            
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  showUpdateNotification();
+                }
+              });
+            });
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+
+    // PWA Install Prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      showInstallButton();
+    });
+
+    function showInstallButton() {
+      const installBtn = document.createElement('button');
+      installBtn.innerHTML = '<i class="fas fa-download"></i> Install App';
+      installBtn.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        box-shadow: var(--shadow-hover);
+        z-index: 1000;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      `;
+      
+      installBtn.addEventListener('click', () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          }
+          deferredPrompt = null;
+          installBtn.remove();
+        });
+      });
+      
+      document.body.appendChild(installBtn);
+    }
+
+    function showUpdateNotification() {
+      const updateBtn = document.createElement('div');
+      updateBtn.innerHTML = `
+        <div style="background: var(--gradient-primary); color: white; padding: 1rem; border-radius: 8px; margin: 1rem; text-align: center;">
+          <p style="margin: 0 0 1rem;">New version available!</p>
+          <button onclick="updateApp()" style="background: white; color: var(--primary-color); border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 500;">
+            Update Now
+          </button>
+        </div>
+      `;
+      updateBtn.style.position = 'fixed';
+      updateBtn.style.top = '0';
+      updateBtn.style.left = '0';
+      updateBtn.style.right = '0';
+      updateBtn.style.zIndex = '1000';
+      
+      document.body.appendChild(updateBtn);
+    }
+
+    function updateApp() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(registration => {
+          if (registration && registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+            window.location.reload();
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html>

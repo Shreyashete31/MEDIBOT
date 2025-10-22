@@ -1,0 +1,54 @@
+[
+  {
+    "id": "honey-for-cough",
+    "name": "Honey for Cough",
+    "category": "Respiratory",
+    "ingredients": ["Raw honey (1–2 tsp)", "Warm water or herbal tea"],
+    "preparation": "Stir honey into warm fluid and sip slowly.",
+    "benefits": ["Soothes throat", "May reduce cough frequency"],
+    "dosage": "Adults and children ≥1 year: 1–2 tsp, up to 3 times/day.",
+    "warnings": ["Do not give honey to children <1 year (risk of botulism)", "Monitor blood sugar if diabetic"],
+    "conditions": ["Cough", "Throat irritation"],
+    "keywords": ["honey", "cough", "soothe", "throat"],
+    "sources": [
+      {"name": "Mayo Clinic", "url": "https://www.mayoclinic.org/symptoms/cough/in-depth/cough/art-20051100"},
+      {"name": "WebMD", "url": "https://www.webmd.com/cold-and-flu/honey-cough"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  },
+  {
+    "id": "turmeric-milk",
+    "name": "Turmeric Golden Milk",
+    "category": "Immunity",
+    "ingredients": ["Milk or plant milk", "Turmeric (1/2 tsp)", "Black pepper (pinch)", "Ginger (optional)", "Honey (optional)"],
+    "preparation": "Warm milk; whisk in turmeric and pepper. Add ginger/honey to taste.",
+    "benefits": ["Anti-inflammatory potential", "Soothing"],
+    "dosage": "1 cup once daily, as tolerated.",
+    "warnings": ["May interact with anticoagulants", "Avoid high doses in gallbladder disease"],
+    "conditions": ["Sore throat", "Inflammation"],
+    "keywords": ["turmeric", "golden milk", "curcumin", "immunity"],
+    "sources": [
+      {"name": "WebMD", "url": "https://www.webmd.com/diet/what-to-know-about-turmeric"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  },
+  {
+    "id": "saline-nasal-rinse",
+    "name": "Saline Nasal Rinse",
+    "category": "ENT",
+    "ingredients": ["Sterile saline solution", "Neti pot or squeeze bottle"],
+    "preparation": "Use sterile saline; follow device instructions to irrigate nasal passages.",
+    "benefits": ["Reduces nasal congestion", "Clears mucus"],
+    "dosage": "Once or twice daily as needed.",
+    "warnings": ["Use sterile/distilled water only", "Clean device thoroughly"],
+    "conditions": ["Sinus congestion", "Allergic rhinitis"],
+    "keywords": ["saline", "nasal rinse", "neti", "congestion"],
+    "sources": [
+      {"name": "Mayo Clinic", "url": "https://www.mayoclinic.org/diseases-conditions/common-cold/expert-answers/neti-pot/faq-20058466"}
+    ],
+    "verified": true,
+    "last_reviewed": "2025-10-22"
+  }
+]
