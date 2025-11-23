@@ -102,50 +102,6 @@ router.get('/', validateRemedySearch, async (req, res) => {
   }
 });
 
-// GET /api/remedies/:id - Get a specific remedy
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const remedy = await database.get(`
-      SELECT 
-        id, title, description, category, difficulty, rating, 
-        prep_time, ingredients, instructions, benefits, warnings, image,
-        created_at, updated_at
-      FROM remedies 
-      WHERE id = ?
-    `, [id]);
-
-    if (!remedy) {
-      return res.status(404).json({
-        success: false,
-        message: 'Remedy not found'
-      });
-    }
-
-    // Parse JSON fields
-    const processedRemedy = {
-      ...remedy,
-      ingredients: JSON.parse(remedy.ingredients),
-      instructions: JSON.parse(remedy.instructions),
-      rating: parseFloat(remedy.rating)
-    };
-
-    res.json({
-      success: true,
-      data: processedRemedy
-    });
-
-  } catch (error) {
-    console.error('Error fetching remedy:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch remedy',
-      error: error.message
-    });
-  }
-});
-
 // GET /api/remedies/categories/list - Get all categories
 router.get('/categories/list', async (req, res) => {
   try {
@@ -239,6 +195,50 @@ router.get('/search/suggestions', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch search suggestions',
+      error: error.message
+    });
+  }
+});
+
+// GET /api/remedies/:id - Get a specific remedy
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const remedy = await database.get(`
+      SELECT 
+        id, title, description, category, difficulty, rating, 
+        prep_time, ingredients, instructions, benefits, warnings, image,
+        created_at, updated_at
+      FROM remedies 
+      WHERE id = ?
+    `, [id]);
+
+    if (!remedy) {
+      return res.status(404).json({
+        success: false,
+        message: 'Remedy not found'
+      });
+    }
+
+    // Parse JSON fields
+    const processedRemedy = {
+      ...remedy,
+      ingredients: JSON.parse(remedy.ingredients),
+      instructions: JSON.parse(remedy.instructions),
+      rating: parseFloat(remedy.rating)
+    };
+
+    res.json({
+      success: true,
+      data: processedRemedy
+    });
+
+  } catch (error) {
+    console.error('Error fetching remedy:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch remedy',
       error: error.message
     });
   }

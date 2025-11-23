@@ -196,6 +196,33 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/users/sync - Sync lightweight user app data
+router.post('/sync', async (req, res) => {
+  try {
+    const { userId, data } = req.body || {};
+
+    if (!userId || !data) {
+      return res.status(400).json({
+        success: false,
+        message: 'userId and data are required'
+      });
+    }
+
+    // Accept payload and acknowledge; can be expanded to persist detailed fields
+    res.json({
+      success: true,
+      message: 'User data sync acknowledged',
+      received: {
+        userId,
+        keys: Object.keys(data)
+      }
+    });
+  } catch (error) {
+    console.error('Error syncing user data:', error);
+    res.status(500).json({ success: false, message: 'Failed to sync user data' });
+  }
+});
+
 // POST /api/users/favorites - Add to favorites (protected)
 router.post('/favorites', authenticateToken, async (req, res) => {
   try {

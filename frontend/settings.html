@@ -15,19 +15,19 @@
   <script src="dark-mode.js"></script>
   <style>
     :root {
-      --primary-color: #4fc3f7; /* Light blue */
-      --primary-dark: #29b6f6;
-      --secondary-color: #81c784; /* Light green */
-      --accent-color: #ff8a65; /* Light coral */
+      --primary-color: #3fb0e6;
+      --primary-dark: #2799d6;
+      --secondary-color: #70b977;
+      --accent-color: #f07a5a;
       --text-primary: #2c3e50;
       --text-secondary: #5d6d7e;
-      --background: #f8fffe;
+      --background: #eaf8ff;
       --surface: #ffffff;
-      --border-color: #e8f4f8;
-      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
-      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
+      --border-color: #d1e6f0;
+      --shadow: 0 2px 12px rgba(63, 176, 230, 0.14);
+      --shadow-hover: 0 4px 24px rgba(39, 153, 214, 0.2);
       --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #66bb6a);
+      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #56a962);
     }
 
     * {
@@ -37,7 +37,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f0f8ff 0%, #f0fff4 100%);
+      background: linear-gradient(135deg, #e0f2ff 0%, #e0fff0 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -894,4 +894,21 @@
     function updateFontSize(size) {
       document.documentElement.style.fontSize = size + 'px';
       const el = document.getElementById('fontSizeValue');
-      if
+      if (el) { el.textContent = size + 'px'; }
+      debounceSave();
+    }
+
+    function updateAnimationSpeed(speed) {
+      const root = document.documentElement;
+      const disable = (speed === 'none');
+      if (disable) {
+        root.classList.add('reduce-motion');
+      } else {
+        root.classList.remove('reduce-motion');
+      }
+      let factor = '1';
+      if (speed === 'slow') factor = '1.5';
+      else if (speed === 'fast') factor = '0.75';
+      root.style.setProperty('--animation-factor', factor);
+      debounceSave();
+    }

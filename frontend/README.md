@@ -95,12 +95,12 @@ A comprehensive, professional health application built with modern web technolog
 
 ```
 frontend/
-├── 1 register.html          # User registration page
+├── index.html               # User registration page
 ├── 2 login.html             # User login page
 ├── 3 home.html              # Main dashboard
-├── remedies.html            # Natural remedies database
+├── remedies_enhanced.html   # Natural remedies database
 ├── firstaid.html            # First aid guide
-├── emergency.html           # Emergency tools
+├── emergency_enhanced.html  # Emergency tools
 ├── suggestions.html         # AI symptom checker
 ├── profile.html             # User profile and health tracking
 ├── manifest.json            # PWA manifest

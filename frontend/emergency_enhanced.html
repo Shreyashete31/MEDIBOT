@@ -7,22 +7,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #009688;
-      --primary-dark: #00796b;
-      --secondary-color: #4caf50;
-      --accent-color: #ff5722;
-      --danger-color: #f44336;
-      --warning-color: #ff9800;
-      --text-primary: #212121;
-      --text-secondary: #757575;
-      --background: #fafafa;
+      --primary-color: #b53a3a;
+      --primary-dark: #8f2e2e;
+      --secondary-color: #55b59a;
+      --accent-color: #f5acac;
+      --danger-color: #8f2e2e;
+      --warning-color: #d89a44;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #ffdfe2;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
-      --shadow: 0 2px 10px rgba(0,0,0,0.1);
-      --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --gradient-danger: linear-gradient(135deg, var(--danger-color), #d32f2f);
-      --gradient-warning: linear-gradient(135deg, var(--warning-color), #f57c00);
+      --border-color: #f2c2c6;
+      --shadow: 0 12px 30px rgba(143, 46, 46, 0.24);
+      --shadow-hover: 0 18px 40px rgba(143, 46, 46, 0.32);
+      --gradient-primary: linear-gradient(135deg, #f3b3b7 0%, #ffd2e6 100%);
+      --gradient-danger: linear-gradient(135deg, #d65a5a, #8f2e2e);
+      --gradient-warning: linear-gradient(135deg, #d89a44, #c56f3f);
     }
 
     * {
@@ -32,7 +32,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffebee 0%, #fff3e0 100%);
+      background: linear-gradient(135deg, #ffd6da 0%, #ffd2ec 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -530,6 +530,13 @@
       margin: 0;
     }
 
+    .medical-notes {
+      margin-top: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
     /* Panic Button */
     .panic-section {
       margin-bottom: 2rem;
@@ -799,10 +806,10 @@
   <!-- Navigation -->
   <nav>
     <a href="3 home.html">Home</a>
-    <a href="remedies.html">Remedies</a>
+    <a href="remedies_enhanced.html">Remedies</a>
     <a href="firstaid.html">First Aid</a>
     <a href="suggestions.html">Suggestions</a>
-    <a href="emergency.html" class="active">Emergency</a>
+    <a href="emergency_enhanced.html" class="active">Emergency</a>
   </nav>
 
   <!-- Main Container -->
@@ -935,6 +942,7 @@
             <div class="medical-value" id="emergencyContact">Mom (555-1234)</div>
           </div>
         </div>
+        <p class="medical-notes" id="medicalNotesDisplay">Add medical notes in your profile to see them here.</p>
       </div>
     </section>
 
@@ -986,6 +994,7 @@
   <script>
     // Global variables
     let currentUser = null;
+    let userProfile = null;
     let emergencyContacts = [];
     let currentLocation = null;
     let panicActive = false;
@@ -1001,6 +1010,16 @@
     // User initialization
     function initializeUser() {
       currentUser = localStorage.getItem('loggedInUser');
+      if (!currentUser) return;
+      try {
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        userProfile = users[currentUser]?.profile || null;
+        if (userProfile) {
+          updateMedicalInfo(userProfile);
+        }
+      } catch (err) {
+        console.warn('Unable to load user profile for emergency tools', err);
+      }
     }
 
     // Initialize emergency contacts
@@ -1267,6 +1286,20 @@
     // Open medical info
     function openMedicalInfo() {
       alert('Medical information displayed. In a real app, this would show detailed medical history, medications, and emergency information.');
+    }
+
+    function updateMedicalInfo(profile) {
+      const bloodType = profile.bloodType || 'Not set';
+      const allergies = profile.allergies || 'Not listed';
+      const meds = profile.medications || 'No medications stored';
+      const contact = profile.emergencyContact || 'Add an emergency contact in your profile';
+      const notes = profile.medicalNotes || 'Add medical notes in your profile to keep responders informed.';
+
+      document.getElementById('bloodType').textContent = bloodType;
+      document.getElementById('allergies').textContent = allergies;
+      document.getElementById('medications').textContent = meds;
+      document.getElementById('emergencyContact').textContent = contact;
+      document.getElementById('medicalNotesDisplay').textContent = notes;
     }
 
     // Modal functions

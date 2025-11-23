@@ -7,17 +7,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #009688;
-      --primary-dark: #00796b;
+      --primary-color: #007f73;
+      --primary-dark: #00665d;
       --secondary-color: #4caf50;
       --error-color: #f44336;
       --success-color: #4caf50;
       --warning-color: #ff9800;
       --text-primary: #212121;
       --text-secondary: #757575;
-      --background: #fafafa;
+      --background: #f2f5f5;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
+      --border-color: #d6dede;
       --shadow: 0 2px 10px rgba(0,0,0,0.1);
       --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
     }
@@ -494,7 +494,7 @@
     </div>
 
     <div class="register-link">
-      Don't have an account? <a href="1 register.html">Create one</a>
+      Don't have an account? <a href="index.html">Create one</a>
     </div>
   </div>
 
@@ -614,6 +614,22 @@
         btn.disabled = false;
 
         if (loginSuccess) {
+          // Track login history per user for accurate activity stats
+          try {
+            const today = new Date().toISOString().split('T')[0];
+            const userRecord = users[username] || {};
+            userRecord.profile = userRecord.profile || {};
+            const history = new Set(userRecord.profile.loginHistory || []);
+            history.add(today);
+            userRecord.profile.loginHistory = Array.from(history);
+            userRecord.profile.lastLogin = new Date().toISOString();
+            users[username] = userRecord;
+            localStorage.setItem("users", JSON.stringify(users));
+            localStorage.setItem("lastLogin", Date.now().toString());
+          } catch (trackErr) {
+            console.warn("Unable to track login history", trackErr);
+          }
+
           // Store login session
           const sessionData = {
             username: username,

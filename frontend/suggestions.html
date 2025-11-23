@@ -7,22 +7,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #009688;
-      --primary-dark: #00796b;
-      --secondary-color: #4caf50;
-      --accent-color: #ff5722;
-      --warning-color: #ff9800;
-      --danger-color: #f44336;
-      --text-primary: #212121;
-      --text-secondary: #757575;
-      --background: #fafafa;
+      --primary-color: #c37733;
+      --primary-dark: #a35e26;
+      --secondary-color: #53b49a;
+      --accent-color: #e891a4;
+      --warning-color: #d08e36;
+      --danger-color: #b44f4f;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #ffe3cd;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
-      --shadow: 0 2px 10px rgba(0,0,0,0.1);
-      --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --gradient-warning: linear-gradient(135deg, var(--warning-color), #f57c00);
-      --gradient-danger: linear-gradient(135deg, var(--danger-color), #d32f2f);
+      --border-color: #eab585;
+      --shadow: 0 12px 30px rgba(195, 119, 51, 0.22);
+      --shadow-hover: 0 18px 40px rgba(163, 94, 38, 0.3);
+      --gradient-primary: linear-gradient(135deg, #ffcfa2 0%, #ffbadf 100%);
+      --gradient-warning: linear-gradient(135deg, #d08e36, #a35e26);
+      --gradient-danger: linear-gradient(135deg, #e78f8f, #b44f4f);
     }
 
     * {
@@ -32,7 +32,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+      background: linear-gradient(135deg, #ffdfc6 0%, #ffe0f2 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -557,10 +557,10 @@
   <!-- Navigation -->
   <nav>
     <a href="3 home.html">Home</a>
-    <a href="remedies.html">Remedies</a>
+    <a href="remedies_enhanced.html">Remedies</a>
     <a href="firstaid.html">First Aid</a>
     <a href="suggestions.html" class="active">Symptom Checker</a>
-    <a href="emergency.html">Emergency</a>
+    <a href="emergency_enhanced.html">Emergency</a>
   </nav>
 
   <!-- Main Container -->
@@ -586,6 +586,11 @@
         <span class="suggestion-tag" onclick="addSymptom('sore throat')">Sore Throat</span>
         <span class="suggestion-tag" onclick="addSymptom('body aches')">Body Aches</span>
         <span class="suggestion-tag" onclick="addSymptom('shortness of breath')">Shortness of Breath</span>
+        <span class="suggestion-tag" onclick="addSymptom('seasonal allergies')">Allergies</span>
+        <span class="suggestion-tag" onclick="addSymptom('constipation')">Constipation</span>
+        <span class="suggestion-tag" onclick="addSymptom('knee pain')">Knee Pain</span>
+        <span class="suggestion-tag" onclick="addSymptom('stress')">Stress</span>
+        <span class="suggestion-tag" onclick="addSymptom('dry skin')">Dry Skin</span>
       </div>
       
       <button class="check-button" id="checkButton" onclick="checkSymptoms()">
@@ -620,10 +625,9 @@
     // Global variables
     let currentUser = null;
     let selectedSymptoms = [];
-    let symptomDatabase = {};
 
     // Comprehensive symptom database
-    const symptomsData = {
+    const baseSymptomData = {
       'headache': {
         severity: 'medium',
         description: 'Pain or discomfort in the head or neck area',
@@ -971,11 +975,211 @@
       }
     };
 
-    // Initialize app
+    const symptomLookup = {};
+    const symptomAliases = new Map();
+
+    const generatedSymptomTemplates = [
+      {
+        names: ['seasonal allergies', 'sinus congestion', 'hay fever', 'post nasal drip', 'runny nose', 'ear fullness'],
+        severity: 'low',
+        description: (name) => `${capitalize(name)} can cause itchy eyes, sneezing, and stuffy breathing passages.`,
+        recommendations: [
+          { title: 'Rinse & Humidify', content: 'Use saline sprays or warm showers to soothe irritated sinuses.' },
+          { title: 'Allergen Shield', content: 'Close windows on high pollen days and wash bedding weekly.' },
+          { title: 'Gentle Support', content: 'Sip warm teas with honey or turmeric for natural relief.' }
+        ],
+        whenToSeeDoctor: [
+          'Symptoms lasting more than 10 days',
+          'Facial pain or fever develops',
+          'Breathing difficulty or wheezing'
+        ],
+        relatedRemedies: ['turmeric-milk', 'ginger-tea'],
+        keywords: ['allergy', 'pollen', 'congestion']
+      },
+      {
+        names: ['constipation', 'acid reflux', 'bloating', 'gastritis', 'indigestion', 'loss of appetite'],
+        severity: 'medium',
+        description: (name) => `${capitalize(name)} is a common digestive discomfort that improves with gentle dietary care.`,
+        recommendations: [
+          { title: 'Warm Hydration', content: 'Drink warm water with lemon or mint to stimulate digestion.' },
+          { title: 'Fiber & Balance', content: 'Choose fruits, vegetables, and whole grains while limiting heavy meals.' },
+          { title: 'Slow Meals', content: 'Eat in calm settings and chew slowly to reduce stomach strain.' }
+        ],
+        whenToSeeDoctor: [
+          'Persistent pain or blood in stool',
+          'Unintentional weight loss',
+          'Symptoms lasting longer than two weeks'
+        ],
+        relatedRemedies: ['soothing-digestive-tonic', 'ginger-tea'],
+        keywords: ['stomach', 'digestive', 'gas', 'reflux']
+      },
+      {
+        names: ['knee pain', 'shoulder stiffness', 'low back pain', 'neck strain', 'sciatica', 'wrist pain'],
+        severity: 'medium',
+        description: (name) => `${capitalize(name)} often results from posture, overuse, or minor injury.`,
+        recommendations: [
+          { title: 'Rest & Support', content: 'Alternate gentle movement with rest, using cushions or braces as needed.' },
+          { title: 'Heat & Cool', content: 'Apply cold packs for swelling and warm compresses for stiffness.' },
+          { title: 'Mindful Movement', content: 'Stretch slowly and practice alignment-focused exercises or yoga.' }
+        ],
+        whenToSeeDoctor: [
+          'Severe pain or swelling',
+          'Numbness or weakness in limbs',
+          'Pain after a fall or accident'
+        ],
+        relatedRemedies: ['turmeric-milk', 'magnesium-soak'],
+        keywords: ['joint', 'muscle', 'strain', 'ache']
+      },
+      {
+        names: ['stress', 'anxiety', 'burnout', 'overwhelm', 'restlessness'],
+        severity: 'medium',
+        description: (name) => `${capitalize(name)} can impact sleep, focus, and mood.`,
+        recommendations: [
+          { title: 'Breathing Rituals', content: 'Practice 4-7-8 breathing or short meditation breaks.' },
+          { title: 'Digital Boundaries', content: 'Unplug 30 minutes before bed and create a calm evening routine.' },
+          { title: 'Nourish & Move', content: 'Eat balanced meals and take short walks to release tension.' }
+        ],
+        whenToSeeDoctor: [
+          'Persistent anxiety interfering with daily life',
+          'Panic attacks or chest discomfort',
+          'Trouble sleeping for more than two weeks'
+        ],
+        relatedRemedies: ['lavender-sleep-spray', 'chamomile-tea'],
+        keywords: ['stress', 'anxiety', 'nerves', 'panic']
+      },
+      {
+        names: ['insomnia', 'jet lag', 'nighttime restlessness', 'midnight waking', 'light sleep'],
+        severity: 'low',
+        description: (name) => `${capitalize(name)} makes it hard to fall or stay asleep, but calming habits can help.`,
+        recommendations: [
+          { title: 'Sleep Hygiene', content: 'Keep the bedroom cool, dark, and screen-free.' },
+          { title: 'Wind-Down Ritual', content: 'Try teas, journaling, or gentle stretches before bed.' },
+          { title: 'Consistent Schedule', content: 'Wake and sleep at the same time daily to reset your clock.' }
+        ],
+        whenToSeeDoctor: [
+          'Insomnia lasting more than 3 weeks',
+          'Daytime sleep attacks or snoring',
+          'Need for sleep medications nightly'
+        ],
+        relatedRemedies: ['lavender-sleep-spray', 'golden-milk'],
+        keywords: ['sleep', 'rest', 'melatonin']
+      },
+      {
+        names: ['dry skin', 'sunburn', 'acne flare', 'eczema flare', 'bug bites', 'scalp itch'],
+        severity: 'low',
+        description: (name) => `${capitalize(name)} can improve with gentle skincare and hydration.`,
+        recommendations: [
+          { title: 'Cool Compress', content: 'Soothe inflamed areas with cool, damp cloths or aloe vera gel.' },
+          { title: 'Moisture Barrier', content: 'Use fragrance-free moisturizers or oils after bathing.' },
+          { title: 'Protect & Avoid', content: 'Wear SPF, avoid scratching, and identify triggers like fabric or detergents.' }
+        ],
+        whenToSeeDoctor: [
+          'Rash with fever or infection signs',
+          'Spreading redness or swelling',
+          'Skin changes that do not heal'
+        ],
+        relatedRemedies: ['aloe-vera-burns', 'turmeric-milk'],
+        keywords: ['skin', 'rash', 'itch', 'irritation']
+      },
+      {
+        names: ['dehydration', 'low blood pressure', 'lightheadedness', 'heat exhaustion', 'cramps'],
+        severity: 'medium',
+        description: (name) => `${capitalize(name)} may stem from fluid or electrolyte imbalance.`,
+        recommendations: [
+          { title: 'Hydration Plan', content: 'Sip water with electrolytes, coconut water, or broths throughout the day.' },
+          { title: 'Mineral Support', content: 'Include magnesium-rich foods like leafy greens or pumpkin seeds.' },
+          { title: 'Cool Down', content: 'Rest in shaded spaces and loosen clothing to recover.' }
+        ],
+        whenToSeeDoctor: [
+          'Fainting or persistent dizziness',
+          'Confusion or rapid heartbeat',
+          'Inability to keep fluids down'
+        ],
+        relatedRemedies: ['hydration-tonic', 'electrolyte-elixir'],
+        keywords: ['thirst', 'dizzy', 'electrolyte']
+      },
+      {
+        names: ['menstrual cramps', 'pms mood swings', 'hormonal headaches', 'perimenopause hot flashes'],
+        severity: 'medium',
+        description: (name) => `${capitalize(name)} is influenced by hormonal shifts and lifestyle factors.`,
+        recommendations: [
+          { title: 'Warm Comfort', content: 'Use heating pads or warm baths to relax muscles.' },
+          { title: 'Cycle-Smart Nutrition', content: 'Eat iron-rich foods, omega-3s, and stay hydrated.' },
+          { title: 'Mind-Body Care', content: 'Practice light yoga, breathing, or journaling to ease stress.' }
+        ],
+        whenToSeeDoctor: [
+          'Severe cramps unrelieved by home care',
+          'Bleeding heavier than usual',
+          'Symptoms disrupting daily life'
+        ],
+        relatedRemedies: ['magnesium-soak', 'ginger-tea'],
+        keywords: ['period', 'cycle', 'hormone', 'pms']
+      }
+    ];
+
+    function registerSymptomEntry(entry) {
+      const slug = entry.slug || entry.name.toLowerCase();
+      const formatted = {
+        slug,
+        name: entry.name || capitalize(slug),
+        severity: entry.severity || 'low',
+        description: entry.description || '',
+        commonCauses: entry.commonCauses || entry.common_causes || [],
+        recommendations: (entry.recommendations || []).map(rec => ({ ...rec })),
+        whenToSeeDoctor: [...(entry.whenToSeeDoctor || [])],
+        relatedRemedies: entry.relatedRemedies || [],
+        keywords: Array.from(new Set([slug, ...(entry.keywords || [])].map(keyword => keyword.toLowerCase())))
+      };
+      symptomLookup[slug] = formatted;
+      formatted.keywords.forEach(keyword => symptomAliases.set(keyword.toLowerCase(), slug));
+    }
+
+    Object.entries(baseSymptomData).forEach(([key, value]) => {
+      registerSymptomEntry({
+        slug: key,
+        name: capitalize(key),
+        severity: value.severity,
+        description: value.description,
+        recommendations: value.recommendations,
+        whenToSeeDoctor: value.whenToSeeDoctor,
+        relatedRemedies: value.relatedRemedies || [],
+        keywords: value.commonCauses
+      });
+    });
+
+    generatedSymptomTemplates.forEach(template => {
+      template.names.forEach(name => {
+        registerSymptomEntry({
+          slug: name.toLowerCase(),
+          name: capitalize(name),
+          severity: template.severity,
+          description: template.description(name),
+          recommendations: template.recommendations,
+          whenToSeeDoctor: template.whenToSeeDoctor,
+          relatedRemedies: template.relatedRemedies,
+          keywords: template.keywords
+        });
+      });
+    });
+
+    cacheSymptomsForAssistant();
+
+    function cacheSymptomsForAssistant() {
+      try {
+        const uniqueEntries = Object.values(symptomLookup).filter((entry, index, array) => array.findIndex(item => item.slug === entry.slug) === index);
+        localStorage.setItem('symptomsData', JSON.stringify(uniqueEntries));
+      } catch (err) {
+        console.warn('Unable to cache symptom dataset', err);
+      }
+    }
+
+    function capitalize(text = '') {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       initializeUser();
       initializeSymptomInput();
-      symptomDatabase = symptomsData;
     });
 
     // User initialization
@@ -997,9 +1201,9 @@
     // Add symptom from input
     function addSymptomFromInput() {
       const input = document.getElementById('symptomInput');
-      const symptom = input.value.trim().toLowerCase();
+      const symptom = input.value.trim();
       
-      if (symptom && !selectedSymptoms.includes(symptom)) {
+      if (symptom) {
         addSymptom(symptom);
         input.value = '';
       }
@@ -1007,10 +1211,34 @@
 
     // Add symptom to list
     function addSymptom(symptom) {
-      if (!selectedSymptoms.includes(symptom)) {
-        selectedSymptoms.push(symptom);
+      const resolved = resolveSymptomKey(symptom);
+      const entry = symptomLookup[resolved];
+      
+      if (!entry) {
+        alert(`"${symptom}" isn't in our database yet, but we'll keep improving!`);
+        return;
+      }
+      
+      if (!selectedSymptoms.includes(resolved)) {
+        selectedSymptoms.push(resolved);
         updateSelectedSymptomsDisplay();
       }
+    }
+
+    function resolveSymptomKey(symptom) {
+      const lower = symptom.toLowerCase().trim();
+      if (symptomLookup[lower]) return lower;
+      if (symptomAliases.has(lower)) return symptomAliases.get(lower);
+      for (const [keyword, slug] of symptomAliases.entries()) {
+        if (lower.includes(keyword)) {
+          return slug;
+        }
+      }
+      return lower;
+    }
+
+    function formatSymptomLabel(slug) {
+      return symptomLookup[slug]?.name || capitalize(slug);
     }
 
     // Remove symptom from list
@@ -1032,7 +1260,7 @@
       container.classList.add('show');
       list.innerHTML = selectedSymptoms.map(symptom => `
         <span class="selected-symptom">
-          ${symptom}
+          ${formatSymptomLabel(symptom)}
           <button class="remove-btn" onclick="removeSymptom('${symptom}')">
             <i class="fas fa-times"></i>
           </button>
@@ -1068,7 +1296,7 @@
       
       // Calculate overall severity
       const severities = selectedSymptoms.map(symptom => {
-        const data = symptomDatabase[symptom];
+        const data = symptomLookup[symptom];
         return data ? data.severity : 'low';
       });
       
@@ -1094,12 +1322,13 @@
 
       // Add recommendations for each symptom
       selectedSymptoms.forEach(symptom => {
-        const data = symptomDatabase[symptom];
+        const data = symptomLookup[symptom];
         if (data) {
           content += `
             <div class="recommendations">
-              <h3 style="margin: 0 0 1rem; color: var(--text-primary);">${symptom.charAt(0).toUpperCase() + symptom.slice(1)}</h3>
-              <p style="color: var(--text-secondary); margin: 0 0 1.5rem; line-height: 1.6;">${data.description}</p>
+              <h3 style="margin: 0 0 1rem; color: var(--text-primary);">${formatSymptomLabel(symptom)}</h3>
+              <p style="color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.6;">${data.description}</p>
+              ${data.commonCauses && data.commonCauses.length ? `<p style="color: var(--text-secondary); margin: 0 0 1.5rem; font-size: 0.9rem;"><strong>Common causes:</strong> ${data.commonCauses.join(', ')}</p>` : ''}
           `;
 
           data.recommendations.forEach(rec => {
@@ -1128,7 +1357,7 @@
 
       // Add related remedies
       const allRelatedRemedies = [...new Set(selectedSymptoms.flatMap(symptom => {
-        const data = symptomDatabase[symptom];
+        const data = symptomLookup[symptom];
         return data ? data.relatedRemedies : [];
       }))];
 
@@ -1137,7 +1366,7 @@
           <div class="related-remedies">
             <h4 style="margin: 0 0 1rem; color: var(--text-primary);">Related Natural Remedies</h4>
             ${allRelatedRemedies.map(remedyId => `
-              <a href="remedies.html#${remedyId}" class="remedy-link">
+              <a href="remedies_enhanced.html#${remedyId}" class="remedy-link">
                 <i class="fas fa-leaf"></i>
                 View Remedy
               </a>

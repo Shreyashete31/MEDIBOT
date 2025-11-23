@@ -15,19 +15,19 @@
   <script src="accessibility.js"></script>
   <style>
     :root {
-      --primary-color: #F8FBFF;
-      --primary-dark: #29b6f6;
-      --secondary-color: #81c784; /* Light green */
-      --accent-color: #ff8a65; /* Light coral */
-      --warning-color: #ffb74d;
-      --text-primary: #2c3e50;
-      --text-secondary: #5d6d7e;
-      --background: #f8fffe;
+      --primary-color: #4a72e0;
+      --primary-dark: #355fd0;
+      --secondary-color: #5fbfa3;
+      --accent-color: #e47f93;
+      --warning-color: #f6c667;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #e2e8ff;
       --surface: #ffffff;
-      --border-color: #e8f4f8;
-      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
-      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      --border-color: #cbd6e8;
+      --shadow: 0 12px 30px rgba(74, 114, 224, 0.16);
+      --shadow-hover: 0 18px 40px rgba(53, 95, 208, 0.24);
+      --gradient-primary: linear-gradient(135deg, #96b5ff 0%, #dea2ff 100%);
     }
 
     * {
@@ -37,7 +37,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f0f8ff 0%, #f0fff4 100%);
+      background: linear-gradient(135deg, #dbe4ff 0%, #ffd2ec 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -688,6 +688,16 @@
             <label class="form-label">Allergies</label>
             <textarea class="form-textarea" id="allergies" placeholder="List any allergies or medical conditions"></textarea>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Current Medications</label>
+            <textarea class="form-textarea" id="medications" placeholder="Prescription names, dosages, and supplements"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Medical Notes</label>
+            <textarea class="form-textarea" id="medicalNotes" placeholder="Chronic conditions, surgeries, or other important details"></textarea>
+          </div>
           
           <div class="form-group">
             <label class="form-label">Emergency Contact</label>
@@ -754,8 +764,12 @@
       
       if (userData) {
         userProfile = userData.profile || {};
-        document.getElementById('profileName').textContent = currentUser;
-        document.getElementById('profileEmail').textContent = userData.email || 'No email provided';
+        userProfile.loginHistory = Array.isArray(userProfile.loginHistory) ? userProfile.loginHistory : [];
+        userProfile.medications = userProfile.medications || '';
+        userProfile.medicalNotes = userProfile.medicalNotes || '';
+        const displayName = userProfile.name && userProfile.name.trim() ? userProfile.name : currentUser;
+        document.getElementById('profileName').textContent = displayName;
+        document.getElementById('profileEmail').textContent = userProfile.email || userData.email || 'No email provided';
         document.getElementById('headerAvatar').textContent = currentUser.charAt(0).toUpperCase();
         document.getElementById('profileAvatar').textContent = currentUser.charAt(0).toUpperCase();
       }
@@ -772,13 +786,16 @@
           gender: '',
           bloodType: '',
           allergies: '',
+          medications: '',
+          medicalNotes: '',
           emergencyContact: '',
           heightCm: '',
           weightKg: '',
           healthMetrics: [],
           symptomHistory: [],
           remedyHistory: [],
-          quizPoints: 0
+          quizPoints: 0,
+          loginHistory: []
         };
       }
     }
@@ -792,6 +809,8 @@
       document.getElementById('gender').value = userProfile.gender || '';
       document.getElementById('bloodType').value = userProfile.bloodType || '';
       document.getElementById('allergies').value = userProfile.allergies || '';
+      document.getElementById('medications').value = userProfile.medications || '';
+      document.getElementById('medicalNotes').value = userProfile.medicalNotes || '';
       document.getElementById('emergencyContact').value = userProfile.emergencyContact || '';
       document.getElementById('heightCm').value = userProfile.heightCm || '';
       document.getElementById('weightKg').value = userProfile.weightKg || '';
@@ -914,15 +933,20 @@
 
     // Calculate days active
     function calculateDaysActive() {
+      const history = Array.isArray(userProfile.loginHistory) ? userProfile.loginHistory : [];
+      if (history.length > 0) {
+        return history.length;
+      }
+      
       const lastLogin = localStorage.getItem('lastLogin');
       if (!lastLogin) return 1;
       
-      const lastLoginDate = new Date(parseInt(lastLogin));
+      const lastLoginDate = new Date(parseInt(lastLogin, 10));
       const today = new Date();
       const diffTime = Math.abs(today - lastLoginDate);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      return Math.min(diffDays, 30); // Cap at 30 days
+      return Math.max(1, Math.min(diffDays, 30));
     }
 
     // Load health metrics
@@ -1197,6 +1221,8 @@
       userProfile.gender = document.getElementById('gender').value;
       userProfile.bloodType = document.getElementById('bloodType').value;
       userProfile.allergies = document.getElementById('allergies').value;
+      userProfile.medications = document.getElementById('medications').value;
+      userProfile.medicalNotes = document.getElementById('medicalNotes').value;
       userProfile.emergencyContact = document.getElementById('emergencyContact').value;
       userProfile.heightCm = document.getElementById('heightCm').value;
       userProfile.weightKg = document.getElementById('weightKg').value;

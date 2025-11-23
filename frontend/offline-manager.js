@@ -253,7 +253,7 @@ class OfflineManager {
   }
 
   // Merge helper: deduplicate and prioritize verified entries
-  function mergeVerifiedData(baseArray, verifiedArray, type) {
+  mergeVerifiedData(baseArray, verifiedArray, type) {
     const getKey = (item) => {
       if (item.id) return String(item.id).toLowerCase();
       if (type === 'firstAid') return (item.title || '').toLowerCase();
@@ -282,7 +282,7 @@ class OfflineManager {
   }
   
   // Safe JSON fetch helper
-  async function fetchJSONSafe(path) {
+  async fetchJSONSafe(path) {
     try {
       const res = await fetch(path);
       if (!res.ok) return null;
@@ -293,7 +293,7 @@ class OfflineManager {
   }
 
   // Load data for offline use
-  async function loadOfflineData(dataType) {
+  async loadOfflineData(dataType) {
     try {
       let response;
       let basePath;
@@ -326,10 +326,10 @@ class OfflineManager {
         let mergedData = baseData;
   
         if (verifiedPath) {
-          const verifiedData = await fetchJSONSafe(verifiedPath);
+          const verifiedData = await this.fetchJSONSafe(verifiedPath);
           if (verifiedData && Array.isArray(verifiedData) && verifiedData.length > 0) {
             const typeKey = dataType === 'firstAid' ? 'firstAid' : dataType;
-            mergedData = mergeVerifiedData(Array.isArray(baseData) ? baseData : (baseData.items || baseData), verifiedData, typeKey);
+            mergedData = this.mergeVerifiedData(Array.isArray(baseData) ? baseData : (baseData.items || baseData), verifiedData, typeKey);
           }
         }
   

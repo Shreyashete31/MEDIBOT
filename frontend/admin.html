@@ -14,8 +14,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #009688;
-      --primary-dark: #00796b;
+      --primary-color: #007f73;
+      --primary-dark: #00665d;
       --secondary-color: #4caf50;
       --accent-color: #ff5722;
       --success-color: #4caf50;
@@ -23,9 +23,9 @@
       --warning-color: #ff9800;
       --text-primary: #212121;
       --text-secondary: #757575;
-      --background: #fafafa;
+      --background: #f2f5f5;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
+      --border-color: #d6dede;
       --shadow: 0 2px 10px rgba(0,0,0,0.1);
       --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
       --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
@@ -722,6 +722,7 @@
     </div>
   </div>
 
+  <script src="api-config.js"></script>
   <script>
     // Global variables
     let authToken = null;
@@ -764,15 +765,10 @@
       errorMessage.style.display = 'none';
       
       try {
-        const response = await fetch('/api/admin/login', {
+        const data = await apiCall('/admin/login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({ username, password })
         });
-        
-        const data = await response.json();
         
         if (data.success) {
           authToken = data.data.token;
@@ -812,16 +808,13 @@
       };
       
       try {
-        const response = await fetch('/api/admin/remedies', {
+        const data = await apiCall('/admin/remedies', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${authToken}`
           },
           body: JSON.stringify(remedyData)
         });
-        
-        const data = await response.json();
         
         if (data.success) {
           closeModal();

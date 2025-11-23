@@ -90,50 +90,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/symptoms/:id - Get a specific symptom
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const symptom = await database.get(`
-      SELECT 
-        id, name, severity, description, common_causes, recommendations, 
-        when_to_see_doctor, related_remedies, created_at, updated_at
-      FROM symptoms 
-      WHERE id = ?
-    `, [id]);
-
-    if (!symptom) {
-      return res.status(404).json({
-        success: false,
-        message: 'Symptom not found'
-      });
-    }
-
-    // Parse JSON fields
-    const processedSymptom = {
-      ...symptom,
-      common_causes: JSON.parse(symptom.common_causes),
-      recommendations: JSON.parse(symptom.recommendations),
-      when_to_see_doctor: JSON.parse(symptom.when_to_see_doctor),
-      related_remedies: symptom.related_remedies ? JSON.parse(symptom.related_remedies) : []
-    };
-
-    res.json({
-      success: true,
-      data: processedSymptom
-    });
-
-  } catch (error) {
-    console.error('Error fetching symptom:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch symptom',
-      error: error.message
-    });
-  }
-});
-
 // POST /api/symptoms/analyze - Analyze symptoms and provide recommendations
 router.post('/analyze', async (req, res) => {
   try {
@@ -297,6 +253,50 @@ router.get('/severity/list', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch severity levels',
+      error: error.message
+    });
+  }
+});
+
+// GET /api/symptoms/:id - Get a specific symptom
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const symptom = await database.get(`
+      SELECT 
+        id, name, severity, description, common_causes, recommendations, 
+        when_to_see_doctor, related_remedies, created_at, updated_at
+      FROM symptoms 
+      WHERE id = ?
+    `, [id]);
+
+    if (!symptom) {
+      return res.status(404).json({
+        success: false,
+        message: 'Symptom not found'
+      });
+    }
+
+    // Parse JSON fields
+    const processedSymptom = {
+      ...symptom,
+      common_causes: JSON.parse(symptom.common_causes),
+      recommendations: JSON.parse(symptom.recommendations),
+      when_to_see_doctor: JSON.parse(symptom.when_to_see_doctor),
+      related_remedies: symptom.related_remedies ? JSON.parse(symptom.related_remedies) : []
+    };
+
+    res.json({
+      success: true,
+      data: processedSymptom
+    });
+
+  } catch (error) {
+    console.error('Error fetching symptom:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch symptom',
       error: error.message
     });
   }

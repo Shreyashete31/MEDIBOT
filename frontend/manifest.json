@@ -79,7 +79,7 @@
       "name": "Emergency",
       "short_name": "Emergency",
       "description": "Quick access to emergency tools",
-      "url": "/emergency.html",
+      "url": "/emergency_enhanced.html",
       "icons": [
         {
           "src": "icons/emergency-shortcut.png",

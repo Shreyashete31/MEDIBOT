@@ -327,6 +327,24 @@ router.get('/types/list', async (req, res) => {
   }
 });
 
+// POST /api/quiz/sync - Acknowledge offline quiz progress sync
+router.post('/sync', async (req, res) => {
+  try {
+    const { userId = 'anonymous', progress = {} } = req.body || {};
+    res.json({
+      success: true,
+      message: 'Quiz progress sync acknowledged',
+      received: {
+        userId,
+        keys: Object.keys(progress)
+      }
+    });
+  } catch (error) {
+    console.error('Error acknowledging quiz sync:', error);
+    res.status(500).json({ success: false, message: 'Failed to sync quiz progress' });
+  }
+});
+
 // Helper function to get grade
 function getGrade(percentage) {
   if (percentage >= 90) return 'A+';

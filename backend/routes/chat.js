@@ -210,5 +210,37 @@ router.get('/suggestions', async (req, res) => {
   }
 });
 
+// POST /api/chat/sync - Sync offline chat history
+router.post('/sync', async (req, res) => {
+  try {
+    const { userId = 'anonymous', history = [] } = req.body || {};
+
+    if (!Array.isArray(history) || history.length === 0) {
+      return res.json({ success: true, message: 'No chat history to sync' });
+    }
+
+    for (const item of history.slice(0, 100)) {
+      const id = (item.id && String(item.id)) || Date.now().toString() + Math.random().toString(36).slice(2);
+      const userMessage = item.userMessage || item.user_message || '';
+      const botResponse = item.botResponse || item.bot_response || '';
+      const remedies = item.suggestedRemedies || item.suggested_remedies || [];
+      const timestamp = item.timestamp || new Date().toISOString();
+
+      if (userMessage || botResponse) {
+        await database.run(
+          `INSERT INTO chat_history (id, user_id, user_message, bot_response, suggested_remedies, timestamp)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [id, userId, userMessage, botResponse, JSON.stringify(remedies), timestamp]
+        );
+      }
+    }
+
+    res.json({ success: true, message: 'Chat history synced' });
+  } catch (error) {
+    console.error('Error syncing chat history:', error);
+    res.status(500).json({ success: false, message: 'Failed to sync chat history' });
+  }
+});
+
 module.exports = router;
 

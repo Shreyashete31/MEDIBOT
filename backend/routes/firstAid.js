@@ -97,48 +97,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/first-aid/:id - Get a specific first aid instruction
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const instruction = await database.get(`
-      SELECT 
-        id, title, category, emergency, description, steps, warnings, severity,
-        created_at, updated_at
-      FROM first_aid 
-      WHERE id = ?
-    `, [id]);
-
-    if (!instruction) {
-      return res.status(404).json({
-        success: false,
-        message: 'First aid instruction not found'
-      });
-    }
-
-    // Parse JSON fields and convert boolean
-    const processedInstruction = {
-      ...instruction,
-      steps: JSON.parse(instruction.steps),
-      emergency: Boolean(instruction.emergency)
-    };
-
-    res.json({
-      success: true,
-      data: processedInstruction
-    });
-
-  } catch (error) {
-    console.error('Error fetching first aid instruction:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch first aid instruction',
-      error: error.message
-    });
-  }
-});
-
 // GET /api/first-aid/categories/list - Get all categories
 router.get('/categories/list', async (req, res) => {
   try {
@@ -236,6 +194,48 @@ router.get('/search/suggestions', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch search suggestions',
+      error: error.message
+    });
+  }
+});
+
+// GET /api/first-aid/:id - Get a specific first aid instruction
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const instruction = await database.get(`
+      SELECT 
+        id, title, category, emergency, description, steps, warnings, severity,
+        created_at, updated_at
+      FROM first_aid 
+      WHERE id = ?
+    `, [id]);
+
+    if (!instruction) {
+      return res.status(404).json({
+        success: false,
+        message: 'First aid instruction not found'
+      });
+    }
+
+    // Parse JSON fields and convert boolean
+    const processedInstruction = {
+      ...instruction,
+      steps: JSON.parse(instruction.steps),
+      emergency: Boolean(instruction.emergency)
+    };
+
+    res.json({
+      success: true,
+      data: processedInstruction
+    });
+
+  } catch (error) {
+    console.error('Error fetching first aid instruction:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch first aid instruction',
       error: error.message
     });
   }

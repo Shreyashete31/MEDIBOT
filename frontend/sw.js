@@ -8,10 +8,8 @@ const STATIC_FILES = [
   '/index.html',
   '/2 login.html',
   '/3 home.html',
-  '/remedies.html',
   '/remedies_enhanced.html',
   '/firstaid.html',
-  '/emergency.html',
   '/emergency_enhanced.html',
   '/suggestions.html',
   '/chat.html',
@@ -23,11 +21,11 @@ const STATIC_FILES = [
   '/admin.html',
   '/manifest.json',
   '/assets/quiz_first_aid.json',
-  '/assets/remedies.json',
   '/assets/first_aid_data.json',
   '/assets/symptoms_data.json',
   '/assets/remedies_data.json',
   '/dark-mode.js',
+  '/offline-manager.js',
   '/accessibility.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];

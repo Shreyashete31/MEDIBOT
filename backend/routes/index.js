@@ -41,4 +41,35 @@ router.use('/chat', chatRoutes);
 router.use('/quiz', quizRoutes);
 router.use('/admin', adminRoutes);
 
+// Inline favorites sync router to support frontend offline sync
+const favoritesSyncRouter = express.Router();
+favoritesSyncRouter.post('/sync', async (req, res) => {
+  try {
+    const database = require('../database/database');
+    const { userId, favorites = [] } = req.body || {};
+    if (!userId || !Array.isArray(favorites)) {
+      return res.status(400).json({ success: false, message: 'userId and favorites array required' });
+    }
+
+    // Remove existing favorites for this user and reinsert provided set (idempotent sync)
+    await database.run('DELETE FROM user_favorites WHERE user_id = ?', [userId]);
+
+    for (const fav of favorites.slice(0, 500)) {
+      const remedyId = fav.remedy_id || fav.remedyId || null;
+      const firstAidId = fav.first_aid_id || fav.firstAidId || null;
+      await database.run(
+        'INSERT INTO user_favorites (user_id, remedy_id, first_aid_id) VALUES (?, ?, ?)',
+        [userId, remedyId, firstAidId]
+      );
+    }
+
+    res.json({ success: true, message: 'Favorites synced' });
+  } catch (error) {
+    console.error('Error syncing favorites:', error);
+    res.status(500).json({ success: false, message: 'Failed to sync favorites' });
+  }
+});
+
+router.use('/favorites', favoritesSyncRouter);
+
 module.exports = router;

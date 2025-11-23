@@ -14,20 +14,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #4fc3f7; /* Light blue */
-      --primary-dark: #29b6f6;
-      --secondary-color: #81c784; /* Light green */
-      --accent-color: #ff8a65; /* Light coral */
-      --success-color: #66bb6a;
-      --error-color: #ef5350;
-      --warning-color: #ffb74d;
+      --primary-color: #2f97cc;
+      --primary-dark: #1f7fb8;
+      --secondary-color: #65a968;
+      --accent-color: #f16a46;
+      --success-color: #4e9f52;
+      --error-color: #d8433f;
+      --warning-color: #e39a3c;
       --text-primary: #2c3e50;
-      --text-secondary: #5d6d7e;
-      --background: #f8fffe;
+      --text-secondary: #556472;
+      --background: #e6f7f7;
       --surface: #ffffff;
-      --border-color: #e8f4f8;
-      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
-      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
+      --border-color: #cfe6ee;
+      --shadow: 0 2px 12px rgba(47, 151, 204, 0.16);
+      --shadow-hover: 0 4px 24px rgba(31, 127, 184, 0.24);
       --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
       --gradient-success: linear-gradient(135deg, var(--success-color), #4caf50);
       --gradient-error: linear-gradient(135deg, var(--error-color), #f44336);
@@ -180,6 +180,7 @@
 
     .quiz-question.active {
       display: block;
+      animation: questionSlide 0.3s ease-out;
     }
 
     /* Points animation */
@@ -196,8 +197,6 @@
         transform: translate(-50%, -50%) scale(1);
         opacity: 0;
       }
-    }
-      animation: questionSlide 0.3s ease-out;
     }
 
     @keyframes questionSlide {
@@ -690,7 +689,7 @@
         Test your first aid knowledge with 10 multiple-choice questions. 
         Learn important life-saving techniques and improve your emergency response skills.
       </p>
-      <button class="start-quiz-btn" onclick="generateRandomQuiz()">
+      <button class="start-quiz-btn" onclick="startQuiz()">
         <i class="fas fa-play"></i>
         Start Quiz
       </button>
@@ -725,6 +724,7 @@
     </div>
   </main>
 
+  <script src="api-config.js"></script>
   <script>
     // Ripple effect for main buttons
     document.addEventListener('click', function(e) {
@@ -777,8 +777,7 @@
       try {
         showLoading();
         
-        const response = await fetch('/api/quiz/first-aid?limit=10');
-        const data = await response.json();
+        const data = await apiCall('/quiz/first-aid?limit=10');
         
         if (data.success) {
           quizQuestions = data.data.questions;
@@ -925,17 +924,21 @@
       // Store answer
       userAnswers[question.id] = optionIndex;
       
-      // Calculate points for this answer
-      const question = quizQuestions[questionIndex];
-      if (optionIndex === question.answerIndex) {
-        // Correct answer - award points based on difficulty/time
+      // Calculate points only if local dataset provides correct_answer
+      const qLocalCorrect = typeof question.correct_answer === 'number';
+      if (qLocalCorrect && optionIndex === question.correct_answer) {
         const timeBonus = Math.max(0, 30 - Math.floor((Date.now() - questionStartTime) / 1000));
         const basePoints = 10;
         const totalPoints = basePoints + timeBonus;
         totalPointsEarned += totalPoints;
-        
-        // Show points earned
         showPointsEarned(totalPoints);
+        // Show explanation if available
+        if (question.explanation) {
+          const exp = document.getElementById(`explanation-${questionIndex}`);
+          const expText = document.getElementById(`explanationText-${questionIndex}`);
+          expText.textContent = question.explanation;
+          exp.classList.add('show');
+        }
       }
       
       // Enable next button
@@ -1016,11 +1019,8 @@
         // Save points to user profile
         saveQuizPoints();
         
-        const response = await fetch('/api/quiz/first-aid/submit', {
+        const data = await apiCall('/quiz/first-aid/submit', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({
             answers: userAnswers,
             timeSpent: Date.now() - quizStartTime,
@@ -1028,8 +1028,6 @@
             userId: currentUser
           })
         });
-        
-        const data = await response.json();
         
         if (data.success) {
           quizCompleted = true;
@@ -1240,10 +1238,22 @@
     // Navigation
     function goBack() {
       if (quizCompleted || Object.keys(userAnswers).length === 0) {
-        window.history.back();
+        if (window.history.length > 1) {
+          window.history.back();
+        } else if (document.referrer) {
+          window.location.href = document.referrer;
+        } else {
+          window.location.href = '3 home.html';
+        }
       } else {
         if (confirm('Are you sure you want to leave? Your progress will be lost.')) {
-          window.history.back();
+          if (window.history.length > 1) {
+            window.history.back();
+          } else if (document.referrer) {
+            window.location.href = document.referrer;
+          } else {
+            window.location.href = '3 home.html';
+          }
         }
       }
     }

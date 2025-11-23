@@ -14,20 +14,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #4fc3f7; /* Light blue */
-      --primary-dark: #29b6f6;
-      --secondary-color: #81c784; /* Light green */
-      --accent-color: #ff8a65; /* Light coral */
-      --text-primary: #2c3e50;
-      --text-secondary: #5d6d7e;
-      --background: #f8fffe;
+      --primary-color: #4a72e0;
+      --primary-dark: #355fd0;
+      --secondary-color: #5fbfa3;
+      --accent-color: #e47f93;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #e2e8ff;
       --surface: #ffffff;
-      --border-color: #e8f4f8;
-      --shadow: 0 2px 12px rgba(79, 195, 247, 0.1);
-      --shadow-hover: 0 4px 24px rgba(79, 195, 247, 0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --bot-color: #f0f8ff;
-      --user-color: var(--primary-color);
+      --border-color: #cbd6e8;
+      --shadow: 0 12px 30px rgba(74, 114, 224, 0.18);
+      --shadow-hover: 0 18px 40px rgba(53, 95, 208, 0.25);
+      --gradient-primary: linear-gradient(135deg, #96b5ff 0%, #dea2ff 100%);
+      --bot-color: #d9e8ff;
+      --user-color: #4a72e0;
     }
 
     * {
@@ -37,7 +37,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--background);
+      background: linear-gradient(135deg, #dbe4ff 0%, #ffd2ec 100%);
       color: var(--text-primary);
       height: 100vh;
       display: flex;
@@ -444,9 +444,9 @@
   <!-- Header -->
   <header class="chat-header">
     <div class="header-left">
-      <button class="back-btn" onclick="goBack()">
+      <a class="back-btn" href="3 home.html" onclick="goBack(); return false;">
         <i class="fas fa-arrow-left"></i>
-      </button>
+      </a>
       <h1 class="header-title">
         <i class="fas fa-robot"></i>
         AI Health Assistant
@@ -521,6 +521,7 @@
     </div>
   </div>
 
+  <script src="api-config.js"></script>
   <script>
     // Ripple effect for buttons
     document.addEventListener('click', function(e) {
@@ -645,14 +646,11 @@
     // Load chat history
     async function loadChatHistory() {
       try {
-        const response = await fetch(`/api/chat/history?userId=${currentUser}&limit=20`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.data.length > 0) {
-            chatHistory = data.data;
-            renderChatHistory();
-            hideWelcomeMessage();
-          }
+        const data = await apiCall(`/chat/history?userId=${currentUser}&limit=20`);
+        if (data.success && data.data.length > 0) {
+          chatHistory = data.data;
+          renderChatHistory();
+          hideWelcomeMessage();
         } else {
           // Offline/local fallback
           const local = JSON.parse(localStorage.getItem('chatHistory') || '[]');
@@ -699,17 +697,14 @@
     // Load quick suggestions
     async function loadSuggestions() {
       try {
-        const response = await fetch('/api/chat/suggestions');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            const suggestionsContainer = document.getElementById('suggestions');
-            suggestionsContainer.innerHTML = data.data.slice(0, 6).map(suggestion => 
-              `<div class="suggestion-chip" onclick="sendSuggestion('${suggestion.keyword}')">
-                ${suggestion.keyword}
-              </div>`
-            ).join('');
-          }
+        const data = await apiCall('/chat/suggestions');
+        if (data.success) {
+          const suggestionsContainer = document.getElementById('suggestions');
+          suggestionsContainer.innerHTML = data.data.slice(0, 6).map(suggestion => 
+            `<div class="suggestion-chip" onclick="sendSuggestion('${suggestion.keyword}')">
+              ${suggestion.keyword}
+            </div>`
+          ).join('');
         } else {
           // Fallback to static suggestions
           const suggestions = [
@@ -765,10 +760,8 @@
         }
       });
 
-      // Enable/disable send button based on input
-      messageInput.addEventListener('input', function() {
-        sendBtn.disabled = this.value.trim().length === 0;
-      });
+      // Ensure click triggers send even if inline handler is blocked
+      sendBtn.addEventListener('click', sendMessage);
     }
 
     // Send message
@@ -794,18 +787,13 @@
 
       try {
         // Send message to backend
-        const response = await fetch('/api/chat/send', {
+        const data = await apiCall('/chat/send', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
           body: JSON.stringify({
             message: message,
             userId: currentUser
           })
         });
-
-        const data = await response.json();
         
         // Hide typing indicator
         hideTypingIndicator();
@@ -823,17 +811,48 @@
           if (speechEnabled && speechSynthesis) {
             speakText(botText);
           }
+          document.getElementById('sendBtn').disabled = false;
         } else {
           addMessageToChat('Sorry, I encountered an error. Please try again.', 'bot');
+          document.getElementById('sendBtn').disabled = false;
         }
       } catch (error) {
         console.error('Error sending message:', error);
         hideTypingIndicator();
+        addMessageToChat("Connection issue detected. Showing offline guidance.", 'bot');
         // Offline fallback AI response
         const fallback = offlineAIResponse(message);
         addMessageToChat(fallback, 'bot');
+        document.getElementById('sendBtn').disabled = false;
       }
     }
+
+    const wellnessGuides = [
+      {
+        keywords: ['diet', 'nutrition', 'food', 'eat', 'meal'],
+        response: 'Balanced nutrition supports healing. Build plates with half colorful vegetables, a quarter lean protein, and a quarter whole grains. Add healthy fats (olive oil, nuts), stay hydrated, and limit ultra-processed snacks.'
+      },
+      {
+        keywords: ['exercise', 'fitness', 'workout', 'stretch'],
+        response: 'Aim for 150 minutes of moderate movement weekly. Combine brisk walks, light strength training, and mobility stretches. Warm up, listen to your body, and rest sore muscles to prevent injury.'
+      },
+      {
+        keywords: ['mental', 'mood', 'depress', 'focus', 'mind'],
+        response: 'For emotional wellness, pause for deep breathing, name your feelings, and reach out to supportive people. Short gratitude lists or journaling can calm racing thoughts. Seek professional help if mood changes persist.'
+      },
+      {
+        keywords: ['immune', 'immunity'],
+        response: 'Support immunity with regular sleep, nutrient-dense meals, joyful movement, hydration, and stress breaks. Handwashing and updated vaccinations remain essential for prevention.'
+      },
+      {
+        keywords: ['hydration', 'water', 'drink'],
+        response: 'Sip water steadily through the day. Flavor with citrus, cucumber, or mint. Combine fluids with electrolytes after workouts, illness, or hot weather to avoid cramps and dizziness.'
+      },
+      {
+        keywords: ['skin care', 'skincare', 'glow'],
+        response: 'Keep skincare gentle: cleanse with lukewarm water, moisturize damp skin, and apply SPF 30+ daily. Drink water and eat antioxidant-rich foods for a natural glow.'
+      }
+    ];
 
     function offlineAIResponse(userMessage) {
       const msg = userMessage.toLowerCase();
@@ -872,7 +891,14 @@
       // Check for remedy queries
       const rem = pickBest(remediesData, (i) => i.keywords);
       if (rem) {
-        return `Great question about ${rem.name}! Here's how to prepare it:\n\n**Ingredients:** ${(rem.ingredients || []).join(', ')}\n\n**Preparation:** ${rem.preparation}\n\n**Benefits:** ${(rem.benefits || []).join(', ')}\n\n**Dosage:** ${rem.dosage}\n\n⚠️ **Warnings:** ${(rem.warnings || []).join(' ')}\n\nThis remedy can help with: ${(rem.conditions || []).join(', ')}.${formatSources(rem.sources)}`;
+        const preparation = rem.preparation || (Array.isArray(rem.instructions) ? rem.instructions.join('. ') : 'Follow the listed steps carefully.');
+        return `Great question about ${rem.name}! Here's how to prepare it:\n\n**Ingredients:** ${(rem.ingredients || []).join(', ')}\n\n**Preparation:** ${preparation}\n\n**Benefits:** ${(rem.benefits || []).join(', ')}\n\n**Dosage:** ${rem.dosage || 'Use as directed once or twice daily'}\n\n⚠️ **Warnings:** ${(rem.warnings || []).join(' ')}\n\nThis remedy can help with: ${(rem.conditions || []).join(', ')}.${formatSources(rem.sources)}`;
+      }
+
+      for (const guide of wellnessGuides) {
+        if ((guide.keywords || []).some(keyword => msg.includes(keyword))) {
+          return `${guide.response}\n\nLet me know if you’d like specific recipes, stretches, or habit trackers.`;
+        }
       }
       
       // General conversational responses
@@ -893,7 +919,7 @@
       }
       
       // Default response with suggestions
-      return 'I\'m here to help with your health questions! You can ask me about:\n\n• First aid for injuries or emergencies\n• Information about symptoms you\'re experiencing\n• Natural remedies for common conditions\n• General health and wellness tips\n\nWhat would you like to know about? (Offline mode)';
+      return 'I\'m here to help with your health questions! You can ask me about:\n\n• First aid for injuries or emergencies\n• Information about symptoms you\'re experiencing\n• Natural remedies for common conditions\n• Wellness topics like sleep, hydration, or stress relief\n\nWhat would you like to explore? (Offline mode)';
     }
 
     // Send suggestion
@@ -1062,7 +1088,13 @@
 
     // Navigation
     function goBack() {
-      window.history.back();
+      if (window.history.length > 1) {
+        window.history.back();
+      } else if (document.referrer) {
+        window.location.href = document.referrer;
+      } else {
+        window.location.href = '3 home.html';
+      }
     }
 
     // Handle page visibility change

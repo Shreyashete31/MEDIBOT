@@ -7,21 +7,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #2ec4b6; /* mint */
-      --primary-dark: #1aa89b;
-      --secondary-color: #4dabf7; /* sky */
-      --accent-color: #ff6b6b; /* coral */
-      --warning-color: #ff9800;
-      --danger-color: #f44336;
-      --text-primary: #212121;
-      --text-secondary: #757575;
-      --background: #fafafa;
+      --primary-color: #3e61cc;
+      --primary-dark: #2c4fb3;
+      --secondary-color: #58b395;
+      --accent-color: #d66f84;
+      --warning-color: #c9993b;
+      --danger-color: #a83e3e;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #d5e0ff;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
-      --shadow: 0 2px 10px rgba(0,0,0,0.1);
-      --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --gradient-danger: linear-gradient(135deg, var(--danger-color), #d32f2f);
+      --border-color: #c0ccee;
+      --shadow: 0 12px 30px rgba(62, 97, 204, 0.2);
+      --shadow-hover: 0 18px 40px rgba(44, 79, 179, 0.28);
+      --gradient-primary: linear-gradient(135deg, #86a6f2 0%, #cd94f0 100%);
+      --gradient-danger: linear-gradient(135deg, #e37f7f, #a83e3e);
     }
 
     * {
@@ -31,7 +31,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+      background: linear-gradient(135deg, #d0dcff 0%, #ffc6ce 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -233,6 +233,12 @@
       border-color: var(--primary-color);
     }
 
+    .category-card.active {
+      border-color: var(--primary-color);
+      box-shadow: var(--shadow-hover);
+      background: linear-gradient(135deg, rgba(111,156,250,0.08), rgba(247,196,255,0.08));
+    }
+
     .category-card.emergency {
       background: var(--gradient-danger);
       color: white;
@@ -257,6 +263,13 @@
       font-size: 0.9rem;
       opacity: 0.8;
       margin: 0;
+    }
+
+    .category-status {
+      text-align: center;
+      margin: 1rem 0 2rem;
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     /* First Aid Cards */
@@ -529,10 +542,10 @@
   <!-- Navigation -->
   <nav>
     <a href="3 home.html">Home</a>
-    <a href="remedies.html">Remedies</a>
+    <a href="remedies_enhanced.html">Remedies</a>
     <a href="firstaid.html" class="active">First Aid</a>
     <a href="suggestions.html">Suggestions</a>
-    <a href="emergency.html">Emergency</a>
+    <a href="emergency_enhanced.html">Emergency</a>
   </nav>
 
   <!-- Main Container -->
@@ -558,42 +571,43 @@
     <section class="categories-section">
       <h2 class="search-title">Emergency Categories</h2>
       <div class="categories-grid">
-        <div class="category-card emergency" onclick="filterByCategory('emergency')">
+        <div class="category-card emergency" data-category="emergency" onclick="filterByCategory('emergency')">
           <div class="category-icon">🚨</div>
           <div class="category-title">Emergency</div>
           <div class="category-desc">Life-threatening situations</div>
         </div>
         
-        <div class="category-card" onclick="filterByCategory('wounds')">
+        <div class="category-card" data-category="wounds" onclick="filterByCategory('wounds')">
           <div class="category-icon">🩹</div>
           <div class="category-title">Wounds & Injuries</div>
           <div class="category-desc">Cuts, burns, sprains</div>
         </div>
         
-        <div class="category-card" onclick="filterByCategory('medical')">
+        <div class="category-card" data-category="medical" onclick="filterByCategory('medical')">
           <div class="category-icon">🩺</div>
           <div class="category-title">Medical Emergencies</div>
           <div class="category-desc">Heart attack, stroke, seizures</div>
         </div>
         
-        <div class="category-card" onclick="filterByCategory('environmental')">
+        <div class="category-card" data-category="environmental" onclick="filterByCategory('environmental')">
           <div class="category-icon">🌡️</div>
           <div class="category-title">Environmental</div>
           <div class="category-desc">Heat stroke, hypothermia</div>
         </div>
         
-        <div class="category-card" onclick="filterByCategory('poisoning')">
+        <div class="category-card" data-category="poisoning" onclick="filterByCategory('poisoning')">
           <div class="category-icon">☠️</div>
           <div class="category-title">Poisoning</div>
           <div class="category-desc">Chemical exposure, food poisoning</div>
         </div>
         
-        <div class="category-card" onclick="filterByCategory('respiratory')">
+        <div class="category-card" data-category="respiratory" onclick="filterByCategory('respiratory')">
           <div class="category-icon">🫁</div>
           <div class="category-title">Respiratory</div>
           <div class="category-desc">Choking, breathing problems</div>
         </div>
       </div>
+      <div id="categoryStatus" class="category-status">Showing all emergency guides</div>
     </section>
 
     <!-- First Aid Instructions -->
@@ -602,6 +616,7 @@
     </div>
   </main>
 
+  <script src="api-config.js"></script>
   <script>
     // Ripple effect for interactive elements
     document.addEventListener('click', function(e) {
@@ -632,6 +647,22 @@
     let currentUser = null;
     let allFirstAid = [];
     let filteredFirstAid = [];
+    let activeCategory = 'all';
+
+    const categoryFilters = {
+      all: () => true,
+      emergency: (instruction) => instruction.emergency || includesText(instruction.category, ['emergency']) || includesText(instruction.severity, ['critical', 'high']),
+      wounds: (instruction) => includesText(`${instruction.title} ${instruction.description}`, ['wound', 'cut', 'bleed', 'burn', 'sprain']),
+      medical: (instruction) => includesText(instruction.category, ['medical']) || includesText(instruction.title, ['heart', 'stroke', 'seizure']),
+      environmental: (instruction) => includesText(instruction.category, ['environment']) || includesText(instruction.title, ['heat', 'hypothermia']),
+      poisoning: (instruction) => includesText(instruction.category, ['poison']) || includesText(instruction.title, ['poison', 'toxin', 'bite']),
+      respiratory: (instruction) => includesText(instruction.category, ['respiratory']) || includesText(instruction.title, ['choking', 'breath', 'asthma'])
+    };
+
+    function includesText(text = '', keywords = []) {
+      const haystack = String(text).toLowerCase();
+      return keywords.some(keyword => haystack.includes(keyword));
+    }
 
     // Fallback: load from backend if available, else use embedded dataset
     const firstAidData = [
@@ -973,8 +1004,7 @@
     // Initialize first aid data
     async function initializeFirstAid() {
       try {
-        const res = await fetch('/api/first-aid?limit=50');
-        const data = await res.json();
+        const data = await apiCall('/first-aid?limit=50');
         if (data.success) {
           allFirstAid = data.data.map(item => ({
             id: item.id,
@@ -1004,6 +1034,8 @@
       }
       filteredFirstAid = [...allFirstAid];
       renderFirstAid(filteredFirstAid);
+      cacheFirstAidData();
+      setActiveCategoryCard(activeCategory);
     }
 
     // Render first aid instructions
@@ -1020,6 +1052,8 @@
         `;
         return;
       }
+
+      updateCategoryStatus(instructions.length);
 
       grid.innerHTML = instructions.map(instruction => `
         <div class="first-aid-card ${instruction.emergency ? 'emergency' : ''}">
@@ -1067,6 +1101,44 @@
       `).join('');
     }
 
+    function updateCategoryStatus(count) {
+      const status = document.getElementById('categoryStatus');
+      if (!status) return;
+      const label = activeCategory === 'all' ? 'all categories' : activeCategory.replace('-', ' ');
+      status.textContent = count === 0
+        ? `No guides available for ${label}`
+        : `Showing ${count} guide${count === 1 ? '' : 's'} for ${label}`;
+    }
+
+    function setActiveCategoryCard(category) {
+      document.querySelectorAll('.category-card').forEach(card => {
+        const slug = card.dataset.category;
+        card.classList.toggle('active', slug === category);
+      });
+    }
+
+    function cacheFirstAidData() {
+      try {
+        const payload = allFirstAid.map(item => ({
+          title: item.title,
+          keywords: generateKeywords(item),
+          steps: item.steps,
+          warnings: item.warnings,
+          description: item.description,
+          category: item.category,
+          severity: item.severity
+        }));
+        localStorage.setItem('firstAidData', JSON.stringify(payload));
+      } catch (err) {
+        console.warn('Unable to cache first aid data', err);
+      }
+    }
+
+    function generateKeywords(item = {}) {
+      const text = `${item.title || ''} ${item.description || ''} ${item.category || ''}`;
+      return Array.from(new Set(text.toLowerCase().split(/[^a-z]+/).filter(Boolean)));
+    }
+
     // Search functionality
     function initializeSearch() {
       const searchInput = document.getElementById('firstAidSearch');
@@ -1087,13 +1159,20 @@
 
     // Filter by category
     function filterByCategory(category) {
+      activeCategory = category;
       const searchInput = document.getElementById('firstAidSearch');
-      searchInput.value = '';
+      if (searchInput) {
+        searchInput.value = '';
+      }
       
-      filteredFirstAid = allFirstAid.filter(instruction => {
-        return instruction.category === category;
-      });
+      if (category === 'all') {
+        filteredFirstAid = [...allFirstAid];
+      } else {
+        const matcher = categoryFilters[category] || ((instruction) => includesText(instruction.category, [category]));
+        filteredFirstAid = allFirstAid.filter(matcher);
+      }
       
+      setActiveCategoryCard(category);
       renderFirstAid(filteredFirstAid);
     }
 

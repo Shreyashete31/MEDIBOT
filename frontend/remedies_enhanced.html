@@ -7,20 +7,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #009688;
-      --primary-dark: #00796b;
-      --secondary-color: #4caf50;
-      --accent-color: #ff5722;
-      --warning-color: #ff9800;
-      --text-primary: #212121;
-      --text-secondary: #757575;
-      --background: #fafafa;
+      --primary-color: #228a5d;
+      --primary-dark: #176f4a;
+      --secondary-color: #3ea581;
+      --accent-color: #78d9ac;
+      --warning-color: #f6c667;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #e5f5ee;
       --surface: #ffffff;
-      --border-color: #e0e0e0;
-      --shadow: 0 2px 10px rgba(0,0,0,0.1);
-      --shadow-hover: 0 4px 20px rgba(0,0,0,0.15);
-      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #2e7d32);
+      --border-color: #bfe3d5;
+      --shadow: 0 12px 30px rgba(34, 138, 93, 0.22);
+      --shadow-hover: 0 18px 40px rgba(23, 111, 74, 0.3);
+      --gradient-primary: linear-gradient(135deg, #67c595 0%, #309b73 100%);
+      --gradient-secondary: linear-gradient(135deg, #aeead0 0%, #78d9ac 100%);
     }
 
     * {
@@ -30,7 +30,7 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+      background: linear-gradient(135deg, #def3ea 0%, #edfff5 100%);
       color: var(--text-primary);
       min-height: 100vh;
     }
@@ -643,10 +643,10 @@
   <!-- Navigation -->
   <nav>
     <a href="3 home.html">Home</a>
-    <a href="remedies.html" class="active">Remedies</a>
+    <a href="remedies_enhanced.html" class="active">Remedies</a>
     <a href="firstaid.html">First Aid</a>
     <a href="suggestions.html">Suggestions</a>
-    <a href="emergency.html">Emergency</a>
+    <a href="emergency_enhanced.html">Emergency</a>
   </nav>
 
   <!-- Main Container -->
@@ -837,6 +837,174 @@
         benefits: "Reduces fever, boosts immunity, antibacterial, antiviral",
         warnings: "Consult doctor for high fever or persistent symptoms",
         image: "🌿"
+      },
+      {
+        id: "hydration-tonic",
+        title: "Citrus Hydration Tonic",
+        description: "Electrolyte-rich drink to gently rehydrate after heat, workouts, or illness.",
+        category: "General",
+        difficulty: "easy",
+        rating: 4.6,
+        prepTime: "5 minutes",
+        ingredients: ["2 cups coconut water", "1 tbsp fresh lemon juice", "1 tsp honey", "Pinch of sea salt", "Fresh mint leaves"],
+        instructions: [
+          "Combine coconut water, lemon juice, honey, and sea salt in a jar",
+          "Stir until the honey dissolves completely",
+          "Add mint leaves and chill for 10 minutes",
+          "Sip slowly throughout the day"
+        ],
+        benefits: "Replenishes electrolytes, supports energy, soothes mild headaches, aids muscle recovery",
+        warnings: "Reduce honey for low-sugar diets; skip salt if on sodium restriction",
+        image: "💧",
+        dosage: "Enjoy up to 2 servings per day",
+        conditions: ["dehydration", "muscle cramps", "heat exhaustion"]
+      },
+      {
+        id: "electrolyte-elixir",
+        title: "Herbal Electrolyte Elixir",
+        description: "Chamomile and citrus infusion to restore fluids and calm the nervous system.",
+        category: "General",
+        difficulty: "easy",
+        rating: 4.5,
+        prepTime: "10 minutes",
+        ingredients: ["1 chamomile tea bag", "1 cup hot water", "1/4 cup orange juice", "1 tsp maple syrup", "Pinch of Himalayan salt"],
+        instructions: [
+          "Steep chamomile tea in hot water for 5 minutes",
+          "Remove the tea bag and stir in orange juice and maple syrup",
+          "Add a pinch of salt and mix gently",
+          "Serve warm or chilled"
+        ],
+        benefits: "Calms nerves, replaces electrolytes, gentle on the stomach",
+        warnings: "Check with your doctor if you take sedatives or have citrus allergies",
+        image: "🫖",
+        dosage: "One mug when needed",
+        conditions: ["lightheadedness", "stress", "mild dehydration"]
+      },
+      {
+        id: "lavender-sleep-spray",
+        title: "Lavender Sleep Mist",
+        description: "A calming pillow spray that signals your mind and body to unwind.",
+        category: "General",
+        difficulty: "easy",
+        rating: 4.7,
+        prepTime: "8 minutes",
+        ingredients: ["1/2 cup distilled water", "1 tbsp witch hazel", "10 drops lavender essential oil", "4 drops chamomile oil"],
+        instructions: [
+          "Combine distilled water and witch hazel in a spray bottle",
+          "Add lavender and chamomile essential oils",
+          "Shake gently before each use",
+          "Mist lightly over bedding 10 minutes before sleep"
+        ],
+        benefits: "Promotes relaxation, eases anxiety, supports consistent sleep routines",
+        warnings: "Avoid spraying directly on skin if sensitive; keep away from eyes",
+        image: "💤",
+        dosage: "Use nightly as part of a wind-down ritual",
+        conditions: ["insomnia", "stress", "anxiety"]
+      },
+      {
+        id: "magnesium-soak",
+        title: "Magnesium Epsom Bath",
+        description: "A mineral soak to relax tight muscles and calm the nervous system.",
+        category: "Pain",
+        difficulty: "easy",
+        rating: 4.8,
+        prepTime: "15 minutes",
+        ingredients: ["1 cup Epsom salt", "1/4 cup baking soda", "5 drops frankincense oil", "Warm bathwater"],
+        instructions: [
+          "Fill a bathtub with comfortably warm water",
+          "Dissolve Epsom salt and baking soda into the bath",
+          "Add frankincense oil and swirl to combine",
+          "Soak for 15-20 minutes while practicing deep breathing"
+        ],
+        benefits: "Eases cramps, supports magnesium levels, calms the mind",
+        warnings: "Avoid very hot water if pregnant or with heart conditions",
+        image: "🛁",
+        dosage: "Use 2-3 times per week as needed",
+        conditions: ["muscle pain", "restless legs", "stress"]
+      },
+      {
+        id: "soothing-digestive-tonic",
+        title: "Soothing Digestive Tonic",
+        description: "Ginger and fennel infusion that settles bloating, gas, and post-meal discomfort.",
+        category: "Digestion",
+        difficulty: "easy",
+        rating: 4.6,
+        prepTime: "10 minutes",
+        ingredients: ["1 tsp fennel seeds", "1 tsp grated ginger", "1 cup hot water", "1/2 tsp honey", "2 cardamom pods"],
+        instructions: [
+          "Add fennel, ginger, and cardamom to a cup",
+          "Pour hot water over the herbs and cover",
+          "Steep for 7 minutes, then strain",
+          "Stir in honey and sip slowly"
+        ],
+        benefits: "Reduces bloating, stimulates digestion, eases nausea",
+        warnings: "Avoid if you have fennel allergies; ginger may thin blood",
+        image: "🍵",
+        dosage: "Drink after heavy meals or as needed",
+        conditions: ["bloating", "nausea", "gastric discomfort"]
+      },
+      {
+        id: "immune-broth",
+        title: "Immune Garden Broth",
+        description: "Mineral-rich broth with garlic, greens, and herbs to nourish immunity.",
+        category: "Immunity",
+        difficulty: "medium",
+        rating: 4.9,
+        prepTime: "35 minutes",
+        ingredients: ["6 cups water", "2 cloves garlic", "1-inch ginger", "1 cup leafy greens", "1 carrot", "1 tbsp apple cider vinegar", "Fresh thyme"],
+        instructions: [
+          "Add water, chopped garlic, ginger, carrot, and vinegar to a pot",
+          "Simmer gently for 25 minutes",
+          "Add greens and thyme, cook 5 minutes more",
+          "Strain or enjoy as a light soup"
+        ],
+        benefits: "Supports immunity, hydrates, soothes sore throats, warms the body",
+        warnings: "Adjust garlic if you take blood thinners",
+        image: "🥣",
+        dosage: "Drink warm once daily during seasonal changes",
+        conditions: ["immunity", "colds", "fatigue"]
+      },
+      {
+        id: "skin-calming-mask",
+        title: "Skin Calming Oat Mask",
+        description: "Oat and yogurt mask to ease redness and replenish moisture.",
+        category: "Beauty",
+        difficulty: "easy",
+        rating: 4.5,
+        prepTime: "7 minutes",
+        ingredients: ["2 tbsp ground oats", "1 tbsp plain yogurt", "1 tsp honey", "2 drops aloe vera gel"],
+        instructions: [
+          "Mix oats, yogurt, honey, and aloe into a smooth paste",
+          "Apply evenly to clean skin",
+          "Leave on for 10 minutes",
+          "Rinse with cool water and pat dry"
+        ],
+        benefits: "Soothes irritation, hydrates skin, adds glow",
+        warnings: "Patch test first if you have dairy or honey sensitivities",
+        image: "🌸",
+        dosage: "Use 1-2 times weekly",
+        conditions: ["dry skin", "irritation", "post-sun care"]
+      },
+      {
+        id: "breath-easy-balm",
+        title: "Breathe Easy Chest Balm",
+        description: "Herbal balm to open airways and ease chest tightness during colds.",
+        category: "Respiratory",
+        difficulty: "medium",
+        rating: 4.7,
+        prepTime: "20 minutes",
+        ingredients: ["1/4 cup coconut oil", "2 tbsp beeswax", "8 drops eucalyptus oil", "6 drops peppermint oil", "4 drops tea tree oil"],
+        instructions: [
+          "Melt coconut oil and beeswax over low heat",
+          "Remove from heat and stir in essential oils",
+          "Pour into a small jar and let solidify",
+          "Rub a pea-sized amount onto chest and back before bed"
+        ],
+        benefits: "Opens nasal passages, eases cough, provides comforting warmth",
+        warnings: "Do not use on children under 6; avoid during pregnancy without doctor approval",
+        image: "🌬️",
+        dosage: "Apply up to twice daily",
+        conditions: ["congestion", "cough", "cold"]
       }
     ];
 
@@ -873,6 +1041,7 @@
       allRemedies = remediesData;
       filteredRemedies = [...allRemedies];
       renderRemedies(filteredRemedies);
+      cacheRemediesForAssistant();
     }
 
     // Render remedies
@@ -948,6 +1117,37 @@
           </div>
         </div>
       `).join('');
+    }
+
+    function cacheRemediesForAssistant() {
+      try {
+        const payload = allRemedies.map(remedy => ({
+          id: remedy.id,
+          name: remedy.title,
+          ingredients: remedy.ingredients,
+          instructions: remedy.instructions,
+          benefits: Array.isArray(remedy.benefits) ? remedy.benefits : splitText(remedy.benefits),
+          description: remedy.description,
+          warnings: Array.isArray(remedy.warnings) ? remedy.warnings : splitText(remedy.warnings),
+          category: remedy.category,
+          keywords: generateRemedyKeywords(remedy),
+          conditions: remedy.conditions || [],
+          dosage: remedy.dosage || 'Use as directed'
+        }));
+        localStorage.setItem('remediesData', JSON.stringify(payload));
+      } catch (err) {
+        console.warn('Unable to cache remedies dataset', err);
+      }
+    }
+
+    function generateRemedyKeywords(remedy = {}) {
+      const text = `${remedy.title || ''} ${remedy.description || ''} ${remedy.category || ''} ${(remedy.benefits || '')}`;
+      return Array.from(new Set(text.toLowerCase().split(/[^a-z]+/).filter(Boolean)));
+    }
+
+    function splitText(value) {
+      if (!value) return [];
+      return String(value).split(/[,;]+/).map(item => item.trim()).filter(Boolean);
     }
 
     // Generate star rating
