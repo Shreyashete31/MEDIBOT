@@ -577,21 +577,7 @@
         <input type="text" id="symptomInput" placeholder="Enter your symptoms (e.g., headache, fever, nausea)..." />
       </div>
       
-      <div class="symptom-suggestions">
-        <span class="suggestion-tag" onclick="addSymptom('headache')">Headache</span>
-        <span class="suggestion-tag" onclick="addSymptom('fever')">Fever</span>
-        <span class="suggestion-tag" onclick="addSymptom('cough')">Cough</span>
-        <span class="suggestion-tag" onclick="addSymptom('nausea')">Nausea</span>
-        <span class="suggestion-tag" onclick="addSymptom('fatigue')">Fatigue</span>
-        <span class="suggestion-tag" onclick="addSymptom('sore throat')">Sore Throat</span>
-        <span class="suggestion-tag" onclick="addSymptom('body aches')">Body Aches</span>
-        <span class="suggestion-tag" onclick="addSymptom('shortness of breath')">Shortness of Breath</span>
-        <span class="suggestion-tag" onclick="addSymptom('seasonal allergies')">Allergies</span>
-        <span class="suggestion-tag" onclick="addSymptom('constipation')">Constipation</span>
-        <span class="suggestion-tag" onclick="addSymptom('knee pain')">Knee Pain</span>
-        <span class="suggestion-tag" onclick="addSymptom('stress')">Stress</span>
-        <span class="suggestion-tag" onclick="addSymptom('dry skin')">Dry Skin</span>
-      </div>
+      <div class="symptom-suggestions" id="symptomSuggestions"></div>
       
       <button class="check-button" id="checkButton" onclick="checkSymptoms()">
         <i class="fas fa-search"></i>
@@ -1180,6 +1166,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       initializeUser();
       initializeSymptomInput();
+      renderSuggestionTags();
     });
 
     // User initialization
@@ -1196,6 +1183,15 @@
           addSymptomFromInput();
         }
       });
+    }
+
+    function renderSuggestionTags() {
+      const container = document.getElementById('symptomSuggestions');
+      if (!container) return;
+      const entries = Object.values(symptomLookup);
+      const unique = entries.filter((e, i, arr) => arr.findIndex(x => x.slug === e.slug) === i);
+      const pick = unique.slice(0, Math.max(50, unique.length));
+      container.innerHTML = pick.map(e => `<span class="suggestion-tag" onclick="addSymptom('${e.slug}')">${e.name}</span>`).join('');
     }
 
     // Add symptom from input
