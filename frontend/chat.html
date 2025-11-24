@@ -819,8 +819,6 @@
       } catch (error) {
         console.error('Error sending message:', error);
         hideTypingIndicator();
-        addMessageToChat("Connection issue detected. Showing offline guidance.", 'bot');
-        // Offline fallback AI response
         const fallback = offlineAIResponse(message);
         addMessageToChat(fallback, 'bot');
         document.getElementById('sendBtn').disabled = false;
@@ -855,71 +853,129 @@
     ];
 
     function offlineAIResponse(userMessage) {
-      const msg = userMessage.toLowerCase();
-      
-      // Load expanded data
-      const firstAidData = JSON.parse(localStorage.getItem('firstAidData') || '[]');
-      const symptomsData = JSON.parse(localStorage.getItem('symptomsData') || '[]');
-      const remediesData = JSON.parse(localStorage.getItem('remediesData') || '[]');
-      
-      const pickBest = (items, getKeywords) => {
-        const matches = items.filter(i => (getKeywords(i) || []).some(keyword => msg.includes(String(keyword).toLowerCase())));
-        if (matches.length === 0) return null;
-        // Prefer verified entries
-        matches.sort((a, b) => (b.verified === true) - (a.verified === true));
-        return matches[0];
-      };
-      
-      const formatSources = (sources) => {
-        if (!sources || sources.length === 0) return '';
-        const list = sources.map(s => `${s.name}`).join(', ');
-        return `\n\nSources: ${list}`;
-      };
-      
-      // Check for first aid queries
-      const fa = pickBest(firstAidData, (i) => i.keywords);
-      if (fa) {
-        return `For ${fa.title.toLowerCase()}, here's what you should do:\n\n${(fa.steps || []).map((step, index) => `${index + 1}. ${step}`).join('\n')}\n\n⚠️ ${(fa.warnings || []).join(' ')}${formatSources(fa.sources)}\n\nThis is general guidance. For serious emergencies, call emergency services immediately.`;
-      }
-      
-      // Check for symptom queries
-      const sym = pickBest(symptomsData, (i) => i.keywords);
-      if (sym) {
-        return `I understand you're experiencing ${String(sym.name).toLowerCase()}. Here's some helpful information:\n\n**Common causes:** ${(sym.common_causes || []).join(', ')}\n\n**Home remedies:** ${(sym.home_remedies || []).join(', ')}\n\n**When to seek help:** ${sym.when_to_seek_help}${formatSources(sym.sources)}\n\nRemember, I'm here to provide general guidance. If symptoms are severe or persistent, please consult a healthcare professional.`;
-      }
-      
-      // Check for remedy queries
-      const rem = pickBest(remediesData, (i) => i.keywords);
-      if (rem) {
-        const preparation = rem.preparation || (Array.isArray(rem.instructions) ? rem.instructions.join('. ') : 'Follow the listed steps carefully.');
-        return `Great question about ${rem.name}! Here's how to prepare it:\n\n**Ingredients:** ${(rem.ingredients || []).join(', ')}\n\n**Preparation:** ${preparation}\n\n**Benefits:** ${(rem.benefits || []).join(', ')}\n\n**Dosage:** ${rem.dosage || 'Use as directed once or twice daily'}\n\n⚠️ **Warnings:** ${(rem.warnings || []).join(' ')}\n\nThis remedy can help with: ${(rem.conditions || []).join(', ')}.${formatSources(rem.sources)}`;
+      var msg = String(userMessage || '').toLowerCase();
+      var firstAidData = JSON.parse(localStorage.getItem('firstAidData') || '[]');
+      var symptomsData = JSON.parse(localStorage.getItem('symptomsData') || '[]');
+      var remediesData = JSON.parse(localStorage.getItem('remediesData') || '[]');
+
+      function anyContains(text, arr) {
+        var t = String(text || '').toLowerCase();
+        for (var i = 0; i < arr.length; i++) { if (t.indexOf(arr[i]) !== -1) return true; }
+        return false;
       }
 
-      for (const guide of wellnessGuides) {
-        if ((guide.keywords || []).some(keyword => msg.includes(keyword))) {
-          return `${guide.response}\n\nLet me know if you’d like specific recipes, stretches, or habit trackers.`;
+      function formatList(arr) {
+        return (arr || []).join(', ');
+      }
+
+      function pickBest(items, getKeywords) {
+        var matches = items.filter(function(i){
+          var kws = (getKeywords(i) || []).map(function(k){ return String(k).toLowerCase(); });
+          for (var j = 0; j < kws.length; j++) { if (msg.indexOf(kws[j]) !== -1) return true; }
+          return false;
+        });
+        if (matches.length === 0) return null;
+        matches.sort(function(a,b){ return (b.verified === true) - (a.verified === true); });
+        return matches[0];
+      }
+
+      function formatSources(sources) {
+        if (!sources || sources.length === 0) return '';
+        var list = sources.map(function(s){ return s.name; }).join(', ');
+        return '\n\nSources: ' + list;
+      }
+
+      function suggestRemedies(keys) {
+        var out = [];
+        for (var i = 0; i < remediesData.length; i++) {
+          var r = remediesData[i];
+          var pool = [];
+          if (Array.isArray(r.keywords)) pool = pool.concat(r.keywords);
+          if (Array.isArray(r.conditions)) pool = pool.concat(r.conditions);
+          var hit = pool.some(function(k){ return keys.some(function(x){ return String(k).toLowerCase().indexOf(x) !== -1; }); });
+          if (hit) out.push(r);
+          if (out.length >= 3) break;
+        }
+        return out;
+      }
+
+      function renderRemedyBlock(titleKeys) {
+        var rems = suggestRemedies(titleKeys);
+        if (!rems || rems.length === 0) return '';
+        var names = rems.map(function(r){ return r.name; }).join(', ');
+        return '\n\nYou can try these natural remedies: ' + names + '. Always check allergies and interactions.';
+      }
+
+      var nonHealth = ['movie','music','song','weather','finance','stock','game','code','programming','politics','news','sports','celebrity','travel tip'];
+      if (anyContains(msg, nonHealth)) {
+        return 'I only guide for healthcare, first aid, symptoms, and natural remedies. Please ask a health-related question.';
+      }
+
+      var distress = ['not feeling well','feel sick','unwell','feel bad','not well','feeling weak'];
+      if (anyContains(msg, distress)) {
+        var triage = '**Let\'s figure this out.** Please share: \n• When it started and how severe it is \n• Fever or chills? \n• Cough, sore throat, headache, stomach issues? \n• Chest pain or breathing difficulty? \n• Recent exposure, travel, new foods/medicines';
+        var tips = '\n\nStart with rest, fluids, and light meals. If severe symptoms or chest pain/shortness of breath occur, seek urgent care.';
+        return triage + '\n\nTry exploring: Symptoms of fever, Home remedy for cough, Headache remedies.';
+      }
+
+      if (anyContains(msg, ['fever','temperature','high temp'])) {
+        var block = '**Fever support**\n\n• Hydrate with water and oral rehydration fluids \n• Rest in a cool room; light clothing \n• Lukewarm sponge baths, avoid cold shock \n• Consider antipyretics per label guidance \n• Monitor red flags: very high fever, confusion, stiff neck, breathing difficulty';
+        return block + renderRemedyBlock(['fever','temperature']);
+      }
+
+      if (anyContains(msg, ['cold','cough','sore throat','runny nose'])) {
+        var block2 = '**Cold and cough care**\n\n• Warm fluids and steam inhalation \n• Honey-lemon in warm water (not for infants) \n• Salt-water gargles for sore throat \n• Rest and gentle hydration \n• Seek help for high fever, chest pain, or breathing issues';
+        return block2 + renderRemedyBlock(['cold','cough','sore throat']);
+      }
+
+      if (anyContains(msg, ['headache','migraine'])) {
+        var block3 = '**Headache relief**\n\n• Hydration, dim lights, minimize screen time \n• Gentle neck/shoulder stretches \n• Avoid skipping meals; manage caffeine \n• Track triggers (sleep, stress, foods)';
+        return block3 + renderRemedyBlock(['headache','migraine']);
+      }
+
+      if (anyContains(msg, ['stomach pain','abdominal pain','gastric','acidity'])) {
+        var block4 = '**Stomach discomfort**\n\n• Small bland meals (rice, banana, toast) \n• Hydration; oral rehydration if diarrhea \n• Avoid spicy or fatty foods \n• Seek care for severe pain, blood in stool, persistent vomiting';
+        return block4 + renderRemedyBlock(['stomach','acidity','gastric']);
+      }
+
+      if (anyContains(msg, ['diarrhea','loose motion','vomit','vomiting','nausea'])) {
+        var block5 = '**GI support**\n\n• Oral rehydration, small sips \n• Rest; advance diet slowly \n• Avoid dairy and heavy foods initially \n• Urgent care for signs of dehydration, blood, high fever';
+        return block5 + renderRemedyBlock(['diarrhea','vomit','nausea']);
+      }
+
+      if (anyContains(msg, ['chest pain','shortness of breath','breathing difficulty'])) {
+        var faChest = pickBest(firstAidData, function(i){ return i.keywords; });
+        var urgent = '**Urgent attention**\n\nChest pain or breathing difficulty can be serious. Seek emergency care immediately.';
+        return urgent;
+      }
+
+      var fa = pickBest(firstAidData, function(i){ return i.keywords; });
+      if (fa) {
+        return 'For ' + String(fa.title || '').toLowerCase() + ', do:\n\n' + (Array.isArray(fa.steps) ? fa.steps.map(function(s,idx){ return (idx+1)+'. '+s; }).join('\n') : '') + '\n\n⚠️ ' + (Array.isArray(fa.warnings) ? fa.warnings.join(' ') : '') + formatSources(fa.sources) + '\n\nCall emergency services for severe cases.';
+      }
+
+      var sym = pickBest(symptomsData, function(i){ return i.keywords; });
+      if (sym) {
+        return 'I understand you\'re experiencing ' + String(sym.name || '').toLowerCase() + '.\n\n**Common causes:** ' + formatList(sym.common_causes || []) + '\n\n**Home remedies:** ' + formatList(sym.home_remedies || []) + '\n\n**When to seek help:** ' + (sym.when_to_seek_help || '') + formatSources(sym.sources) + '\n\nIf symptoms are severe or persistent, consult a healthcare professional.';
+      }
+
+      var rem = pickBest(remediesData, function(i){ return i.keywords; });
+      if (rem) {
+        var prep = rem.preparation || (Array.isArray(rem.instructions) ? rem.instructions.join('. ') : 'Follow the listed steps carefully.');
+        return 'About ' + rem.name + ':\n\n**Ingredients:** ' + formatList(rem.ingredients || []) + '\n\n**Preparation:** ' + prep + '\n\n**Benefits:** ' + formatList(rem.benefits || []) + '\n\n**Dosage:** ' + (rem.dosage || 'Use as directed once or twice daily') + '\n\n⚠️ **Warnings:** ' + (Array.isArray(rem.warnings) ? rem.warnings.join(' ') : '') + '\n\nHelps with: ' + formatList(rem.conditions || []) + formatSources(rem.sources);
+      }
+
+      for (var g = 0; g < wellnessGuides.length; g++) {
+        var guide = wellnessGuides[g];
+        var kws = guide.keywords || [];
+        for (var k = 0; k < kws.length; k++) {
+          if (msg.indexOf(kws[k]) !== -1) {
+            return guide.response + '\n\nTell me if you want specific recipes, stretches, or trackers.';
+          }
         }
       }
-      
-      // General conversational responses
-      if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
-        return 'Hello! I\'m your AI health assistant. I can help you with first aid guidance, symptom information, and natural remedies. What would you like to know about today?';
-      }
-      
-      if (msg.includes('help') || msg.includes('what can you do')) {
-        return 'I can help you with:\n\n🏥 **First Aid:** Emergency care guidance for injuries and medical emergencies\n\n🤒 **Symptoms:** Information about common symptoms and when to seek help\n\n🌿 **Remedies:** Natural home remedies and their preparation\n\n💡 **General Health:** Wellness tips and health advice\n\nJust ask me about any health concern you have!';
-      }
-      
-      if (msg.includes('thank') || msg.includes('thanks')) {
-        return 'You\'re very welcome! I\'m here whenever you need health guidance. Feel free to ask me anything about first aid, symptoms, or natural remedies.';
-      }
-      
-      if (msg.includes('how are you') || msg.includes('how do you feel')) {
-        return 'I\'m doing well, thank you for asking! I\'m here and ready to help with any health questions you might have. How can I assist you today?';
-      }
-      
-      // Default response with suggestions
-      return 'I\'m here to help with your health questions! You can ask me about:\n\n• First aid for injuries or emergencies\n• Information about symptoms you\'re experiencing\n• Natural remedies for common conditions\n• Wellness topics like sleep, hydration, or stress relief\n\nWhat would you like to explore? (Offline mode)';
+
+      return 'I guide health topics only. Ask me about first aid, symptoms, or natural remedies. You can start with: Symptoms of fever, Home remedy for cough, Headache remedies.';
     }
 
     // Send suggestion
