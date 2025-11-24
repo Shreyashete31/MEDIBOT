@@ -677,14 +677,11 @@
       const settings = safeGetItem('appSettings', {});
 
       // Theme settings
-      if (settings.darkMode) {
-        const d = document.getElementById('darkModeToggle');
-        if (d) { d.classList.add('active'); d.setAttribute('aria-checked','true'); }
-      }
-
-      if (settings.theme) {
-        selectTheme(settings.theme, false);
-      }
+      const currentDark = (typeof getDarkMode === 'function') ? getDarkMode() : !!settings.darkMode;
+      const d = document.getElementById('darkModeToggle');
+      if (d) { d.classList.toggle('active', !!currentDark); d.setAttribute('aria-checked', currentDark ? 'true' : 'false'); }
+      if (settings.theme) { selectTheme(settings.theme, false); }
+      if (typeof setDarkMode === 'function') setDarkMode(!!currentDark);
 
       if (settings.fontSize) {
         const fs = document.getElementById('fontSizeRange');
@@ -773,6 +770,18 @@
         target.setAttribute('aria-pressed','true');
       }
 
+      if (theme === 'light') {
+        try { localStorage.setItem('darkMode', 'false'); } catch (e) {}
+        if (typeof setDarkMode === 'function') setDarkMode(false);
+      } else if (theme === 'dark') {
+        try { localStorage.setItem('darkMode', 'true'); } catch (e) {}
+        if (typeof setDarkMode === 'function') setDarkMode(true);
+      } else if (theme === 'auto') {
+        const sysDark = (typeof window !== 'undefined' && window.matchMedia) ? window.matchMedia('(prefers-color-scheme: dark)').matches : false;
+        try { localStorage.setItem('darkMode', sysDark ? 'true' : 'false'); } catch (e) {}
+        if (typeof setDarkMode === 'function') setDarkMode(sysDark);
+      }
+
       if (save) debounceSave();
     }
 
@@ -813,6 +822,9 @@
       if (!toggle) return;
       toggle.classList.toggle('active');
       toggle.setAttribute('aria-checked', toggle.classList.contains('active'));
+      const enabled = toggle.classList.contains('active');
+      try { localStorage.setItem('darkMode', enabled ? 'true' : 'false'); } catch(e) {}
+      if (typeof setDarkMode === 'function') setDarkMode(enabled);
       debounceSave();
     }
 

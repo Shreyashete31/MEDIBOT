@@ -520,6 +520,24 @@
       }
     }
 
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .suggestion-chip {
+      background: var(--surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .suggestion-chip:hover { background: #f5fafe; }
+
     /* No dark theme per design requirements */
   </style>
 </head>
@@ -565,6 +583,7 @@
         <i class="fas fa-search"></i>
         <input type="text" id="firstAidSearch" placeholder="Search for first aid procedures (e.g., burns, cuts, choking)..." />
       </div>
+      <div id="searchSuggestions" class="suggestions"></div>
     </section>
 
     <!-- Categories -->
@@ -1014,8 +1033,9 @@
             description: item.description,
             steps: item.steps,
             warnings: item.warnings,
-            severity: item.severity
-          }));
+            severity: item.severity,
+            keywords: Array.isArray(item.keywords) ? item.keywords : generateKeywords(item)
+          })).map(normalizeFirstAidItem);
           filteredFirstAid = [...allFirstAid];
           renderFirstAid(filteredFirstAid);
           return;
@@ -1025,12 +1045,11 @@
       try {
         const baseRes = await fetch('./assets/first_aid_data.json');
         const baseData = baseRes.ok ? await baseRes.json() : [];
-        const verRes = await fetch('./assets/verified/first_aid_verified.json');
-        const verData = verRes.ok ? await verRes.json() : [];
-        allFirstAid = mergeFirstAid(Array.isArray(baseData) ? baseData : (baseData.items || baseData), verData);
+        allFirstAid = mergeFirstAid(Array.isArray(baseData) ? baseData : (baseData.items || baseData), []);
+        allFirstAid = allFirstAid.map(normalizeFirstAidItem);
       } catch (err) {
         // Final fallback to embedded sample if assets unavailable
-        allFirstAid = firstAidData;
+        allFirstAid = firstAidData.map(normalizeFirstAidItem);
       }
       // Ensure at least 50 guides per category
       allFirstAid = ensureCategoryMinimums(allFirstAid, 50);
@@ -1066,7 +1085,7 @@
             <h3 class="card-title">
               ${instruction.emergency ? '🚨' : '🩹'} ${instruction.title}
             </h3>
-            <p class="card-description">${instruction.description}</p>
+            <p class="card-description">${instruction.description || 'Follow the steps below carefully.'}</p>
           </div>
           
           <div class="card-content">
@@ -1141,6 +1160,18 @@
       return Array.from(new Set(text.toLowerCase().split(/[^a-z]+/).filter(Boolean)));
     }
 
+    function normalizeFirstAidItem(item = {}) {
+      const category = String(item.category || 'general').toLowerCase();
+      const description = item.description || `${String(item.title || 'First Aid').trim()} guidance`;
+      const keywords = Array.isArray(item.keywords) ? item.keywords : generateKeywords(item);
+      return {
+        ...item,
+        category,
+        description,
+        keywords
+      };
+    }
+
     function ensureCategoryMinimums(list, minPerCategory) {
       const categories = ['emergency','wounds','medical','environmental','poisoning','respiratory'];
       const makeTemplate = (cat, idx) => {
@@ -1188,17 +1219,168 @@
       const searchInput = document.getElementById('firstAidSearch');
       
       searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase();
+        const query = this.value.toLowerCase().trim();
         
         filteredFirstAid = allFirstAid.filter(instruction => {
+          const hasKeywords = Array.isArray(instruction.keywords) && instruction.keywords.some(k => String(k).toLowerCase().includes(query));
           return instruction.title.toLowerCase().includes(query) ||
                  instruction.description.toLowerCase().includes(query) ||
                  instruction.steps.some(step => step.toLowerCase().includes(query)) ||
-                 instruction.category.toLowerCase().includes(query);
+                 instruction.category.toLowerCase().includes(query) ||
+                 hasKeywords;
         });
+
+        if (filteredFirstAid.length === 0 && query.length > 0) {
+          const fallback = getKeywordGuide(query);
+          if (fallback) filteredFirstAid = [fallback];
+        }
         
         renderFirstAid(filteredFirstAid);
+        updateCategoryStatus(filteredFirstAid.length);
       });
+    }
+
+    function getKeywordGuide(query) {
+      const q = query.toLowerCase();
+      const match = (arr) => arr.some(k => q.includes(k));
+      const base = (id, title, category, desc, steps, warnings, severity) => ({
+        id,
+        title,
+        category,
+        emergency: ['emergency','respiratory','poisoning'].includes(category),
+        description: desc,
+        steps,
+        warnings,
+        severity
+      });
+
+      if (match(['burn','scald'])) {
+        return base(
+          'kw-burn',
+          'Minor Burns First Aid',
+          'wounds',
+          'Immediate steps for minor thermal burns.',
+          [
+            'Cool the burn under cool running water for 10–15 minutes',
+            'Remove rings or tight items near the area',
+            'Cover with sterile, non-adhesive dressing',
+            'Avoid ice, butter, or ointments',
+            'Seek care if the burn is large or on face/hands/genitals'
+          ],
+          'Do not pop blisters. For severe or electrical burns, call emergency services.',
+          'medium'
+        );
+      }
+
+      if (match(['cut','laceration','bleed','bleeding'])) {
+        return base(
+          'kw-cut',
+          'Bleeding Control (Minor Cuts)',
+          'wounds',
+          'First aid steps to stop bleeding from minor cuts.',
+          [
+            'Apply direct pressure with clean cloth for 5–10 minutes',
+            'Rinse with clean water when bleeding slows',
+            'Apply sterile dressing and keep clean/dry',
+            'Elevate injured area if possible',
+            'Seek care for deep or contaminated wounds'
+          ],
+          'Do not remove deeply embedded objects; seek professional care.',
+          'medium'
+        );
+      }
+
+      if (match(['choke','choking'])) {
+        return base(
+          'kw-choking',
+          'Choking (Adult) First Aid',
+          'respiratory',
+          'Steps to assist a conscious adult who is choking.',
+          [
+            'Ask "Are you choking?" and stand behind the person',
+            'Place fist above navel and grasp with other hand',
+            'Perform quick upward abdominal thrusts',
+            'If they become unconscious, start CPR and call emergency services',
+            'Seek medical evaluation after resolution'
+          ],
+          'Do not perform blind finger sweeps. Call emergency services if severe.',
+          'high'
+        );
+      }
+
+      if (match(['sprain','strain'])) {
+        return base(
+          'kw-sprain',
+          'Sprain Care (R.I.C.E.)',
+          'wounds',
+          'Supportive care for mild sprains.',
+          [
+            'Rest the injured area',
+            'Ice 15–20 minutes every 2–3 hours',
+            'Compress with elastic bandage',
+            'Elevate above heart level',
+            'Avoid weight-bearing if painful; seek care if severe'
+          ],
+          'Do not apply ice directly to skin; wrap ice pack.',
+          'low'
+        );
+      }
+
+      if (match(['fever'])) {
+        return base(
+          'kw-fever',
+          'Fever Self-Care',
+          'medical',
+          'Guidance for mild fever management.',
+          [
+            'Hydrate frequently',
+            'Rest in a cool environment',
+            'Use light clothing and cool compresses',
+            'Consider antipyretics per label instructions',
+            'Seek medical care for high or persistent fever'
+          ],
+          'High fever, severe headache, stiff neck, or breathing difficulty require urgent evaluation.',
+          'medium'
+        );
+      }
+
+      if (match(['nosebleed','nose bleed'])) {
+        return base(
+          'kw-nosebleed',
+          'Nosebleed First Aid',
+          'wounds',
+          'Steps to stop a nosebleed.',
+          [
+            'Lean forward slightly',
+            'Pinch soft part of nose for 10–20 minutes',
+            'Apply a cold compress to bridge of nose',
+            'Avoid blowing nose for several hours',
+            'Seek care if bleeding persists'
+          ],
+          'Do not tilt head back; blood may go down the throat.',
+          'low'
+        );
+      }
+
+      if (match(['poison','overdose'])) {
+        return base(
+          'kw-poison',
+          'Poisoning (Ingestion) First Aid',
+          'poisoning',
+          'Immediate steps for suspected ingestion of a harmful substance.',
+          [
+            'Call emergency services or poison control immediately',
+            'Do not induce vomiting unless instructed',
+            'Check responsiveness and breathing',
+            'Provide substance details if known',
+            'Follow professional instructions until help arrives'
+          ],
+          'Do not give anything by mouth unless directed by professionals.',
+          'critical'
+        );
+      }
+
+      return null;
     }
 
     // Filter by category

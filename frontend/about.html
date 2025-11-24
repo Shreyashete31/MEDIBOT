@@ -465,15 +465,15 @@
       <h3>Get in Touch</h3>
       <p>Have questions, suggestions, or feedback? We'd love to hear from you!</p>
       <div class="contact-links">
-        <a href="mailto:support@healthhub.app" class="contact-link">
+        <a href="#" class="contact-link" onclick="sendSupportEmail(); return false;">
           <i class="fas fa-envelope"></i>
           Email Us
         </a>
-        <a href="#" class="contact-link">
+        <a href="chat.html" class="contact-link">
           <i class="fas fa-comments"></i>
           Live Chat
         </a>
-        <a href="#" class="contact-link">
+        <a href="#" class="contact-link" onclick="sendIssueEmail(); return false;">
           <i class="fas fa-bug"></i>
           Report Issue
         </a>
@@ -482,10 +482,17 @@
   </main>
 
   <script>
-    // Initialize dark mode
-    document.addEventListener('DOMContentLoaded', function() {
-      // Dark mode functionality is handled by dark-mode.js
-    });
+    document.addEventListener('DOMContentLoaded', function() {});
+    function sendSupportEmail() {
+      const subject = encodeURIComponent('Support Request - HealthHub');
+      const body = encodeURIComponent(`Hello,%0D%0A%0D%0AI have a question or need support.%0D%0A%0D%0APage: ${location.href}%0D%0AUser: ${localStorage.getItem('loggedInUser') || 'guest'}%0D%0ABrowser: ${navigator.userAgent}`);
+      window.location.href = `mailto:sheteshreya14@gmail.com?subject=${subject}&body=${body}`;
+    }
+    function sendIssueEmail() {
+      const subject = encodeURIComponent('Issue Report - HealthHub');
+      const body = encodeURIComponent(`Describe the issue:%0D%0A%0D%0ASteps to reproduce:%0D%0AExpected behavior:%0D%0AActual behavior:%0D%0A%0D%0APage: ${location.href}%0D%0AUser: ${localStorage.getItem('loggedInUser') || 'guest'}%0D%0ABrowser: ${navigator.userAgent}`);
+      window.location.href = `mailto:sheteshreya14@gmail.com?subject=${subject}&body=${body}`;
+    }
   </script>
 </body>
 </html>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Natural Remedies - HealthHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="api-config.js"></script>
   <style>
     :root {
       --primary-color: #228a5d;
@@ -1036,17 +1037,52 @@
       }
     }
 
-    // Initialize remedies
-    function initializeRemedies() {
-      allRemedies = remediesData;
-      const TARGET_TOTAL = 500;
-      if (allRemedies.length < TARGET_TOTAL) {
-        const extras = generateUniqueRemedies(TARGET_TOTAL - allRemedies.length);
-        allRemedies = allRemedies.concat(extras);
+    // Initialize remedies (fetch from backend and ensure uniqueness)
+    async function initializeRemedies() {
+      try {
+        const fetched = await fetchAllRemediesFromAPI(300);
+        allRemedies = ensurePrepTimes(deduplicateRemedies(fetched.length ? fetched : remediesData));
+      } catch (err) {
+        allRemedies = ensurePrepTimes(deduplicateRemedies(remediesData));
+      }
+      if (allRemedies.length < 300) {
+        const extras = generateExpandedRemedies(300 - allRemedies.length);
+        allRemedies = ensurePrepTimes(deduplicateRemedies(allRemedies.concat(extras)));
       }
       filteredRemedies = [...allRemedies];
       renderRemedies(filteredRemedies);
       cacheRemediesForAssistant();
+    }
+
+    async function fetchAllRemediesFromAPI(targetTotal) {
+      const out = [];
+      let offset = 0;
+      const limit = 100;
+      for (let i = 0; i < 20; i++) {
+        const res = await apiCall(`/remedies?limit=${limit}&offset=${offset}`);
+        if (!(res && res.success && Array.isArray(res.data))) break;
+        const batch = res.data.map(r => ({
+          id: r.id || r.remedy_id || String(r.name || r.title || Math.random()),
+          title: resolveTitle(r),
+          description: r.description || '',
+          category: r.category || 'General',
+          difficulty: r.difficulty || 'easy',
+          rating: typeof r.rating === 'number' ? r.rating : parseFloat(r.rating || 0) || 4.5,
+          prepTime: r.prep_time || r.prepTime || '—',
+          ingredients: Array.isArray(r.ingredients) ? r.ingredients : (Array.isArray(r.ingredients_list) ? r.ingredients_list : []),
+          instructions: Array.isArray(r.instructions) ? r.instructions : (Array.isArray(r.steps) ? r.steps : []),
+          benefits: Array.isArray(r.benefits) ? r.benefits.join(', ') : (r.benefits || ''),
+          warnings: Array.isArray(r.warnings) ? r.warnings.join(', ') : (r.warnings || ''),
+          image: r.image || '🌿',
+          dosage: r.dosage || 'Use as directed',
+          conditions: r.conditions || []
+        }));
+        out.push(...batch);
+        const hasMore = res.pagination ? !!res.pagination.hasMore : batch.length === limit;
+        if (!hasMore || out.length >= targetTotal) break;
+        offset += limit;
+      }
+      return ensurePrepTimes(deduplicateRemedies(out));
     }
 
     // Render remedies
@@ -1073,6 +1109,7 @@
             <div class="remedy-category">${remedy.category}</div>
             <h3 class="remedy-title">${remedy.image} ${remedy.title}</h3>
             <p class="remedy-description">${remedy.description}</p>
+            ${remedy.skinType ? `<div class="remedy-category" style="margin-top:0.25rem;background:var(--gradient-secondary);">Skin: ${remedy.skinType}</div>` : ''}
             <div class="remedy-meta">
               <div class="remedy-rating">
                 <div class="stars">
@@ -1155,85 +1192,232 @@
       return String(value).split(/[,;]+/).map(item => item.trim()).filter(Boolean);
     }
 
-    function generateUniqueRemedies(count) {
-      const families = [
-        { baseId:'ginger-tea', baseTitle:'Ginger Tea', category:'Digestion', image:'🫖', benefits:'Relieves nausea and aids digestion', warnings:'May interact with blood thinners', baseDesc:'Warm infusion supporting digestive comfort', baseIng:['Fresh ginger','Water','Honey'], variants:['Classic','Lemon','Mint','Cinnamon','Cardamom','Clove','Pepper','Honey-Lemon','Green Tea Blend','Fennel Boost'] },
-        { baseId:'turmeric-milk', baseTitle:'Turmeric Milk', category:'Immunity', image:'🥛', benefits:'Anti-inflammatory, immune support', warnings:'Consult doctor if on anticoagulants', baseDesc:'Comforting golden milk', baseIng:['Turmeric','Milk','Black pepper'], variants:['Classic','Ginger','Cinnamon','Cardamom','Vanilla','Nutmeg','Honey','Coconut Milk','Almond Milk','Saffron'] },
-        { baseId:'honey-lemon', baseTitle:'Honey Lemon Soother', category:'Respiratory', image:'🍯', benefits:'Soothes throat and cough', warnings:'Not for children under 1 year', baseDesc:'Warm citrus-honey tonic', baseIng:['Honey','Lemon','Warm water'], variants:['Classic','Ginger','Mint','Thyme','Cinnamon','Clove','Pepper','Apple Cider Vinegar','Chamomile','Tulsi'] },
-        { baseId:'steam-inhalation', baseTitle:'Steam Inhalation', category:'Respiratory', image:'🌬️', benefits:'Relieves congestion', warnings:'Avoid burns; keep a safe distance', baseDesc:'Gentle steam for nasal comfort', baseIng:['Hot water'], variants:['Plain','Eucalyptus','Peppermint','Thyme','Chamomile','Lavender','Rosemary','Tea Tree','Lemon','Tulsi'] },
-        { baseId:'saltwater-gargle', baseTitle:'Saltwater Gargle', category:'Respiratory', image:'💧', benefits:'Reduces throat irritation', warnings:'Do not swallow', baseDesc:'Warm saline rinse', baseIng:['Salt','Warm water'], variants:['Classic','Baking Soda','Turmeric','Peppermint','Chamomile','Honey','Apple Cider Vinegar','Thyme','Sage','Clove'] },
-        { baseId:'peppermint-tea', baseTitle:'Peppermint Tea', category:'Digestion', image:'🍵', benefits:'Eases bloating and gas', warnings:'Avoid if reflux worsens', baseDesc:'Cooling herbal infusion', baseIng:['Peppermint','Water'], variants:['Classic','Ginger','Fennel','Chamomile','Lemon Balm','Licorice','Cinnamon','Honey','Lemon','Green Tea'] },
-        { baseId:'chamomile-tea', baseTitle:'Chamomile Tea', category:'General', image:'🍵', benefits:'Promotes relaxation and sleep', warnings:'Check for ragweed allergy', baseDesc:'Calming floral tea', baseIng:['Chamomile','Water'], variants:['Classic','Lavender','Lemon','Honey','Mint','Vanilla','Ginger','Cinnamon','Rose','Ashwagandha'] },
-        { baseId:'acv-tonic', baseTitle:'Apple Cider Vinegar Tonic', category:'Digestion', image:'🍎', benefits:'Helps indigestion and blood sugar', warnings:'Dilute well; avoid overuse', baseDesc:'Tangy digestive support', baseIng:['ACV','Water','Honey'], variants:['Classic','Cinnamon','Ginger','Lemon','Turmeric','Mint','Chili','Cardamom','Clove','Fennel'] },
-        { baseId:'aloe-gel', baseTitle:'Aloe Vera Gel', category:'Skin', image:'🌿', benefits:'Cools and hydrates skin', warnings:'Patch test first', baseDesc:'Soothing plant gel', baseIng:['Aloe gel'], variants:['Fresh Leaf','With Rose Water','With Cucumber','With Honey','With Tea Tree','With Lavender','With Witch Hazel','With Oat','With Vitamin E','With Turmeric'] },
-        { baseId:'oat-mask', baseTitle:'Oat Calming Mask', category:'Beauty', image:'🌸', benefits:'Reduces redness and dryness', warnings:'Patch test if sensitive', baseDesc:'Gentle oat-yogurt blend', baseIng:['Oats','Yogurt','Honey'], variants:['Classic','Aloe','Cucumber','Turmeric','Green Tea','Rose','Milk','Banana','Avocado','Chamomile'] },
-        { baseId:'garlic-broth', baseTitle:'Garlic Immunity Broth', category:'Immunity', image:'🥣', benefits:'Supports immune defenses', warnings:'May affect blood clotting', baseDesc:'Warm savory infusion', baseIng:['Garlic','Water','Ginger'], variants:['Classic','Thyme','Turmeric','Lemon','Pepper','Parsley','Carrot','Onion','Bay Leaf','Miso'] },
-        { baseId:'cumin-water', baseTitle:'Cumin Water', category:'Digestion', image:'🍵', benefits:'Aids digestion and bloating', warnings:'Mild diuretic effect', baseDesc:'Earthy spice infusion', baseIng:['Cumin','Water'], variants:['Classic','Ginger','Fennel','Mint','Lemon','Cinnamon','Cardamom','Clove','Ajwain','Fenugreek'] },
-        { baseId:'arnica-rub', baseTitle:'Arnica Comfort Rub', category:'Pain', image:'🛁', benefits:'Eases bruises and soreness', warnings:'Not on broken skin', baseDesc:'Topical relief blend', baseIng:['Arnica','Carrier oil'], variants:['Classic','Menthol','Peppermint','Lavender','Eucalyptus','Camphor','Ginger','Capsicum','Rosemary','Tea Tree'] }
-      ];
+    const KNOWN_TITLES = {
+      'honey-cough': 'Honey for Cough',
+      'turmeric-milk': 'Turmeric Golden Milk',
+      'ginger-tea': 'Ginger Tea',
+      'aloe-vera-burns': 'Aloe Vera for Burns',
+      'neem-paste-acne': 'Neem Paste for Acne',
+      'tulsi-fever': 'Tulsi Leaves for Fever',
+      'hydration-tonic': 'Citrus Hydration Tonic',
+      'electrolyte-elixir': 'Herbal Electrolyte Elixir',
+      'lavender-sleep-spray': 'Lavender Sleep Mist',
+      'magnesium-soak': 'Magnesium Epsom Bath',
+      'soothing-digestive-tonic': 'Soothing Digestive Tonic',
+      'immune-broth': 'Immune Garden Broth',
+      'skin-calming-mask': 'Skin Calming Oat Mask',
+      'breath-easy-balm': 'Breathe Easy Chest Balm'
+    };
+
+    function toTitleCase(str) {
+      return String(str || '').split(/[-_\s]+/).map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+    }
+
+    function titleFromId(id) {
+      if (!id) return '';
+      return toTitleCase(id);
+    }
+
+    function resolveTitle(r) {
+      return r.title || r.name || KNOWN_TITLES[r.id] || titleFromId(r.id) || 'Unnamed Remedy';
+    }
+    function estimatePrepTime({ difficulty = 'easy', ingredients = [], instructions = [], category = '' }) {
+      const base = difficulty === 'hard' ? 20 : difficulty === 'medium' ? 12 : 6;
+      const addSteps = Array.isArray(instructions) ? Math.min(instructions.length, 10) : 0;
+      const addIng = Array.isArray(ingredients) ? Math.max(0, ingredients.length - 3) : 0;
+      const catBonus = /mask|pack|gel|skin/i.test(category) ? 4 : /broth|soup/i.test(category) ? 8 : 0;
+      const minutes = Math.max(3, Math.min(45, base + addSteps + addIng + catBonus));
+      return `${minutes} minutes`;
+    }
+    function ensurePrepTimes(remedies) {
+      return remedies.map(r => {
+        const has = r.prepTime && String(r.prepTime).trim() && r.prepTime !== '—';
+        return has ? r : { 
+          ...r, 
+          prepTime: estimatePrepTime({ difficulty: r.difficulty, ingredients: r.ingredients, instructions: r.instructions, category: r.category })
+        };
+      });
+    }
+
+    // Deduplicate remedies by title + ingredients + description
+    function deduplicateRemedies(remedies) {
+      const seen = new Set();
+      const out = [];
+      const norm = s => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      for (const r of remedies) {
+        const ing = Array.isArray(r.ingredients) ? r.ingredients.map(i => norm(i)).sort() : [];
+        const key = `${norm(r.title)}|${JSON.stringify(ing)}|${norm(r.description)}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          out.push(r);
+        }
+      }
+      return out;
+    }
+
+    function generateExpandedRemedies(count) {
       const difficulties = ['easy','medium','hard'];
       const ratings = [4.3,4.4,4.5,4.6,4.7,4.8,4.9];
       const out = [];
-      families.forEach(f => {
-        f.variants.forEach((v, idx) => {
-          const id = `${f.baseId}-${v.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
-          const title = `${f.baseTitle} — ${v}`;
+
+      const families = [
+        { baseId:'steam-inhalation', baseTitle:'Steam Inhalation', category:'Respiratory', image:'🌬️', baseDesc:'Gentle steam for nasal comfort', baseIng:['Hot water'], variants:['Eucalyptus','Peppermint','Thyme','Chamomile','Lavender','Rosemary'] },
+        { baseId:'saltwater-gargle', baseTitle:'Salt Water Gargle', category:'Respiratory', image:'💧', baseDesc:'Warm saline rinse for throat comfort', baseIng:['Salt','Warm water'], variants:['Turmeric','Baking Soda','Thyme','Sage','Honey'] },
+        { baseId:'tulsi-ginger-tea', baseTitle:'Tulsi Ginger Tea', category:'Respiratory', image:'🌿', baseDesc:'Warm herbal tea for cough relief', baseIng:['Tulsi','Ginger','Water'], variants:['Honey','Lemon','Cinnamon'] },
+        { baseId:'ors-home', baseTitle:'Home ORS Solution', category:'Digestion', image:'💧', baseDesc:'Hydrating oral rehydration drink', baseIng:['Water','Sugar','Salt'], variants:['Lemon','Cumin'] },
+        { baseId:'curd-rice', baseTitle:'Curd Rice Soother', category:'Digestion', image:'🍚', baseDesc:'Gut-friendly bland meal for recovery', baseIng:['Curd','Cooked rice'], variants:['Cumin','Ginger','Banana'] },
+        { baseId:'banana-rice-water', baseTitle:'Banana Rice Water', category:'Digestion', image:'🍌', baseDesc:'Pectin-rich soothing drink', baseIng:['Banana','Rice water'], variants:['Honey','Cinnamon'] },
+        { baseId:'acv-tonic', baseTitle:'Apple Cider Vinegar Tonic', category:'Digestion', image:'🍎', baseDesc:'Tangy digestive support', baseIng:['Apple cider vinegar','Water','Honey'], variants:['Cinnamon','Ginger','Lemon'] },
+        { baseId:'turmeric-milk', baseTitle:'Turmeric Golden Milk', category:'Immunity', image:'🥛', baseDesc:'Comforting anti-inflammatory drink', baseIng:['Turmeric','Milk','Black pepper'], variants:['Ginger','Cinnamon','Cardamom'] },
+        { baseId:'garlic-broth', baseTitle:'Garlic Immunity Broth', category:'Immunity', image:'🥣', baseDesc:'Warm savory infusion for immune support', baseIng:['Garlic','Water','Ginger'], variants:['Thyme','Turmeric','Lemon'] },
+        { baseId:'peppermint-tea', baseTitle:'Peppermint Tea', category:'Digestion', image:'🍵', baseDesc:'Cooling herbal infusion', baseIng:['Peppermint','Water'], variants:['Fennel','Chamomile','Honey'] },
+        { baseId:'magnesium-bath', baseTitle:'Magnesium Epsom Bath', category:'Pain', image:'🛁', baseDesc:'Mineral soak to relax muscles', baseIng:['Epsom salt','Warm water'], variants:['Lavender','Frankincense'] },
+        { baseId:'ginger-honey-lemon', baseTitle:'Ginger Honey Lemon Tea', category:'Respiratory', image:'🫖', baseDesc:'Soothing tea for coughs', baseIng:['Ginger','Honey','Lemon','Water'], variants:['Cinnamon'] }
+      ];
+
+      const skinTypes = ['Oily','Dry','Combination','Sensitive','Acne-Prone','Mature'];
+      const skinPacks = [
+        { baseId:'besan-turmeric-pack', baseTitle:'Besan Turmeric Pack', image:'🌸', baseIng:['Gram flour','Turmeric','Yogurt or rose water'], types:{ Oily:['Rose water'], Dry:['Yogurt'], Combination:['Yogurt','Rose water'], Sensitive:['Aloe'], 'Acne-Prone':['Tea tree'], Mature:['Honey'] } },
+        { baseId:'multani-mitti-pack', baseTitle:'Multani Mitti Clarifying Pack', image:'🌸', baseIng:['Multani mitti','Rose water'], types:{ Oily:['Lemon'], Dry:['Milk','Honey'], Combination:['Aloe'], Sensitive:['Cucumber'], 'Acne-Prone':['Neem'], Mature:['Saffron'] } },
+        { baseId:'oat-yogurt-mask', baseTitle:'Oat Yogurt Mask', image:'🌸', baseIng:['Oats','Yogurt','Honey'], types:{ Oily:['Lemon'], Dry:['Olive oil'], Combination:['Aloe'], Sensitive:['Cucumber'], 'Acne-Prone':['Turmeric'], Mature:['Vitamin E'] } },
+        { baseId:'aloe-cucumber-gel', baseTitle:'Aloe Cucumber Gel', image:'🌿', baseIng:['Aloe','Cucumber'], types:{ Oily:['Witch hazel'], Dry:['Honey'], Combination:['Rose water'], Sensitive:['Chamomile'], 'Acne-Prone':['Tea tree'], Mature:['Vitamin E'] } }
+      ];
+
+      for (const f of families) {
+        for (let i = 0; i < f.variants.length; i++) {
+          const addon = f.variants[i];
+          const id = `${f.baseId}-${addon.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${i+1}`;
+          const title = `${f.baseTitle} with ${addon}`;
           const ing = [...f.baseIng];
-          const add = v.split(' ').map(x => x.replace(/[^a-z]/gi,'')).filter(Boolean);
-          add.forEach(x => { if (!ing.includes(x)) ing.push(x); });
+          if (!ing.includes(addon)) ing.push(addon);
           const instructions = [
-            `Combine base ingredients in a cup or pot`,
-            `Add variant component: ${v}`,
-            `Steep or simmer for ${7 + (idx%5)} minutes`,
-            `Strain if needed and serve warm`
+            'Prepare base ingredients',
+            `Add ${addon} and mix or steep`,
+            'Rest 5–10 minutes',
+            'Consume warm or as directed'
           ];
           out.push({
             id,
             title,
-            description: `${f.baseDesc}. Variant: ${v}.`,
+            description: `${f.baseDesc} featuring ${addon.toLowerCase()}.`,
             category: f.category,
-            difficulty: difficulties[(idx)%difficulties.length],
-            rating: ratings[(idx)%ratings.length],
-            prepTime: `${5 + (idx%10)} minutes`,
+            difficulty: difficulties[i%difficulties.length],
+            rating: ratings[i%ratings.length],
+            prepTime: `${5 + (i%10)} minutes`,
             ingredients: ing,
             instructions,
-            benefits: f.benefits,
-            warnings: f.warnings,
+            benefits: 'Supportive wellness',
+            warnings: 'Adjust for sensitivities and medications',
             image: f.image,
             dosage: 'Use as directed',
             conditions: []
           });
-        });
-      });
-      const extrasNeeded = count - out.length;
-      if (extrasNeeded > 0) {
-        const seeds = ['Thyme','Tulsi','Licorice','Basil','Oregano','Sage','Fenugreek','Ajwain','Cinnamon','Cardamom','Clove','Pepper','Mint','Lemon','Honey'];
-        for (let i = 0; i < extrasNeeded; i++) {
-          const herb = seeds[i % seeds.length];
-          const catMap = ['Skin','Digestion','Immunity','Respiratory','Pain','General','Beauty'];
-          const cat = catMap[i % catMap.length];
-          out.push({
-            id: `herbal-${herb.toLowerCase()}-${i+1}`,
-            title: `${herb} Herbal Blend ${i+1}`,
-            description: `Supportive blend featuring ${herb.toLowerCase()} for ${cat.toLowerCase()} care`,
-            category: cat,
-            difficulty: difficulties[i % difficulties.length],
-            rating: ratings[i % ratings.length],
-            prepTime: `${6 + (i%8)} minutes`,
-            ingredients: [herb, 'Water', 'Optional honey'],
-            instructions: [
-              'Boil water',
-              `Add ${herb.toLowerCase()} and steep 6–8 minutes`,
-              'Sweeten if desired and sip warm'
-            ],
-            benefits: 'Gentle daily support',
-            warnings: 'Adjust for sensitivities and medications',
-            image: '🌿',
-            dosage: 'Use as directed',
-            conditions: []
-          });
+          if (out.length >= count) return out.slice(0, count);
         }
       }
+
+      for (const pack of skinPacks) {
+      for (let s = 0; s < skinTypes.length; s++) {
+          const type = skinTypes[s];
+          const extras = pack.types[type] || [];
+          const id = `${pack.baseId}-${type.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`;
+          const title = `${pack.baseTitle} (${type})`;
+          const ing = [...pack.baseIng, ...extras];
+          const instructions = [
+            'Combine ingredients into a smooth paste',
+            'Apply evenly to clean skin',
+            'Leave on for 10–15 minutes',
+            'Rinse and moisturize'
+          ];
+          out.push({
+            id,
+            title,
+            description: `Targeted care for ${type.toLowerCase()} skin.`,
+            category: 'Skin',
+            difficulty: difficulties[s%difficulties.length],
+            rating: ratings[s%ratings.length],
+            prepTime: '10 minutes',
+            ingredients: ing,
+            instructions,
+            benefits: 'Enhances skin appearance and comfort',
+            warnings: 'Patch test if sensitive',
+            image: '🌸',
+            dosage: 'Use 1–2 times weekly',
+            conditions: [],
+            skinType: type
+          });
+          if (out.length >= count) return out.slice(0, count);
+        }
+      }
+
+      const specials = [
+        {
+          id: 'fever-cooling-compress',
+          title: 'Fever Cooling Compress',
+          description: 'Cool damp cloth technique to help reduce mild fever discomfort.',
+          category: 'General',
+          difficulty: 'easy',
+          rating: 4.4,
+          prepTime: '5 minutes',
+          ingredients: ['Cool water','Clean cloth','Optional: apple cider vinegar'],
+          instructions: ['Soak cloth in cool water and wring out','Place on forehead, wrists, and calves','Refresh every 5 minutes as needed'],
+          benefits: 'Helps reduce fever discomfort',
+          warnings: 'Do not use ice directly on skin; consult a professional for high fever',
+          image: '💧',
+          dosage: 'Use as needed',
+          conditions: ['fever']
+        },
+        {
+          id: 'cold-compress-relief',
+          title: 'Cold Compress for Congestion',
+          description: 'Cool compress to ease sinus congestion and cold-related headaches.',
+          category: 'Respiratory',
+          difficulty: 'easy',
+          rating: 4.3,
+          prepTime: '6 minutes',
+          ingredients: ['Cool water','Clean cloth','Ice pack wrapped in cloth'],
+          instructions: ['Wrap ice pack with cloth or use cool damp cloth','Apply gently over sinus areas for 10 minutes','Rest and reapply if needed'],
+          benefits: 'Relieves cold-related sinus pressure',
+          warnings: 'Avoid prolonged direct ice contact; patch test for skin sensitivity',
+          image: '❄️',
+          dosage: '10 minutes per session',
+          conditions: ['cold']
+        },
+        {
+          id: 'coriander-fever-decoction',
+          title: 'Coriander Seed Fever Decoction',
+          description: 'Light herbal decoction traditionally used for mild fever support.',
+          category: 'Immunity',
+          difficulty: 'easy',
+          rating: 4.5,
+          prepTime: '12 minutes',
+          ingredients: ['1 tsp coriander seeds','1 cup water','Honey (optional)'],
+          instructions: ['Boil water and add coriander seeds','Simmer 7–8 minutes and strain','Sweeten lightly and sip warm'],
+          benefits: 'Hydrating and soothing during mild fever',
+          warnings: 'Not a replacement for professional care in high fever',
+          image: '🌿',
+          dosage: 'One cup as needed',
+          conditions: ['fever']
+        },
+        {
+          id: 'peppermint-steam-cold-relief',
+          title: 'Peppermint Steam for Cold Relief',
+          description: 'Steam inhalation with peppermint to ease cold congestion.',
+          category: 'Respiratory',
+          difficulty: 'easy',
+          rating: 4.6,
+          prepTime: '10 minutes',
+          ingredients: ['Hot water','Peppermint leaves or oil'],
+          instructions: ['Pour hot water into a bowl','Add peppermint and inhale steam safely','Keep face at a safe distance'],
+          benefits: 'Opens nasal passages and eases cold congestion',
+          warnings: 'Avoid burns; keep a safe distance from steam',
+          image: '🌬️',
+          dosage: '5–10 minutes',
+          conditions: ['cold']
+        }
+      ];
+
+      out.push(...specials);
       return out.slice(0, count);
     }
 
@@ -1284,13 +1468,14 @@
       const sortBy = document.getElementById('sortFilter').value;
       
       filteredRemedies = allRemedies.filter(remedy => {
+        const kw = Array.isArray(remedy.keywords) ? remedy.keywords : generateRemedyKeywords(remedy);
         const matchesSearch = remedy.title.toLowerCase().includes(query) ||
-                            remedy.description.toLowerCase().includes(query) ||
-                            remedy.ingredients.some(ingredient => ingredient.toLowerCase().includes(query)) ||
-                            remedy.benefits.toLowerCase().includes(query);
-        
+                              remedy.description.toLowerCase().includes(query) ||
+                              remedy.category.toLowerCase().includes(query) ||
+                              kw.some(k => k.includes(query)) ||
+                              remedy.ingredients.some(ingredient => ingredient.toLowerCase().includes(query)) ||
+                              String(remedy.benefits).toLowerCase().includes(query);
         const matchesCategory = category === '' || remedy.category === category;
-        
         return matchesSearch && matchesCategory;
       });
       
@@ -1355,8 +1540,15 @@
 
     // View remedy details
     function viewRemedyDetails(remedyId) {
-      const remedy = allRemedies.find(r => r.id === remedyId);
-      if (!remedy) return;
+      const norm = v => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+      let remedy = allRemedies.find(r => String(r.id) === String(remedyId));
+      if (!remedy) remedy = allRemedies.find(r => norm(r.id) === norm(remedyId));
+      if (!remedy) remedy = filteredRemedies.find(r => String(r.id) === String(remedyId));
+      if (!remedy) remedy = allRemedies.find(r => norm(r.title) === norm(remedyId));
+      if (!remedy) {
+        alert('Unable to load remedy details');
+        return;
+      }
 
       const modal = document.getElementById('remedyModal');
       const modalTitle = document.getElementById('modalTitle');

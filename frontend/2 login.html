@@ -498,6 +498,7 @@
     </div>
   </div>
 
+  <script src="api-config.js"></script>
   <script>
     // Toggle password visibility
     function togglePassword(fieldId) {
@@ -515,11 +516,11 @@
 
     // Social login handler
     function socialLogin(provider) {
-      showMessage(`Redirecting to ${provider} login...`, 'success');
-      // In a real app, this would integrate with OAuth providers
-      setTimeout(() => {
-        showMessage(`${provider} login not implemented in demo`, 'error');
-      }, 1000);
+      if (provider === 'google') {
+        googleLogin();
+      } else if (provider === 'facebook') {
+        facebookLogin();
+      }
     }
 
     // Show forgot password modal
@@ -557,6 +558,97 @@
           msg.classList.remove('show');
         }, 5000);
       }
+    }
+
+    function ensureScript(src, id) {
+      return new Promise((resolve, reject) => {
+        if (id && document.getElementById(id)) { resolve(); return; }
+        const s = document.createElement('script');
+        if (id) s.id = id;
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error('Script load failed'));
+        document.body.appendChild(s);
+      });
+    }
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch(e) { return null; }
+    }
+
+    function completeLogin(profile, provider) {
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      let username = profile.name || (profile.email ? profile.email.split('@')[0] : provider + '_user');
+      if (!users[username]) {
+        users[username] = {
+          password: '',
+          email: profile.email || '',
+          newsletter: false,
+          createdAt: new Date().toISOString(),
+          favorites: [],
+          profile: { provider: provider, picture: profile.picture || '' }
+        };
+      } else {
+        const u = users[username];
+        u.email = u.email || profile.email || '';
+        u.profile = u.profile || {};
+        u.profile.provider = provider;
+        if (profile.picture) u.profile.picture = profile.picture;
+      }
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('loggedInUser', username);
+      showMessage('Login successful! Redirecting to home page...', 'success');
+      setTimeout(() => { window.location.href = '3 home.html'; }, 1500);
+    }
+
+    function googleLogin() {
+      if (!window.API_CONFIG || !API_CONFIG.GOOGLE_CLIENT_ID) {
+        showMessage('Set Google client ID in api-config.js', 'error');
+        return;
+      }
+      ensureScript('https://accounts.google.com/gsi/client', 'gsi').then(() => {
+        window.google.accounts.id.initialize({
+          client_id: API_CONFIG.GOOGLE_CLIENT_ID,
+          callback: function(resp) {
+            const data = parseJwt(resp.credential) || {};
+            completeLogin({ name: data.name || 'Google User', email: data.email || '', picture: data.picture || '' }, 'google');
+          }
+        });
+        window.google.accounts.id.prompt();
+      }).catch(() => {
+        showMessage('Google login initialization failed', 'error');
+      });
+    }
+
+    function facebookLogin() {
+      if (!window.API_CONFIG || !API_CONFIG.FACEBOOK_APP_ID) {
+        showMessage('Set Facebook App ID in api-config.js', 'error');
+        return;
+      }
+      ensureScript('https://connect.facebook.net/en_US/sdk.js', 'fb-sdk').then(() => {
+        window.fbAsyncInit = function() {
+          FB.init({ appId: API_CONFIG.FACEBOOK_APP_ID, cookie: true, xfbml: false, version: 'v19.0' });
+          FB.login(function(response) {
+            if (response.authResponse) {
+              FB.api('/me', { fields: 'name,email,picture' }, function(user) {
+                const pic = user && user.picture && user.picture.data && user.picture.data.url ? user.picture.data.url : '';
+                completeLogin({ name: user.name || 'Facebook User', email: user.email || '', picture: pic }, 'facebook');
+              });
+            } else {
+              showMessage('Facebook login cancelled', 'error');
+            }
+          }, { scope: 'email,public_profile' });
+        };
+      }).catch(() => {
+        showMessage('Facebook SDK load failed', 'error');
+      });
     }
 
     // Enhanced login function
