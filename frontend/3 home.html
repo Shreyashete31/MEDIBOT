@@ -851,6 +851,18 @@
           </div>
         `;
       } else {
+        // Try to get remedy data from cached remedies
+        let cachedRemedies = [];
+        try {
+          const cached = localStorage.getItem('remediesData');
+          if (cached) {
+            cachedRemedies = JSON.parse(cached);
+          }
+        } catch (e) {
+          console.warn('Could not load cached remedies', e);
+        }
+
+        // Fallback hardcoded data for known remedies
         const favoriteData = {
           'turmeric-honey': { name: 'Turmeric & Honey', category: 'Respiratory' },
           'ginger-tea': { name: 'Ginger Tea', category: 'Digestion' },
@@ -863,9 +875,16 @@
         container.innerHTML = `
           <div class="favorites-grid">
             ${userFavorites.map(id => {
-              const remedy = favoriteData[id] || { name: id, category: 'General' };
+              // First try to find in cached remedies
+              let remedy = cachedRemedies.find(r => String(r.id) === String(id));
+              if (remedy) {
+                remedy = { name: remedy.name || remedy.title || id, category: remedy.category || 'General' };
+              } else {
+                // Fallback to hardcoded data or use ID
+                remedy = favoriteData[id] || { name: id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), category: 'General' };
+              }
               return `
-                <div class="favorite-item">
+                <div class="favorite-item" onclick="openFavoriteRemedy('${id}')" style="cursor: pointer;">
                   <div class="favorite-name">${remedy.name}</div>
                   <div class="favorite-category">${remedy.category}</div>
                 </div>
@@ -874,6 +893,11 @@
           </div>
         `;
       }
+    }
+
+    function openFavoriteRemedy(remedyId) {
+      // Navigate to remedies page with remedy ID to open it automatically
+      window.location.href = `remedies_enhanced.html?remedy=${encodeURIComponent(remedyId)}`;
     }
 
     function clearAllFavorites() {

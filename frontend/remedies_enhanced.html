@@ -1010,11 +1010,11 @@
     ];
 
     // Initialize app
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       initializeUser();
-      initializeRemedies();
       initializeSearch();
       initializeFilters();
+      await initializeRemedies();
       checkURLSearch();
     });
 
@@ -1043,6 +1043,7 @@
         const fetched = await fetchAllRemediesFromAPI(300);
         allRemedies = ensurePrepTimes(deduplicateRemedies(fetched.length ? fetched : remediesData));
       } catch (err) {
+        console.warn('Failed to fetch remedies from API, using local data:', err);
         allRemedies = ensurePrepTimes(deduplicateRemedies(remediesData));
       }
       if (allRemedies.length < 300) {
@@ -1052,6 +1053,9 @@
       filteredRemedies = [...allRemedies];
       renderRemedies(filteredRemedies);
       cacheRemediesForAssistant();
+      
+      // Return promise that resolves when remedies are ready
+      return Promise.resolve(allRemedies);
     }
 
     async function fetchAllRemediesFromAPI(targetTotal) {
@@ -1499,14 +1503,23 @@
       renderRemedies(filteredRemedies);
     }
 
-    // Check URL search parameter
+    // Check URL search parameter and remedy ID
     function checkURLSearch() {
       const urlParams = new URLSearchParams(window.location.search);
       const searchQuery = urlParams.get('search');
+      const remedyId = urlParams.get('remedy');
       
       if (searchQuery) {
         document.getElementById('remedySearch').value = searchQuery;
         applyFilters();
+      }
+      
+      // If remedy ID is provided, open it (remedies should be loaded by now)
+      if (remedyId) {
+        // Small delay to ensure rendering is complete
+        setTimeout(() => {
+          viewRemedyDetails(decodeURIComponent(remedyId));
+        }, 200);
       }
     }
 
@@ -1541,12 +1554,30 @@
     // View remedy details
     function viewRemedyDetails(remedyId) {
       const norm = v => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g,'-');
-      let remedy = allRemedies.find(r => String(r.id) === String(remedyId));
+      const decodedId = decodeURIComponent(remedyId);
+      
+      // Try multiple matching strategies
+      let remedy = allRemedies.find(r => String(r.id) === String(decodedId));
+      if (!remedy) remedy = allRemedies.find(r => String(r.id) === String(remedyId));
+      if (!remedy) remedy = allRemedies.find(r => norm(r.id) === norm(decodedId));
       if (!remedy) remedy = allRemedies.find(r => norm(r.id) === norm(remedyId));
+      if (!remedy) remedy = filteredRemedies.find(r => String(r.id) === String(decodedId));
       if (!remedy) remedy = filteredRemedies.find(r => String(r.id) === String(remedyId));
+      if (!remedy) remedy = allRemedies.find(r => norm(r.title) === norm(decodedId));
       if (!remedy) remedy = allRemedies.find(r => norm(r.title) === norm(remedyId));
+      
+      // Last resort: try partial match
       if (!remedy) {
-        alert('Unable to load remedy details');
+        const searchLower = decodedId.toLowerCase();
+        remedy = allRemedies.find(r => 
+          r.id.toLowerCase().includes(searchLower) || 
+          r.title.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      if (!remedy) {
+        console.error('Remedy not found:', remedyId, 'Available remedies:', allRemedies.map(r => r.id).slice(0, 10));
+        alert('Unable to load remedy details. Remedy ID: ' + decodedId);
         return;
       }
 
