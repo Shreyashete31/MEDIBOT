@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>About Us - HealthHub</title>
+  <meta name="description" content="Learn about HealthHub - Your comprehensive health and wellness companion">
+  <meta name="theme-color" content="#009688">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HealthHub">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="dark-mode.js"></script>
+  <style>
+    :root {
+      --primary-color: #3fb0e6;
+      --primary-dark: #2799d6;
+      --secondary-color: #70b977;
+      --accent-color: #f07a5a;
+      --text-primary: #2c3e50;
+      --text-secondary: #5d6d7e;
+      --background: #eaf8ff;
+      --surface: #ffffff;
+      --border-color: #d1e6f0;
+      --shadow: 0 2px 12px rgba(63, 176, 230, 0.14);
+      --shadow-hover: 0 4px 24px rgba(39, 153, 214, 0.2);
+      --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #56a962);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0f2ff 0%, #e0fff0 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .app-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 2rem 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .hero-icon i {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin: 0 0 2rem;
+    }
+
+    .content-section {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title i {
+      font-size: 1.5rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .feature-card {
+      background: var(--background);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--gradient-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .feature-icon i {
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .feature-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stat-card {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .team-section {
+      background: var(--background);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .team-member {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .member-avatar {
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .member-name {
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+    }
+
+    .member-role {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .contact-info {
+      background: var(--gradient-secondary);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .contact-info h3 {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      text-decoration: none;
+      color: white;
+      transition: background 0.3s ease;
+    }
+
+    .contact-link:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1rem;
+      }
+      
+      .hero-title {
+        font-size: 2rem;
+      }
+      
+      .content-section {
+        padding: 1.5rem;
+      }
+      
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="header-title">About Us</h1>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="hero-section">
+      <div class="hero-icon">
+        <i class="fas fa-heartbeat"></i>
+      </div>
+      <h1 class="hero-title">HealthHub</h1>
+      <p class="hero-subtitle">Your comprehensive health and wellness companion</p>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">
+        <i class="fas fa-bullseye"></i>
+        Our Mission
+      </h2>
+      <p>HealthHub is dedicated to empowering individuals with accessible, reliable health information and tools. We believe that everyone deserves access to quality healthcare guidance, whether it's for emergency first aid, managing common symptoms, or discovering natural remedies.</p>
+      
+      <p>Our mission is to bridge the gap between professional medical care and everyday health needs, providing users with accurate, easy-to-understand information that can help them make informed decisions about their health and well-being.</p>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">
+        <i class="fas fa-star"></i>
+        What We Offer
+      </h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-first-aid"></i>
+          </div>
+          <h3 class="feature-title">First Aid Guide</h3>
+          <p class="feature-description">Comprehensive first aid instructions for common emergencies and injuries, with step-by-step guidance.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-stethoscope"></i>
+          </div>
+          <h3 class="feature-title">Symptom Checker</h3>
+          <p class="feature-description">Detailed information about common symptoms, their causes, and when to seek professional help.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <h3 class="feature-title">Natural Remedies</h3>
+          <p class="feature-description">Evidence-based natural remedies and home treatments for various health conditions.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3 class="feature-title">AI Assistant</h3>
+          <p class="feature-description">Intelligent health assistant that provides personalized guidance and answers to your health questions.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-question-circle"></i>
+          </div>
+          <h3 class="feature-title">Health Quiz</h3>
+          <p class="feature-description">Interactive quizzes to test and improve your health knowledge with points and achievements.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-wifi"></i>
+          </div>
+          <h3 class="feature-title">Offline Access</h3>
+          <p class="feature-description">Full functionality even without internet connection, with automatic data synchronization.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">
+        <i class="fas fa-chart-bar"></i>
+        Our Impact
+      </h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">First Aid Guides</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Symptom Entries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Natural Remedies</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label">Quiz Questions</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <h2 class="section-title">
+        <i class="fas fa-users"></i>
+        Our Team
+      </h2>
+      <p>HealthHub is developed by a dedicated team of healthcare professionals, software engineers, and health enthusiasts who are passionate about making quality health information accessible to everyone.</p>
+      
+
+    <section class="content-section">
+      <h2 class="section-title">
+        <i class="fas fa-shield-alt"></i>
+        Our Commitment
+      </h2>
+      <p><strong>Accuracy:</strong> All information is reviewed by medical professionals and based on current medical guidelines and evidence-based practices.</p>
+      
+      <p><strong>Privacy:</strong> We prioritize your privacy and data security. All personal health information is stored locally on your device and never shared without your consent.</p>
+      
+      <p><strong>Accessibility:</strong> HealthHub is designed to be accessible to users of all abilities, with features like voice navigation, high contrast modes, and screen reader support.</p>
+      
+      <p><strong>Continuous Improvement:</strong> We regularly update our content and features based on user feedback and the latest medical research to ensure you always have access to the most current information.</p>
+    </section>
+
+    <section class="contact-info">
+      <h3>Get in Touch</h3>
+      <p>Have questions, suggestions, or feedback? We'd love to hear from you!</p>
+      <div class="contact-links">
+        <a href="#" class="contact-link" onclick="sendSupportEmail(); return false;">
+          <i class="fas fa-envelope"></i>
+          Email Us
+        </a>
+        <a href="chat.html" class="contact-link">
+          <i class="fas fa-comments"></i>
+          Live Chat
+        </a>
+        <a href="#" class="contact-link" onclick="sendIssueEmail(); return false;">
+          <i class="fas fa-bug"></i>
+          Report Issue
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {});
+    function sendSupportEmail() {
+      const subject = encodeURIComponent('Support Request - HealthHub');
+      const body = encodeURIComponent(`Hello,%0D%0A%0D%0AI have a question or need support.%0D%0A%0D%0APage: ${location.href}%0D%0AUser: ${localStorage.getItem('loggedInUser') || 'guest'}%0D%0ABrowser: ${navigator.userAgent}`);
+      window.location.href = `mailto:sheteshreya14@gmail.com?subject=${subject}&body=${body}`;
+    }
+    function sendIssueEmail() {
+      const subject = encodeURIComponent('Issue Report - HealthHub');
+      const body = encodeURIComponent(`Describe the issue:%0D%0A%0D%0ASteps to reproduce:%0D%0AExpected behavior:%0D%0AActual behavior:%0D%0A%0D%0APage: ${location.href}%0D%0AUser: ${localStorage.getItem('loggedInUser') || 'guest'}%0D%0ABrowser: ${navigator.userAgent}`);
+      window.location.href = `mailto:sheteshreya14@gmail.com?subject=${subject}&body=${body}`;
+    }
+  </script>
+</body>
+</html>

@@ -431,6 +431,10 @@
         <i class="fab fa-google"></i>
         Google
       </a>
+      <a href="#" class="social-btn" onclick="socialLogin('facebook')">
+        <i class="fab fa-facebook-f"></i>
+        Facebook
+      </a>
     </div>
 
     <div class="divider">
@@ -514,6 +518,8 @@
     function socialLogin(provider) {
       if (provider === 'google') {
         googleLogin();
+      } else if (provider === 'facebook') {
+        facebookLogin();
       }
     }
 
@@ -621,7 +627,29 @@
       });
     }
 
-    
+    function facebookLogin() {
+      if (!window.API_CONFIG || !API_CONFIG.FACEBOOK_APP_ID) {
+        showMessage('Set Facebook App ID in api-config.js', 'error');
+        return;
+      }
+      ensureScript('https://connect.facebook.net/en_US/sdk.js', 'fb-sdk').then(() => {
+        window.fbAsyncInit = function() {
+          FB.init({ appId: API_CONFIG.FACEBOOK_APP_ID, cookie: true, xfbml: false, version: 'v19.0' });
+          FB.login(function(response) {
+            if (response.authResponse) {
+              FB.api('/me', { fields: 'name,email,picture' }, function(user) {
+                const pic = user && user.picture && user.picture.data && user.picture.data.url ? user.picture.data.url : '';
+                completeLogin({ name: user.name || 'Facebook User', email: user.email || '', picture: pic }, 'facebook');
+              });
+            } else {
+              showMessage('Facebook login cancelled', 'error');
+            }
+          }, { scope: 'email,public_profile' });
+        };
+      }).catch(() => {
+        showMessage('Facebook SDK load failed', 'error');
+      });
+    }
 
     // Enhanced login function
     function login(event) {

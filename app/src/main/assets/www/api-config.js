@@ -1,10 +1,10 @@
 // API Configuration
-
- const API_CONFIG = {
+const API_CONFIG = {
   BASE_URL: 'http://localhost:3001/api',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
-  GOOGLE_CLIENT_ID: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com'
+  GOOGLE_CLIENT_ID: '',
+  FACEBOOK_APP_ID: ''
 };
 
 // Helper function to make API calls with error handling
