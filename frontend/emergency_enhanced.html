@@ -997,6 +997,7 @@
     let userProfile = null;
     let emergencyContacts = [];
     let currentLocation = null;
+    let currentAddress = '';
     let panicActive = false;
 
     // Initialize app
@@ -1144,6 +1145,16 @@
           
           updateLocationStatus('Location acquired', 'success');
           updateLocationDisplay();
+          if (typeof getMapsApiKey === 'function') {
+            const k = getMapsApiKey();
+            if (k && k.trim()) {
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=${encodeURIComponent(k.trim())}`;
+              fetch(url).then(r=>r.json()).then(d=>{
+                const addr = d && d.results && d.results[0] && d.results[0].formatted_address ? d.results[0].formatted_address : '';
+                if (addr) { currentAddress = addr; updateLocationDisplay(); }
+              }).catch(()=>{});
+            }
+          }
         },
         error => {
           updateLocationStatus('Location access denied', 'error');
@@ -1173,9 +1184,10 @@
     // Update location display
     function updateLocationDisplay() {
       if (currentLocation) {
+        const addr = currentAddress ? `<br>${currentAddress}` : '';
         document.getElementById('locationCoords').innerHTML = `
           Latitude: ${currentLocation.latitude.toFixed(6)}<br>
-          Longitude: ${currentLocation.longitude.toFixed(6)}
+          Longitude: ${currentLocation.longitude.toFixed(6)}${addr}
         `;
       }
     }
@@ -1188,7 +1200,7 @@
       }
       
       const mapLink = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
-      const shareText = `Emergency: My current location is ${mapLink}`;
+      const shareText = currentAddress ? `Emergency: My current location is ${currentAddress} (${mapLink})` : `Emergency: My current location is ${mapLink}`;
       
       if (navigator.share) {
         navigator.share({
@@ -1216,7 +1228,8 @@
         return;
       }
       
-      const locationText = `Emergency: My location is https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+      const mapLink = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+      const locationText = currentAddress ? `Emergency: My location is ${currentAddress} (${mapLink})` : `Emergency: My location is ${mapLink}`;
       
       // In a real app, this would send SMS/email to contacts
       alert(`Location would be sent to ${favoriteContacts.length} emergency contacts`);

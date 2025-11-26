@@ -4,7 +4,8 @@
   BASE_URL: 'http://localhost:3001/api',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
-  GOOGLE_CLIENT_ID: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com'
+  GOOGLE_CLIENT_ID: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com',
+  MAPS_API_KEY: ''
 };
 
 // Helper function to make API calls with error handling
@@ -85,9 +86,29 @@ function getOfflineSymptoms() {
 
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { API_CONFIG, apiCall };
+  module.exports = { API_CONFIG, apiCall, getMapsApiKey, setMapsApiKey };
 } else {
   window.API_CONFIG = API_CONFIG;
   window.apiCall = apiCall;
+  window.getMapsApiKey = getMapsApiKey;
+  window.setMapsApiKey = setMapsApiKey;
+}
+
+function getMapsApiKey() {
+  try {
+    const ls = localStorage.getItem('GOOGLE_MAPS_API_KEY');
+    if (ls && ls.trim()) return ls.trim();
+  } catch(e) {}
+  return (API_CONFIG && API_CONFIG.MAPS_API_KEY) ? API_CONFIG.MAPS_API_KEY : '';
+}
+
+function setMapsApiKey(k) {
+  try {
+    if (typeof k === 'string' && k.trim()) {
+      localStorage.setItem('GOOGLE_MAPS_API_KEY', k.trim());
+      return true;
+    }
+  } catch(e) {}
+  return false;
 }
 

@@ -575,19 +575,22 @@
   <script>
     // Dynamically load Google Maps with API key from localStorage
     (function loadMaps() {
-      const key = localStorage.getItem('GOOGLE_MAPS_API_KEY');
-      if (!key) {
+      let key = localStorage.getItem('GOOGLE_MAPS_API_KEY');
+      if ((!key || !key.trim()) && typeof getMapsApiKey === 'function') {
+        key = getMapsApiKey();
+      }
+      if (!key || !key.trim()) {
         document.getElementById('hospitalListContent').innerHTML = `
           <div class="error-state">
             <div class="error-icon"><i class="fas fa-key"></i></div>
             <h3>Google Maps API Key Required</h3>
-            <p>Please set your API key via the console: localStorage.setItem('GOOGLE_MAPS_API_KEY', 'YOUR_KEY')</p>
+            <p>Please set your API key via the console: setMapsApiKey('YOUR_KEY')</p>
           </div>
         `;
         return;
       }
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=places&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key.trim())}&libraries=places&callback=initMap`;
       script.async = true;
       script.defer = true;
       script.onerror = function() {
