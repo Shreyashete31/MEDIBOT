@@ -437,6 +437,145 @@
       }
     }
 
+    /* History Modal */
+    .history-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .history-modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .history-modal-content {
+      background: var(--surface);
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: modalSlide 0.3s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .history-modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-modal-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .history-modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .history-modal-close:hover {
+      background: var(--border-color);
+    }
+
+    .history-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .history-item {
+      background: var(--background);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .history-item:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary-color);
+    }
+
+    .history-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .history-item-preview {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .history-item:hover .history-item-preview {
+      color: rgba(255,255,255,0.9);
+    }
+
+    .history-item-time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .history-item:hover .history-item-time {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .history-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .history-empty i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
     /* No dark theme per design requirements */
   </style>
 </head>
@@ -518,6 +657,23 @@
       <button class="send-btn" id="sendBtn" onclick="sendMessage()">
         <i class="fas fa-paper-plane"></i>
       </button>
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div class="history-modal" id="historyModal">
+    <div class="history-modal-content">
+      <div class="history-modal-header">
+        <h2 class="history-modal-title">
+          <i class="fas fa-history"></i> Chat History
+        </h2>
+        <button class="history-modal-close" onclick="closeHistoryModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="history-modal-body" id="historyModalBody">
+        <!-- History items will be populated here -->
+      </div>
     </div>
   </div>
 
@@ -785,6 +941,9 @@
       // Show typing indicator
       showTypingIndicator();
 
+      let botResponse = '';
+      const timestamp = new Date().toISOString();
+
       try {
         // Send message to backend
         const data = await apiCall('/chat/send', {
@@ -800,20 +959,41 @@
 
         if (data.success) {
           // Support both snake_case and camelCase from backend
-          const botText = data.data.bot_response || data.data.botResponse || '';
+          botResponse = data.data.bot_response || data.data.botResponse || '';
           // Add bot response to chat
-          addMessageToChat(botText, 'bot');
+          addMessageToChat(botResponse, 'bot');
           
           // Update chat history
-          chatHistory.push(data.data);
+          const chatEntry = {
+            user_message: message,
+            bot_response: botResponse,
+            timestamp: data.data.timestamp || data.data.created_at || timestamp,
+            userId: currentUser
+          };
+          chatHistory.push(chatEntry);
+          
+          // Save to localStorage
+          saveChatHistoryToLocal();
           
           // Speak the response if speech is enabled
           if (speechEnabled && speechSynthesis) {
-            speakText(botText);
+            speakText(botResponse);
           }
           document.getElementById('sendBtn').disabled = false;
         } else {
-          addMessageToChat('Sorry, I encountered an error. Please try again.', 'bot');
+          botResponse = 'Sorry, I encountered an error. Please try again.';
+          addMessageToChat(botResponse, 'bot');
+          
+          // Save even error messages to history
+          const chatEntry = {
+            user_message: message,
+            bot_response: botResponse,
+            timestamp: timestamp,
+            userId: currentUser
+          };
+          chatHistory.push(chatEntry);
+          saveChatHistoryToLocal();
+          
           document.getElementById('sendBtn').disabled = false;
         }
       } catch (error) {
@@ -821,8 +1001,19 @@
         hideTypingIndicator();
         addMessageToChat("Connection issue detected. Showing offline guidance.", 'bot');
         // Offline fallback AI response
-        const fallback = offlineAIResponse(message);
-        addMessageToChat(fallback, 'bot');
+        botResponse = offlineAIResponse(message);
+        addMessageToChat(botResponse, 'bot');
+        
+        // Save offline conversation to history
+        const chatEntry = {
+          user_message: message,
+          bot_response: botResponse,
+          timestamp: timestamp,
+          userId: currentUser
+        };
+        chatHistory.push(chatEntry);
+        saveChatHistoryToLocal();
+        
         document.getElementById('sendBtn').disabled = false;
       }
     }
@@ -1045,6 +1236,42 @@
       speechSynthesis.speak(utterance);
     }
 
+    // Save chat history to localStorage
+    function saveChatHistoryToLocal() {
+      try {
+        // Save the entire chatHistory array
+        const toSave = chatHistory.map(entry => ({
+          user_message: entry.user_message || entry.message || '',
+          bot_response: entry.bot_response || entry.botResponse || '',
+          timestamp: entry.timestamp || entry.created_at || new Date().toISOString(),
+          userId: entry.userId || currentUser
+        }));
+        
+        // Remove duplicates based on timestamp and message content
+        const unique = [];
+        const seen = new Set();
+        toSave.forEach(entry => {
+          const key = `${entry.timestamp}_${entry.user_message}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(entry);
+          }
+        });
+        
+        // Sort by timestamp (newest first) and keep only last 100 entries
+        unique.sort((a, b) => {
+          const timeA = new Date(a.timestamp || 0).getTime();
+          const timeB = new Date(b.timestamp || 0).getTime();
+          return timeB - timeA;
+        });
+        
+        localStorage.setItem('chatHistory', JSON.stringify(unique.slice(0, 100)));
+        console.log('Saved chat history:', unique.length, 'entries');
+      } catch (error) {
+        console.error('Error saving chat history:', error);
+      }
+    }
+
     // Clear chat
     async function clearChat() {
       if (confirm('Are you sure you want to clear all chat history?')) {
@@ -1059,9 +1286,10 @@
             })
           });
 
-          if (response.ok) {
+          if (response.ok || true) { // Also clear locally even if API fails
             // Clear local chat history
             chatHistory = [];
+            localStorage.setItem('chatHistory', JSON.stringify([]));
             
             // Clear chat display
             const messagesContainer = document.getElementById('chatMessages');
@@ -1073,18 +1301,259 @@
             if (welcomeMessage) {
               welcomeMessage.style.display = 'block';
             }
+            
+            // Close history modal if open
+            closeHistoryModal();
           }
         } catch (error) {
           console.error('Error clearing chat:', error);
-          alert('Failed to clear chat history. Please try again.');
+          // Clear locally anyway
+          chatHistory = [];
+          localStorage.setItem('chatHistory', JSON.stringify([]));
+          const messagesContainer = document.getElementById('chatMessages');
+          const existingMessages = messagesContainer.querySelectorAll('.message');
+          existingMessages.forEach(msg => msg.remove());
+          const welcomeMessage = document.getElementById('welcomeMessage');
+          if (welcomeMessage) {
+            welcomeMessage.style.display = 'block';
+          }
+          closeHistoryModal();
         }
       }
     }
 
-    // Toggle history (placeholder for future implementation)
+    // Toggle history modal
     function toggleHistory() {
-      alert('Chat history feature coming soon!');
+      const modal = document.getElementById('historyModal');
+      if (modal.classList.contains('show')) {
+        closeHistoryModal();
+      } else {
+        showHistoryModal();
+      }
     }
+
+    // Show history modal
+    async function showHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      const modalBody = document.getElementById('historyModalBody');
+      
+      // Show loading state
+      modalBody.innerHTML = `
+        <div class="history-empty">
+          <i class="fas fa-spinner fa-spin"></i>
+          <h3>Loading History...</h3>
+        </div>
+      `;
+      modal.classList.add('show');
+      
+      // Load all chat history
+      try {
+        const history = await loadAllChatHistory();
+        console.log('History loaded for modal:', history.length, 'entries');
+        
+        if (history.length === 0) {
+          modalBody.innerHTML = `
+            <div class="history-empty">
+              <i class="fas fa-inbox"></i>
+              <h3>No Chat History</h3>
+              <p>Start a conversation to see your chat history here.</p>
+            </div>
+          `;
+        } else {
+          // Group history by date
+          const grouped = groupHistoryByDate(history);
+          modalBody.innerHTML = Object.keys(grouped).map(date => `
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="margin: 0 0 0.75rem; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">
+                ${date}
+              </h4>
+              ${grouped[date].map((item, index) => {
+                const time = new Date(item.timestamp || item.created_at || Date.now());
+                const timeString = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const preview = (item.user_message || item.message || '').substring(0, 100);
+                const uniqueKey = `${item.timestamp || item.created_at}_${index}`;
+                return `
+                  <div class="history-item" onclick="loadHistoryConversation('${uniqueKey}')">
+                    <div class="history-item-header">
+                      <div class="history-item-time">${timeString}</div>
+                    </div>
+                    <p class="history-item-preview">${escapeHtml(preview)}${preview.length >= 100 ? '...' : ''}</p>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error loading history for modal:', error);
+        modalBody.innerHTML = `
+          <div class="history-empty">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error Loading History</h3>
+            <p>Please try again later.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Close history modal
+    function closeHistoryModal() {
+      const modal = document.getElementById('historyModal');
+      modal.classList.remove('show');
+    }
+
+    // Load all chat history
+    async function loadAllChatHistory() {
+      let history = [];
+      
+      try {
+        // Try to load from API first
+        const data = await apiCall(`/chat/history?userId=${currentUser}&limit=100`);
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          history = data.data;
+          // Merge with local storage
+          const local = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+          history = mergeHistory(history, local);
+        }
+      } catch (error) {
+        console.log('API not available, using local storage');
+      }
+      
+      // Fallback to localStorage if API didn't return data
+      if (history.length === 0) {
+        try {
+          const local = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+          history = Array.isArray(local) ? local : [];
+          console.log('Loaded from localStorage:', history.length, 'entries');
+        } catch (e) {
+          console.error('Error loading from localStorage:', e);
+          history = [];
+        }
+      }
+      
+      return history;
+    }
+
+    // Merge API and local history, removing duplicates
+    function mergeHistory(apiHistory, localHistory) {
+      const merged = [...apiHistory];
+      const seen = new Set();
+      
+      apiHistory.forEach(entry => {
+        const key = `${entry.timestamp || entry.created_at}_${entry.user_message || entry.message}`;
+        seen.add(key);
+      });
+      
+      localHistory.forEach(entry => {
+        const key = `${entry.timestamp || entry.created_at}_${entry.user_message || entry.message}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          merged.push(entry);
+        }
+      });
+      
+      // Sort by timestamp (newest first)
+      merged.sort((a, b) => {
+        const timeA = new Date(a.timestamp || a.created_at || 0).getTime();
+        const timeB = new Date(b.timestamp || b.created_at || 0).getTime();
+        return timeB - timeA;
+      });
+      
+      return merged;
+    }
+
+    // Group history by date
+    function groupHistoryByDate(history) {
+      const grouped = {};
+      history.forEach(item => {
+        const date = new Date(item.timestamp || item.created_at || Date.now());
+        const dateKey = date.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        if (!grouped[dateKey]) {
+          grouped[dateKey] = [];
+        }
+        grouped[dateKey].push(item);
+      });
+      
+      // Sort each group by time (newest first)
+      Object.keys(grouped).forEach(date => {
+        grouped[date].sort((a, b) => {
+          const timeA = new Date(a.timestamp || a.created_at || 0);
+          const timeB = new Date(b.timestamp || b.created_at || 0);
+          return timeB - timeA;
+        });
+      });
+      
+      return grouped;
+    }
+
+    // Load a specific conversation from history
+    async function loadHistoryConversation(uniqueKey) {
+      try {
+        // Load all history to find the conversation
+        const allHistory = await loadAllChatHistory();
+        const [timestamp] = uniqueKey.split('_');
+        
+        // Find conversation by timestamp
+        const conversation = allHistory.find(h => 
+          (h.timestamp || h.created_at) === timestamp || 
+          String(h.timestamp || h.created_at).includes(timestamp)
+        );
+        
+        if (conversation) {
+          // Load the conversation into the chat
+          chatHistory = [conversation];
+          renderChatHistory();
+          closeHistoryModal();
+          scrollToBottom();
+        } else {
+          // Try to find in current chatHistory array
+          const foundInCurrent = chatHistory.find(h => 
+            (h.timestamp || h.created_at) === timestamp ||
+            String(h.timestamp || h.created_at).includes(timestamp)
+          );
+          
+          if (foundInCurrent) {
+            chatHistory = [foundInCurrent];
+            renderChatHistory();
+            closeHistoryModal();
+            scrollToBottom();
+          } else {
+            alert('Could not load this conversation. It may have been deleted.');
+          }
+        }
+      } catch (error) {
+        console.error('Error loading conversation:', error);
+        alert('Error loading conversation. Please try again.');
+      }
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('historyModal');
+      if (e.target === modal) {
+        closeHistoryModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeHistoryModal();
+      }
+    });
 
     // Navigation
     function goBack() {
