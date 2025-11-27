@@ -12,6 +12,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="dark-mode.js"></script>
   <style>
     :root {
       --primary-color: #25b2a5;
@@ -529,6 +530,10 @@
         <i class="fas fa-crosshairs"></i>
         My Location
       </button>
+      <button class="location-btn" onclick="enterAddressHospitals()">
+        <i class="fas fa-home"></i>
+        Use Address
+      </button>
     </div>
 
     <!-- Content Container -->
@@ -571,6 +576,7 @@
 
   <!-- Google Maps API will be loaded dynamically with key from localStorage -->
 
+  <script src="api-config.js"></script>
   <script src="assets/db.js"></script>
   <script>
     // Dynamically load Google Maps with API key from localStorage
@@ -705,7 +711,8 @@
         },
         error => {
           console.error('Geolocation error:', error);
-          updateLocationStatus('Location access denied', 'error');
+          const msg = (error && error.code === 1) ? 'Location access denied' : (error && error.code === 2) ? 'Location unavailable' : 'Location request timed out';
+          updateLocationStatus(msg, 'error');
           
           // Use default location
           userLocation = { lat: 40.7128, lng: -74.0060 };
@@ -718,6 +725,33 @@
           maximumAge: 300000
         }
       );
+    }
+
+    // Manual address entry for hospitals page
+    function enterAddressHospitals() {
+      const addr = prompt('Enter address/landmark to search nearby hospitals:');
+      if (!addr || !addr.trim()) return;
+      geocodeToUserLocation(addr.trim());
+    }
+
+    function geocodeToUserLocation(address) {
+      if (typeof getMapsApiKey !== 'function') { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      const k = getMapsApiKey();
+      if (!k || !k.trim()) { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      updateLocationStatus('Resolving address...', 'loading');
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${encodeURIComponent(k.trim())}`;
+      fetch(url).then(r=>r.json()).then(d=>{
+        const res = d && d.results && d.results[0];
+        if (!res) { updateLocationStatus('Address not found. Try a more specific query.', 'error'); return; }
+        const loc = res.geometry && res.geometry.location;
+        if (!loc) { updateLocationStatus('Address not found. Try again.', 'error'); return; }
+        userLocation = { lat: loc.lat, lng: loc.lng };
+        updateLocationStatus('Location set from address', 'success');
+        centerMapOnUser();
+        findNearbyHospitals();
+      }).catch(()=>{
+        updateLocationStatus('Geocoding failed. Check internet/API key.', 'error');
+      });
     }
 
     // Update location status
@@ -763,9 +797,8 @@
 
       const request = {
         location: userLocation,
-        radius: 10000, // 10km radius
-        type: ['hospital', 'health'],
-        keyword: 'hospital medical emergency'
+        radius: 5000,
+        type: ['hospital']
       };
 
       if (window.google && placesService) {

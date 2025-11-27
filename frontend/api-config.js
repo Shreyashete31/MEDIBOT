@@ -4,8 +4,8 @@
   BASE_URL: 'http://localhost:3001/api',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
-  GOOGLE_CLIENT_ID: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com',
-  MAPS_API_KEY: ''
+  GOOGLE_CLIENT_ID: '455059237598-3m7hau4maupqe57gbpa3tkk8t512m541.apps.googleusercontent.com',
+  MAPS_API_KEY: 'AIzaSyB8VoJZmeh79TYEFM4wcUUdOsU-ltz_UM0'
 };
 
 // Helper function to make API calls with error handling
