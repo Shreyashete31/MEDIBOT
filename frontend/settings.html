@@ -11,7 +11,8 @@
   <meta name="apple-mobile-web-app-title" content="HealthHub">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
   <script src="dark-mode.js"></script>
   <style>
     :root {
@@ -200,6 +201,7 @@
       background: #ddd;
       outline: none;
       -webkit-appearance: none;
+      appearance: none;
     }
 
     .range-control::-webkit-slider-thumb {
@@ -867,6 +869,16 @@
       if (!toggle) return;
       toggle.classList.toggle('active');
       toggle.setAttribute('aria-checked', toggle.classList.contains('active'));
+      if (toggle.classList.contains('active')) {
+        if ('Notification' in window) {
+          try {
+            Notification.requestPermission().then(function(p){
+              if (p !== 'granted') { showNotification('Notifications blocked by browser', 'error'); }
+              else { showNotification('Notifications enabled', 'success'); }
+            });
+          } catch(e) {}
+        }
+      }
       debounceSave();
     }
 
@@ -924,3 +936,84 @@
       root.style.setProperty('--animation-factor', factor);
       debounceSave();
     }
+    function showNotification(message, type) {
+      const el = document.getElementById('notification');
+      if (!el) return;
+      el.className = 'notification ' + (type === 'error' ? 'error' : 'success');
+      el.textContent = message;
+      el.style.display = 'block';
+      clearTimeout(el._hideTimer);
+      el._hideTimer = setTimeout(function(){ el.style.display = 'none'; }, 2500);
+    }
+    function exportData() {
+      try {
+        var keys = ['appSettings','users','remediesData','firstAidData','symptomsData','readFirstAid'];
+        var payload = {};
+        keys.forEach(function(k){
+          try { payload[k] = JSON.parse(localStorage.getItem(k) || 'null'); }
+          catch(e){ payload[k] = null; }
+        });
+        var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'healthhub-export.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showNotification('Data exported successfully','success');
+      } catch(e) {
+        showNotification('Export failed','error');
+      }
+    }
+    function importData() {
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json,application/json';
+      input.onchange = function() {
+        var file = input.files && input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function() {
+          try {
+            var data = JSON.parse(reader.result || '{}');
+            Object.keys(data || {}).forEach(function(k){
+              try { localStorage.setItem(k, JSON.stringify(data[k])); } catch(e){}
+            });
+            showNotification('Data imported','success');
+            loadSettings();
+          } catch(e) {
+            showNotification('Import failed','error');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+    function resetSettings() {
+      if (!confirm('Reset settings to defaults?')) return;
+      try {
+        localStorage.removeItem('appSettings');
+        var sysDark = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'true' : 'false';
+        try { localStorage.setItem('darkMode', sysDark); } catch(e){}
+        if (typeof setDarkMode === 'function') setDarkMode(sysDark === 'true');
+        selectTheme('auto');
+        showNotification('Settings reset','success');
+        loadSettings();
+      } catch(e) {
+        showNotification('Reset failed','error');
+      }
+    }
+    function clearAllData() {
+      if (!confirm('Clear all local data? This cannot be undone.')) return;
+      try {
+        localStorage.clear();
+        showNotification('All local data cleared','success');
+        loadSettings();
+      } catch(e) {
+        showNotification('Clear failed','error');
+      }
+    }
+  </script>
+</body>
+</html>

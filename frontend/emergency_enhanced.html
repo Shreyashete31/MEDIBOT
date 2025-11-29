@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Emergency Tools - HealthHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="dark-mode.js"></script>
   <style>
     :root {
       --primary-color: #b53a3a;
@@ -913,6 +914,10 @@
             <i class="fas fa-map"></i>
             Open Maps
           </button>
+          <button class="location-btn secondary" onclick="enterAddress()">
+            <i class="fas fa-home"></i>
+            Enter Address
+          </button>
         </div>
       </div>
     </section>
@@ -991,12 +996,14 @@
     </div>
   </div>
 
+  <script src="api-config.js"></script>
   <script>
     // Global variables
     let currentUser = null;
     let userProfile = null;
     let emergencyContacts = [];
     let currentLocation = null;
+    let currentAddress = '';
     let panicActive = false;
 
     // Initialize app
@@ -1004,6 +1011,7 @@
       initializeUser();
       initializeContacts();
       initializeLocation();
+      checkGeolocationPermission();
       initializePanicButton();
     });
 
@@ -1144,9 +1152,21 @@
           
           updateLocationStatus('Location acquired', 'success');
           updateLocationDisplay();
+          saveLastLocation();
+          if (typeof getMapsApiKey === 'function') {
+            const k = getMapsApiKey();
+            if (k && k.trim()) {
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=${encodeURIComponent(k.trim())}`;
+              fetch(url).then(r=>r.json()).then(d=>{
+                const addr = d && d.results && d.results[0] && d.results[0].formatted_address ? d.results[0].formatted_address : '';
+                if (addr) { currentAddress = addr; updateLocationDisplay(); saveLastLocation(); }
+              }).catch(()=>{});
+            }
+          }
         },
         error => {
-          updateLocationStatus('Location access denied', 'error');
+          const msg = (error && error.code === 1) ? 'Location access denied' : (error && error.code === 2) ? 'Location unavailable' : 'Location request timed out';
+          updateLocationStatus(msg, 'error');
         },
         {
           enableHighAccuracy: true,
@@ -1154,6 +1174,48 @@
           maximumAge: 300000
         }
       );
+    }
+    
+    function checkGeolocationPermission() {
+      if (!navigator.permissions || !navigator.permissions.query) return;
+      try {
+        navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+          if (result.state === 'denied') {
+            updateLocationStatus('Location access denied. Use the lock icon (Site settings) to allow location.', 'error');
+          } else if (result.state === 'prompt') {
+            updateLocationStatus('Click Allow when prompted for location.', 'loading');
+          }
+          result.onchange = function() {
+            if (this.state === 'granted') getCurrentLocation();
+          };
+        }).catch(function(){});
+      } catch(e) {}
+    }
+
+    function enterAddress() {
+      const addr = prompt('Enter address or landmark to use as your location:');
+      if (!addr || !addr.trim()) return;
+      geocodeAddress(addr.trim());
+    }
+
+    function geocodeAddress(address) {
+      if (typeof getMapsApiKey !== 'function') { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      const k = getMapsApiKey();
+      if (!k || !k.trim()) { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      updateLocationStatus('Resolving address...', 'loading');
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${encodeURIComponent(k.trim())}`;
+      fetch(url).then(r=>r.json()).then(d=>{
+        const res = d && d.results && d.results[0];
+        if (!res) { updateLocationStatus('Address not found. Try a more specific query.', 'error'); return; }
+        const loc = res.geometry && res.geometry.location;
+        if (!loc) { updateLocationStatus('Address not found. Try again.', 'error'); return; }
+        currentLocation = { latitude: loc.lat, longitude: loc.lng, accuracy: 0 };
+        currentAddress = res.formatted_address || address;
+        updateLocationStatus('Location set from address', 'success');
+        updateLocationDisplay();
+      }).catch(()=>{
+        updateLocationStatus('Geocoding failed. Check internet/API key.', 'error');
+      });
     }
 
     // Update location status
@@ -1173,53 +1235,52 @@
     // Update location display
     function updateLocationDisplay() {
       if (currentLocation) {
+        const ts = new Date().toLocaleString();
+        const addr = currentAddress ? `<br>${currentAddress}` : '';
         document.getElementById('locationCoords').innerHTML = `
           Latitude: ${currentLocation.latitude.toFixed(6)}<br>
-          Longitude: ${currentLocation.longitude.toFixed(6)}
+          Longitude: ${currentLocation.longitude.toFixed(6)}${addr}<br>
+          Updated: ${ts}
         `;
       }
     }
 
     // Share location
     function shareLocation() {
-      if (!currentLocation) {
-        getCurrentLocation();
-        return;
-      }
-      
-      const mapLink = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
-      const shareText = `Emergency: My current location is ${mapLink}`;
-      
-      if (navigator.share) {
-        navigator.share({
-          title: 'Emergency Location',
-          text: shareText,
-          url: mapLink
-        });
-      } else {
-        navigator.clipboard.writeText(shareText).then(() => {
-          alert('Location copied to clipboard!');
-        });
-      }
+      sendLocation();
     }
 
     // Send location to emergency contacts
     function sendLocation() {
+      // Use current location, or fall back to last saved location
       if (!currentLocation) {
-        getCurrentLocation();
-        return;
+        try {
+          const last = JSON.parse(localStorage.getItem('lastLocation') || 'null');
+          if (last && last.latitude && last.longitude) {
+            currentLocation = { latitude: last.latitude, longitude: last.longitude, accuracy: last.accuracy || null };
+            currentAddress = last.address || currentAddress;
+          }
+        } catch(e) {}
       }
-      
-      const favoriteContacts = emergencyContacts.filter(c => c.favorite);
-      if (favoriteContacts.length === 0) {
-        alert('Please add emergency contacts first');
-        return;
+      if (!currentLocation) { updateLocationStatus('No location available. Try Get Location or Enter Address.', 'error'); return; }
+
+      const targets = (emergencyContacts.filter(c => c.favorite).length ? emergencyContacts.filter(c => c.favorite) : emergencyContacts);
+      if (targets.length === 0) { alert('Please add emergency contacts first'); return; }
+
+      const mapLink = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+      const name = currentUser || 'A user';
+      const locationText = currentAddress ? `Emergency! ${name} has sent their current location: ${currentAddress} (${mapLink}).` : `Emergency! ${name} has sent their current location: ${mapLink}.`;
+      if (navigator.share) { try { navigator.share({ title: 'Emergency Alert', text: locationText, url: mapLink }); } catch(e) {} }
+      targets.forEach((c, idx) => {
+        const phone = String(c.phone || '').replace(/\s+/g,'');
+        if (!phone) return;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const smsUrl = isIOS ? `sms:${phone}&body=${encodeURIComponent(locationText)}` : `sms:${phone}?body=${encodeURIComponent(locationText)}`;
+        setTimeout(() => { try { window.location.href = smsUrl; } catch(e) {} }, idx * 250);
+      });
+      if (!navigator.share && targets.length === 0) {
+        navigator.clipboard.writeText(locationText).then(() => { alert('Location text copied. No favorite contacts found.'); });
       }
-      
-      const locationText = `Emergency: My location is https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
-      
-      // In a real app, this would send SMS/email to contacts
-      alert(`Location would be sent to ${favoriteContacts.length} emergency contacts`);
     }
 
     // Open maps
@@ -1231,6 +1292,20 @@
       
       const mapUrl = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
       window.open(mapUrl, '_blank');
+    }
+
+    function saveLastLocation() {
+      try {
+        const data = {
+          user: currentUser || '',
+          latitude: currentLocation?.latitude || null,
+          longitude: currentLocation?.longitude || null,
+          accuracy: currentLocation?.accuracy || null,
+          address: currentAddress || '',
+          timestamp: Date.now()
+        };
+        localStorage.setItem('lastLocation', JSON.stringify(data));
+      } catch(e) {}
     }
 
     // Initialize panic button
@@ -1257,15 +1332,13 @@
       const panicButton = document.getElementById('panicButton');
       
       panicButton.classList.add('active');
-      panicButton.innerHTML = '<i class="fas fa-stop"></i> DEACTIVATING PANIC...';
-      
-      // Simulate panic alert
+      panicButton.innerHTML = '<i class="fas fa-stop"></i> SENDING EMERGENCY ALERT...';
+      sendLocation();
       setTimeout(() => {
-        alert('Panic alert activated! Location shared with emergency contacts.');
         panicActive = false;
         panicButton.classList.remove('active');
         panicButton.innerHTML = '<i class="fas fa-bell"></i> EMERGENCY PANIC ALERT';
-      }, 2000);
+      }, 1500);
     }
 
     // Deactivate panic

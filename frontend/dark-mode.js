@@ -47,6 +47,7 @@ class DarkModeManager {
 
     const runApply = () => {
       this.applyDarkMode();
+      this.applyAppSettings();
       this.updateToggleButtons();
 
       // Attach observer after body exists
@@ -122,6 +123,27 @@ class DarkModeManager {
     }
   }
 
+  applyAppSettings() {
+    if (typeof document === 'undefined') return;
+    let s = {};
+    try { s = JSON.parse(localStorage.getItem('appSettings') || '{}'); } catch(e) { s = {}; }
+    const root = document.documentElement;
+    const body = document.body;
+    if (!root || !body) return;
+    if (s.fontSize) { root.style.fontSize = String(s.fontSize) + 'px'; }
+    if (s.highContrast) { body.classList.add('high-contrast'); } else { body.classList.remove('high-contrast'); }
+    if (s.screenReader) { body.classList.add('screen-reader-optimized'); } else { body.classList.remove('screen-reader-optimized'); }
+    const speed = s.animationSpeed || 'normal';
+    if (speed === 'none') { body.classList.add('reduce-motion'); } else { body.classList.remove('reduce-motion'); }
+    try {
+      const sysReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (speed === 'normal' && sysReduce) { body.classList.add('reduce-motion'); }
+    } catch(e) {}
+    let factor = '1';
+    if (speed === 'slow') factor = '1.5'; else if (speed === 'fast') factor = '0.75';
+    try { root.style.setProperty('--animation-factor', factor); } catch(e) {}
+  }
+
   updateThemeColor() {
     if (typeof document === 'undefined') return;
     let meta = document.querySelector('meta[name="theme-color"]');
@@ -184,15 +206,37 @@ class DarkModeManager {
     if (document.getElementById(this.styleId)) return; // already injected
 
     const darkModeStyles = `
-      .dark-mode-toggle { /* minimal layout - keep in sync with app styles */ 
+      .dark-mode-toggle {
         background: rgba(255,255,255,0.1);
         border: none; color: white; padding: 0.5rem; border-radius: 50%;
         cursor: pointer; font-size: 1.1rem; display:flex; align-items:center; justify-content:center;
         width:40px;height:40px; transition:transform .12s ease;
       }
       .dark-mode-toggle:hover { transform:scale(1.05); }
-      .dark-mode { --text-primary: #fff; --background:#121212; }
-      /* ... keep existing dark-mode selectors from previous file ... */
+      :root { --animation-factor: 1; }
+      .reduce-motion * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .dark-mode {
+        --text-primary: #e7e9ea;
+        --text-secondary: #b0b8c0;
+        --background: #0f1215;
+        --surface: #1a1f24;
+        --border-color: #2a333a;
+        --primary-color: #66c1ff;
+        --primary-dark: #4aa7e6;
+        --secondary-color: #85d39a;
+        --accent-color: #ff9b80;
+        --success-color: #4caf50;
+        --error-color: #f44336;
+        --warning-color: #ffb74d;
+        --shadow: 0 2px 12px rgba(0,0,0,0.6);
+        --shadow-hover: 0 4px 24px rgba(0,0,0,0.8);
+        --gradient-primary: linear-gradient(135deg, #1f7bb6, #165f8c);
+        --gradient-secondary: linear-gradient(135deg, #2f7a4a, #25663e);
+      }
+      body.dark-mode { background: linear-gradient(135deg,#0b0e11 0%, #101413 100%) !important; }
+      .dark-mode .app-header { box-shadow: var(--shadow-hover); }
+      .dark-mode .card, .dark-mode .settings-section, .dark-mode .action-card, .dark-mode .search-section { background: var(--surface); color: var(--text-primary); }
+      .high-contrast.dark-mode { --border-color: #90caf9; }
     `;
 
     try {
@@ -263,5 +307,25 @@ document.addEventListener('click', function (e) {
   } catch (e) {
     // ignore delegation errors in restricted environments
   }
+});
+
+document.addEventListener('keydown', function(e) {
+  try {
+    if (e.altKey && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+      const k = String(e.key || '').toLowerCase();
+      if (k === 's') { e.preventDefault(); navigateTo('settings'); }
+      else if (k === 'a') { e.preventDefault(); navigateTo('about'); }
+      else if (k === 'h') { e.preventDefault(); navigateTo('3 home'); }
+      else if (k === 'p') { e.preventDefault(); navigateTo('profile'); }
+    }
+    if (e.key === '/' && !e.altKey && !e.ctrlKey && !e.metaKey) {
+      const active = document.activeElement;
+      const isTextField = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+      if (!isTextField) {
+        const input = document.querySelector('input[placeholder*="search" i], .search-container input, #firstAidSearch');
+        if (input) { e.preventDefault(); input.focus(); try { input.select(); } catch(_) {} }
+      }
+    }
+  } catch (_) {}
 });
 

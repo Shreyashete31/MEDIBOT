@@ -11,9 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="HealthHub">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="accessibility.js"></script>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
   <script src="dark-mode.js"></script>
+  <script src="accessibility.js"></script>
   <script src="offline-manager.js"></script>
   <style>
     :root {
@@ -746,6 +747,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       initializeUser();
       initializeDailyTip();
+      notifyDailyTipIfSubscribed();
+      initVoiceNavigation();
       initializeFavorites();
       initializeStats();
       initializeSearch();
@@ -801,6 +804,83 @@
       const tipIndex = today % tips.length;
       
       document.getElementById('dailyTip').textContent = tips[tipIndex];
+      window._healthhub_tips = tips;
+    }
+
+    function notifyDailyTipIfSubscribed() {
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      const u = users[currentUser];
+      if (!u || !u.newsletter) return;
+      const settings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+      const allowNotif = settings.notifications !== false;
+      const dateKey = new Date().toISOString().slice(0,10);
+      const sentKey = 'lastTipSent_' + currentUser;
+      const lastSent = localStorage.getItem(sentKey);
+      if (lastSent === dateKey) return;
+
+      const tips = window._healthhub_tips || [];
+      const today = new Date().getDate();
+      const tipText = tips.length ? tips[today % tips.length] : 'Stay healthy!';
+
+      function showBanner(text) {
+        const n = document.createElement('div');
+        n.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:10000;background:var(--surface);color:var(--text-primary);border:2px solid var(--border-color);box-shadow:var(--shadow);padding:1rem 1.25rem;border-radius:12px;max-width:320px;';
+        n.innerHTML = `<div style="font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;"><i class="fas fa-heartbeat" style="color:var(--accent-color);"></i> Daily Health Tip</div><div>${text}</div>`;
+        document.body.appendChild(n);
+        setTimeout(()=>{ n.remove(); }, 8000);
+      }
+
+      if (allowNotif && 'Notification' in window) {
+        try {
+          if (Notification.permission === 'granted') {
+            new Notification('Daily Health Tip', { body: tipText, icon: 'icons/icon-192x192.png' });
+            localStorage.setItem(sentKey, dateKey);
+          } else {
+            Notification.requestPermission().then(function(p){
+              if (p === 'granted') {
+                new Notification('Daily Health Tip', { body: tipText, icon: 'icons/icon-192x192.png' });
+                localStorage.setItem(sentKey, dateKey);
+              } else {
+                showBanner(tipText);
+                localStorage.setItem(sentKey, dateKey);
+              }
+            });
+          }
+        } catch(e) { showBanner(tipText); localStorage.setItem(sentKey, dateKey); }
+      } else {
+        showBanner(tipText);
+        localStorage.setItem(sentKey, dateKey);
+      }
+    }
+
+    function initVoiceNavigation() {
+      try {
+        const settings = JSON.parse(localStorage.getItem('appSettings') || '{}');
+        if (!settings.voiceNav) return;
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return;
+        const rec = new SR();
+        rec.continuous = true; rec.interimResults = false; rec.lang = 'en-US';
+        rec.onresult = function(e){
+          const txt = e.results[e.results.length-1][0].transcript.toLowerCase().trim();
+          handleVoiceCommand(txt);
+        };
+        rec.onerror = function(){ /* ignore */ };
+        rec.start();
+        window._voiceRec = rec;
+      } catch(e) {}
+    }
+
+    function handleVoiceCommand(t) {
+      if (!t) return;
+      if (t.includes('open settings')) { navigateTo('settings'); return; }
+      if (t.includes('open remedies')) { navigateTo('remedies_enhanced'); return; }
+      if (t.includes('open first aid')) { navigateTo('firstaid'); return; }
+      if (t.startsWith('search ')) {
+        const q = t.replace('search ','').trim();
+        const input = document.querySelector('.search-container input');
+        if (input) { input.value = q; }
+      }
     }
 
     // Favorites management

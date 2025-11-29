@@ -11,7 +11,9 @@
   <meta name="apple-mobile-web-app-title" content="HealthHub">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+  <script src="dark-mode.js"></script>
   <script src="accessibility.js"></script>
   <style>
     :root {
@@ -497,6 +499,7 @@
       </button>
       <h1 class="header-title">My Profile</h1>
     </div>
+    </div>
     
     <div class="header-right">
       <div class="user-avatar" id="headerAvatar">U</div>
@@ -537,18 +540,19 @@
 
     <!-- Tabs -->
     <div class="tabs">
-      <div class="tab active" onclick="switchTab('health')">
+      <div class="tab active" onclick="switchTab(event,'health')">
         <i class="fas fa-heartbeat"></i> Health
       </div>
-      <div class="tab" onclick="switchTab('history')">
+      <div class="tab" onclick="switchTab(event,'history')">
         <i class="fas fa-history"></i> History
       </div>
-      <div class="tab" onclick="switchTab('settings')">
+      <div class="tab" onclick="switchTab(event,'settings')">
         <i class="fas fa-cog"></i> Settings
       </div>
-      <div class="tab" onclick="switchTab('about')">
+      <div class="tab" onclick="switchTab(event,'about')">
         <i class="fas fa-info-circle"></i> About Us
       </div>
+    </div>
     </div>
 
     <!-- Health Tab -->
@@ -568,27 +572,7 @@
           </button>
         </div>
 
-    <!-- About Tab -->
-    <div id="aboutTab" class="tab-content">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">About HealthHub</h3>
-        </div>
-        <p style="color: var(--text-secondary); line-height: 1.6;">
-          HealthHub is a wellness companion app focused on accessible first aid, natural remedies, and emergency readiness. All first-aid steps and remedy summaries are curated from reputable sources and reviewed for clarity. This app does not replace professional medical advice.
-        </p>
-        <div class="card" style="margin-top: 1rem;">
-          <h4 class="card-title">Verification Sources and Credits</h4>
-          <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary); line-height: 1.6;">
-            <li>WHO (World Health Organization)</li>
-            <li>Red Cross First Aid Guidelines</li>
-            <li>NIH MedlinePlus</li>
-            <li>AIIMS (All India Institute of Medical Sciences) Poison Control Helpline</li>
-          </ul>
-          <p style="margin-top: 0.75rem; color: var(--text-secondary);">Design accents: mint, sky, and coral. Built with love for brighter, accessible UI.</p>
-        </div>
-      </div>
-    </div>
+    
         
         <div id="healthMetrics">
           <!-- Health metrics will be populated by JavaScript -->
@@ -608,7 +592,8 @@
         </div>
       </div>
     </div>
-
+    </div>
+    
     <!-- History Tab -->
     <div id="historyTab" class="tab-content">
       <div class="card">
@@ -725,16 +710,37 @@
           <h3 class="card-title">Data Management</h3>
         </div>
         
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <button class="btn secondary" onclick="exportAllData()">
-            <i class="fas fa-download"></i> Export All Data
-          </button>
-          <button class="btn secondary" onclick="importData()">
-            <i class="fas fa-upload"></i> Import Data
-          </button>
-          <button class="btn danger" onclick="deleteAccount()">
-            <i class="fas fa-trash"></i> Delete Account
-          </button>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn secondary" onclick="exportAllData()">
+          <i class="fas fa-download"></i> Export All Data
+        </button>
+        <button class="btn secondary" onclick="importData()">
+          <i class="fas fa-upload"></i> Import Data
+        </button>
+        <button class="btn danger" onclick="deleteAccount()">
+          <i class="fas fa-trash"></i> Delete Account
+        </button>
+      </div>
+    </div>
+    
+    <!-- About Tab -->
+    <div id="aboutTab" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">About HealthHub</h3>
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          HealthHub is a wellness companion app focused on accessible first aid, natural remedies, and emergency readiness. All first-aid steps and remedy summaries are curated from reputable sources and reviewed for clarity. This app does not replace professional medical advice.
+        </p>
+        <div class="card" style="margin-top: 1rem;">
+          <h4 class="card-title">Verification Sources and Credits</h4>
+          <ul style="margin: 0.5rem 0 0 1rem; color: var(--text-secondary); line-height: 1.6;">
+            <li>WHO (World Health Organization)</li>
+            <li>Red Cross First Aid Guidelines</li>
+            <li>NIH MedlinePlus</li>
+            <li>AIIMS (All India Institute of Medical Sciences) Poison Control Helpline</li>
+          </ul>
+          <p style="margin-top: 0.75rem; color: var(--text-secondary);">Design accents: mint, sky, and coral. Built with love for brighter, accessible UI.</p>
         </div>
       </div>
     </div>
@@ -905,13 +911,16 @@
     }
 
     // Switch tabs
-    function switchTab(tabName) {
+    function switchTab(e, tabName) {
+      if (typeof e === 'string' && !tabName) { tabName = e; e = null; }
       // Remove active class from all tabs and contents
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
       // Add active class to selected tab and content
-      event.target.classList.add('active');
+      if (e && e.currentTarget) {
+        e.currentTarget.classList.add('active');
+      }
       document.getElementById(tabName + 'Tab').classList.add('active');
       
       currentTab = tabName;

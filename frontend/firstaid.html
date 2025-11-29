@@ -1220,6 +1220,7 @@
       
       searchInput.addEventListener('input', function() {
         const query = this.value.toLowerCase().trim();
+        renderSuggestions(query);
         
         filteredFirstAid = allFirstAid.filter(instruction => {
           const hasKeywords = Array.isArray(instruction.keywords) && instruction.keywords.some(k => String(k).toLowerCase().includes(query));
@@ -1238,6 +1239,43 @@
         renderFirstAid(filteredFirstAid);
         updateCategoryStatus(filteredFirstAid.length);
       });
+    }
+
+    function renderSuggestions(query) {
+      const el = document.getElementById('searchSuggestions');
+      const q = String(query || '').toLowerCase().trim();
+      if (!el) return;
+      if (!q) { el.innerHTML = ''; return; }
+      const seen = new Set();
+      const items = [];
+      for (let i = 0; i < allFirstAid.length; i++) {
+        const it = allFirstAid[i];
+        const t = String(it.title || '').toLowerCase();
+        const d = String(it.description || '').toLowerCase();
+        const c = String(it.category || '').toLowerCase();
+        const kws = Array.isArray(it.keywords) ? it.keywords.map(k => String(k).toLowerCase()) : [];
+        const match = t.includes(q) || d.includes(q) || c.includes(q) || kws.some(k => k.includes(q));
+        if (match) {
+          const lab = it.title || it.category || '';
+          const key = lab.toLowerCase();
+          if (lab && !seen.has(key)) { seen.add(key); items.push(lab); }
+        }
+        if (items.length >= 8) break;
+      }
+      const base = ['Burn','Cut','Bleeding','Choking','Sprain','Fever','Nosebleed','Poisoning'];
+      for (let j = 0; j < base.length && items.length < 8; j++) {
+        const b = base[j];
+        if (b.toLowerCase().includes(q)) items.push(b);
+      }
+      el.innerHTML = items.slice(0,8).map(l => '<span class="suggestion-chip" onclick="applySearch(\'' + String(l).replace(/'/g, "\\'") + '\')">' + l + '</span>').join('');
+    }
+
+    function applySearch(label) {
+      const input = document.getElementById('firstAidSearch');
+      if (!input) return;
+      input.value = label;
+      const evt = new Event('input', { bubbles: true });
+      input.dispatchEvent(evt);
     }
 
     function getKeywordGuide(query) {
