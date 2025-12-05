@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.healthhub",
+  "appName": "HealthHub",
+  "webDir": "frontend",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthHub Backend Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .demo-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .api-test {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        button {
+            background: #009688;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 500;
+        }
+        button:hover {
+            background: #00796b;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            border-left: 4px solid #009688;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        .success {
+            border-left-color: #4caf50;
+            background: #e8f5e8;
+        }
+        .loading {
+            color: #ff9800;
+        }
+        h1 {
+            color: #009688;
+            margin: 0;
+        }
+        h2 {
+            color: #00796b;
+            border-bottom: 2px solid #009688;
+            padding-bottom: 5px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        .status-offline {
+            background: #f44336;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .instructions {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .code {
+            background: #263238;
+            color: #fff;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 HealthHub Backend API Demo</h1>
+        <p>Test your backend API endpoints directly from the browser</p>
+        <div id="serverStatus">
+            <span class="status-indicator status-offline"></span>
+            <span id="statusText">Checking server status...</span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>📋 Instructions</h3>
+        <p><strong>Before testing:</strong></p>
+        <ol>
+            <li>Make sure your backend server is running: <code>npm start</code></li>
+            <li>Server should be accessible at: <code>http://localhost:3001</code></li>
+            <li>Click the buttons below to test different API endpoints</li>
+        </ol>
+    </div>
+
+    <div class="demo-section">
+        <h2>🔍 Health Check</h2>
+        <div class="api-test">
+            <button onclick="testHealth()">Check Server Health</button>
+            <div id="healthResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🌿 Remedies API</h2>
+        <div class="api-test">
+            <button onclick="testRemedies()">Get All Remedies</button>
+            <button onclick="testFeaturedRemedies()">Get Featured Remedies</button>
+            <button onclick="testRemedyCategories()">Get Categories</button>
+            <button onclick="testRemedySearch()">Search Remedies</button>
+            <div id="remediesResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🩹 First Aid API</h2>
+        <div class="api-test">
+            <button onclick="testFirstAid()">Get First Aid Instructions</button>
+            <button onclick="testEmergencyFirstAid()">Get Emergency Procedures</button>
+            <button onclick="testFirstAidCategories()">Get Categories</button>
+            <div id="firstAidResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>🤒 Symptoms API</h2>
+        <div class="api-test">
+            <button onclick="testSymptoms()">Get All Symptoms</button>
+            <button onclick="testSymptomAnalysis()">Analyze Symptoms</button>
+            <button onclick="testSymptomSuggestions()">Get Suggestions</button>
+            <div id="symptomsResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>👤 User Authentication</h2>
+        <div class="api-test">
+            <button onclick="testUserRegistration()">Register User</button>
+            <button onclick="testUserLogin()">Login User</button>
+            <div id="authResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>🔗 Frontend Integration Example</h3>
+        <p>Here's how to integrate this API with your frontend:</p>
+        <div class="code">
+const API_BASE_URL = 'http://localhost:3001/api';
+
+// Fetch remedies
+async function fetchRemedies() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/remedies`);
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('Remedies:', data.data);
+            return data.data;
+        } else {
+            console.error('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+    }
+}
+
+// Search remedies with filters
+async function searchRemedies(searchTerm, category) {
+    const params = new URLSearchParams();
+    if (searchTerm) params.append('search', searchTerm);
+    if (category) params.append('category', category);
+    
+    const response = await fetch(`${API_BASE_URL}/remedies?${params}`);
+    const data = await response.json();
+    return data.success ? data.data : [];
+}
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        let authToken = null;
+
+        // Check server status on page load
+        window.onload = function() {
+            checkServerStatus();
+        };
+
+        async function checkServerStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                
+                if (data.status === 'OK') {
+                    document.getElementById('statusText').textContent = 'Server is online';
+                    document.querySelector('.status-indicator').className = 'status-indicator status-online';
+                } else {
+                    throw new Error('Server not responding correctly');
+                }
+            } catch (error) {
+                document.getElementById('statusText').textContent = 'Server is offline';
+                document.querySelector('.status-indicator').className = 'status-indicator status-offline';
+            }
+        }
+
+        async function makeRequest(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken && { 'Authorization': `Bearer ${authToken}` }),
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return { success: response.ok, status: response.status, data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            
+            if (result.success) {
+                element.className = 'result success';
+                element.textContent = JSON.stringify(result.data, null, 2);
+            } else {
+                element.className = 'result error';
+                element.textContent = `Error: ${result.error || result.data?.message || 'Unknown error'}`;
+            }
+        }
+
+        async function testHealth() {
+            showResult('healthResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/health');
+            showResult('healthResult', result);
+        }
+
+        async function testRemedies() {
+            showResult('remediesResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/remedies');
+            showResult('remediesResult', result);
+        }
+
+        async function testFeaturedRemedies() {
+            showResult('remediesResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/remedies/featured');
+            showResult('remediesResult', result);
+        }
+
+        async function testRemedyCategories() {
+            showResult('remediesResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/remedies/categories/list');
+            showResult('remediesResult', result);
+        }
+
+        async function testRemedySearch() {
+            showResult('remediesResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/remedies?search=honey&category=Respiratory');
+            showResult('remediesResult', result);
+        }
+
+        async function testFirstAid() {
+            showResult('firstAidResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/first-aid');
+            showResult('firstAidResult', result);
+        }
+
+        async function testEmergencyFirstAid() {
+            showResult('firstAidResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/first-aid/emergency');
+            showResult('firstAidResult', result);
+        }
+
+        async function testFirstAidCategories() {
+            showResult('firstAidResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/first-aid/categories/list');
+            showResult('firstAidResult', result);
+        }
+
+        async function testSymptoms() {
+            showResult('symptomsResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/symptoms');
+            showResult('symptomsResult', result);
+        }
+
+        async function testSymptomAnalysis() {
+            showResult('symptomsResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/symptoms/analyze', {
+                method: 'POST',
+                body: JSON.stringify({
+                    symptoms: ['headache', 'fever']
+                })
+            });
+            showResult('symptomsResult', result);
+        }
+
+        async function testSymptomSuggestions() {
+            showResult('symptomsResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/symptoms/search/suggestions?q=head');
+            showResult('symptomsResult', result);
+        }
+
+        async function testUserRegistration() {
+            showResult('authResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/users/register', {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: `testuser${Date.now()}`,
+                    email: `test${Date.now()}@example.com`,
+                    password: 'password123',
+                    full_name: 'Test User'
+                })
+            });
+            
+            if (result.success && result.data.data.token) {
+                authToken = result.data.data.token;
+            }
+            
+            showResult('authResult', result);
+        }
+
+        async function testUserLogin() {
+            showResult('authResult', { success: false, data: 'Loading...' });
+            const result = await makeRequest('/api/users/login', {
+                method: 'POST',
+                body: JSON.stringify({
+                    username: 'testuser',
+                    password: 'password123'
+                })
+            });
+            
+            if (result.success && result.data.data.token) {
+                authToken = result.data.data.token;
+            }
+            
+            showResult('authResult', result);
+        }
+    </script>
+</body>
+</html>

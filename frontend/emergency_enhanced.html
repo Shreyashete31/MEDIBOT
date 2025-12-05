@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Emergency Tools - HealthHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="dark-mode.js"></script>
+  <style>
+    :root {
+      --primary-color: #b53a3a;
+      --primary-dark: #8f2e2e;
+      --secondary-color: #55b59a;
+      --accent-color: #f5acac;
+      --danger-color: #8f2e2e;
+      --warning-color: #d89a44;
+      --text-primary: #1f2a37;
+      --text-secondary: #5c6b7a;
+      --background: #ffdfe2;
+      --surface: #ffffff;
+      --border-color: #f2c2c6;
+      --shadow: 0 12px 30px rgba(143, 46, 46, 0.24);
+      --shadow-hover: 0 18px 40px rgba(143, 46, 46, 0.32);
+      --gradient-primary: linear-gradient(135deg, #f3b3b7 0%, #ffd2e6 100%);
+      --gradient-danger: linear-gradient(135deg, #d65a5a, #8f2e2e);
+      --gradient-warning: linear-gradient(135deg, #d89a44, #c56f3f);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffd6da 0%, #ffd2ec 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .app-header {
+      background: var(--gradient-danger);
+      color: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-hover);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .emergency-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* Navigation */
+    nav {
+      background: var(--surface);
+      padding: 0.75rem 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: var(--background);
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    nav a:hover, nav a.active {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Main Container */
+    .container {
+      padding: 2rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Emergency Alert */
+    .emergency-alert {
+      background: var(--gradient-danger);
+      color: white;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-hover);
+      animation: emergencyPulse 3s infinite;
+    }
+
+    @keyframes emergencyPulse {
+      0% { transform: scale(1); box-shadow: var(--shadow-hover); }
+      50% { transform: scale(1.02); box-shadow: 0 6px 30px rgba(244, 67, 54, 0.4); }
+      100% { transform: scale(1); box-shadow: var(--shadow-hover); }
+    }
+
+    .emergency-alert h2 {
+      margin: 0 0 1rem;
+      font-size: 1.8rem;
+    }
+
+    .emergency-number {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 1rem 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .emergency-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .emergency-btn {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .emergency-btn:hover {
+      background: rgba(255,255,255,0.3);
+      border-color: rgba(255,255,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    .emergency-btn.critical {
+      background: rgba(255,255,255,0.9);
+      color: var(--danger-color);
+      font-weight: 700;
+    }
+
+    .emergency-btn.critical:hover {
+      background: white;
+      transform: scale(1.05);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .action-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+
+    .action-card.emergency {
+      border-left: 4px solid var(--danger-color);
+    }
+
+    .action-card.warning {
+      border-left: 4px solid var(--warning-color);
+    }
+
+    .action-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .action-card.emergency .action-icon {
+      color: var(--danger-color);
+    }
+
+    .action-card.warning .action-icon {
+      color: var(--warning-color);
+    }
+
+    .action-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .action-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Emergency Contacts */
+    .contacts-section {
+      margin-bottom: 2rem;
+    }
+
+    .contacts-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .add-contact-btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .add-contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .contacts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+
+    .contact-card.favorite {
+      border-color: var(--warning-color);
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .contact-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .contact-info h4 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem;
+      color: var(--text-primary);
+    }
+
+    .contact-relation {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .contact-phone {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .contact-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .contact-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-btn:hover {
+      background: var(--background);
+      transform: scale(1.1);
+    }
+
+    .favorite-btn {
+      color: var(--text-secondary);
+    }
+
+    .favorite-btn.active {
+      color: var(--warning-color);
+    }
+
+    .call-btn {
+      color: var(--primary-color);
+    }
+
+    .call-btn:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    /* Location Services */
+    .location-section {
+      margin-bottom: 2rem;
+    }
+
+    .location-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+
+    .location-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .location-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--secondary-color);
+    }
+
+    .location-indicator.error {
+      background: var(--danger-color);
+    }
+
+    .location-coords {
+      font-family: monospace;
+      background: var(--background);
+      padding: 0.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+    }
+
+    .location-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .location-btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .location-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .location-btn.secondary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .location-btn.secondary:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    /* Medical Information */
+    .medical-section {
+      margin-bottom: 2rem;
+    }
+
+    .medical-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+
+    .medical-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .medical-item {
+      padding: 1rem;
+      background: var(--background);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .medical-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin: 0 0 0.5rem;
+      font-weight: 500;
+    }
+
+    .medical-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .medical-notes {
+      margin-top: 1rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* Panic Button */
+    .panic-section {
+      margin-bottom: 2rem;
+    }
+
+    .panic-button {
+      width: 100%;
+      background: var(--gradient-danger);
+      color: white;
+      border: none;
+      padding: 2rem;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-hover);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panic-button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 30px rgba(244, 67, 54, 0.4);
+    }
+
+    .panic-button:active {
+      transform: scale(0.98);
+    }
+
+    .panic-button.active {
+      animation: panicPulse 1s infinite;
+    }
+
+    @keyframes panicPulse {
+      0% { background: var(--gradient-danger); }
+      50% { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+      100% { background: var(--gradient-danger); }
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      animation: modalSlide 0.3s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--border-color);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .form-btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .form-btn.primary {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    .form-btn.secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 2px solid var(--border-color);
+    }
+
+    .form-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .emergency-number {
+        font-size: 2rem;
+      }
+
+      .emergency-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contacts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .location-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .medical-info {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app-header {
+        padding: 1rem;
+      }
+
+      .header-title {
+        font-size: 1.2rem;
+      }
+
+      .emergency-alert {
+        padding: 1.5rem;
+      }
+
+      .emergency-number {
+        font-size: 1.8rem;
+      }
+
+      .panic-button {
+        padding: 1.5rem;
+        font-size: 1.2rem;
+      }
+
+      .medical-info {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --background: #121212;
+        --surface: #1e1e1e;
+        --border-color: #333333;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="header-title">Emergency Tools</h1>
+    </div>
+    
+    <div class="header-right">
+      <div class="emergency-status">
+        <div class="status-indicator" id="statusIndicator"></div>
+        <span id="statusText">Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="remedies_enhanced.html">Remedies</a>
+    <a href="firstaid.html">First Aid</a>
+    <a href="suggestions.html">Suggestions</a>
+    <a href="emergency_enhanced.html" class="active">Emergency</a>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+    <!-- Emergency Alert -->
+    <div class="emergency-alert">
+      <h2><i class="fas fa-exclamation-triangle"></i> Emergency Alert</h2>
+      <p>If this is a life-threatening emergency, call immediately:</p>
+      <div class="emergency-number">911</div>
+      <div class="emergency-buttons">
+        <button class="emergency-btn critical" onclick="callEmergency()">
+          <i class="fas fa-phone"></i>
+          Call 911
+        </button>
+        <button class="emergency-btn" onclick="sendLocation()">
+          <i class="fas fa-map-marker-alt"></i>
+          Send Location
+        </button>
+        <button class="emergency-btn" onclick="activatePanic()">
+          <i class="fas fa-bell"></i>
+          Panic Alert
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+      <h2 class="section-title">
+        <i class="fas fa-bolt"></i>
+        Quick Actions
+      </h2>
+      <div class="actions-grid">
+        <div class="action-card emergency" onclick="callEmergency()">
+          <div class="action-icon"><i class="fas fa-phone"></i></div>
+          <h3 class="action-title">Emergency Call</h3>
+          <p class="action-description">Call emergency services immediately</p>
+        </div>
+        
+        <div class="action-card" onclick="shareLocation()">
+          <div class="action-icon"><i class="fas fa-share-alt"></i></div>
+          <h3 class="action-title">Share Location</h3>
+          <p class="action-description">Share your current location with emergency contacts</p>
+        </div>
+        
+        <div class="action-card warning" onclick="activatePanic()">
+          <div class="action-icon"><i class="fas fa-bell"></i></div>
+          <h3 class="action-title">Panic Button</h3>
+          <p class="action-description">Activate emergency alert and location sharing</p>
+        </div>
+        
+        <div class="action-card" onclick="openMedicalInfo()">
+          <div class="action-icon"><i class="fas fa-user-md"></i></div>
+          <h3 class="action-title">Medical Info</h3>
+          <p class="action-description">Access your medical information quickly</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Emergency Contacts -->
+    <section class="contacts-section">
+      <div class="contacts-header">
+        <h2 class="section-title">
+          <i class="fas fa-address-book"></i>
+          Emergency Contacts
+        </h2>
+        <button class="add-contact-btn" onclick="openAddContactModal()">
+          <i class="fas fa-plus"></i>
+          Add Contact
+        </button>
+      </div>
+      <div class="contacts-grid" id="contactsGrid">
+        <!-- Contacts will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Location Services -->
+    <section class="location-section">
+      <h2 class="section-title">
+        <i class="fas fa-map-marker-alt"></i>
+        Location Services
+      </h2>
+      <div class="location-card">
+        <div class="location-status">
+          <div class="location-indicator" id="locationIndicator"></div>
+          <span id="locationStatus">Getting location...</span>
+        </div>
+        <div class="location-coords" id="locationCoords">
+          Latitude: --.------<br>
+          Longitude: --.------
+        </div>
+        <div class="location-actions">
+          <button class="location-btn" onclick="getCurrentLocation()">
+            <i class="fas fa-crosshairs"></i>
+            Get Location
+          </button>
+          <button class="location-btn secondary" onclick="shareLocation()">
+            <i class="fas fa-share"></i>
+            Share Location
+          </button>
+          <button class="location-btn secondary" onclick="openMaps()">
+            <i class="fas fa-map"></i>
+            Open Maps
+          </button>
+          <button class="location-btn secondary" onclick="enterAddress()">
+            <i class="fas fa-home"></i>
+            Enter Address
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Medical Information -->
+    <section class="medical-section">
+      <h2 class="section-title">
+        <i class="fas fa-user-md"></i>
+        Medical Information
+      </h2>
+      <div class="medical-card">
+        <div class="medical-info">
+          <div class="medical-item">
+            <div class="medical-label">Blood Type</div>
+            <div class="medical-value" id="bloodType">O+</div>
+          </div>
+          <div class="medical-item">
+            <div class="medical-label">Allergies</div>
+            <div class="medical-value" id="allergies">None Known</div>
+          </div>
+          <div class="medical-item">
+            <div class="medical-label">Medications</div>
+            <div class="medical-value" id="medications">None</div>
+          </div>
+          <div class="medical-item">
+            <div class="medical-label">Emergency Contact</div>
+            <div class="medical-value" id="emergencyContact">Mom (555-1234)</div>
+          </div>
+        </div>
+        <p class="medical-notes" id="medicalNotesDisplay">Add medical notes in your profile to see them here.</p>
+      </div>
+    </section>
+
+    <!-- Panic Button -->
+    <section class="panic-section">
+      <h2 class="section-title">
+        <i class="fas fa-exclamation-triangle"></i>
+        Emergency Panic Button
+      </h2>
+      <button class="panic-button" id="panicButton" onclick="activatePanic()">
+        <i class="fas fa-bell"></i>
+        EMERGENCY PANIC ALERT
+      </button>
+    </section>
+  </main>
+
+  <!-- Add Contact Modal -->
+  <div class="modal" id="addContactModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Add Emergency Contact</h2>
+        <button class="modal-close" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="contactForm">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="contactName" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="contactPhone" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Relation</label>
+            <input type="text" class="form-input" id="contactRelation" placeholder="e.g., Parent, Doctor, Friend">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="form-btn secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="form-btn primary">Add Contact</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="api-config.js"></script>
+  <script>
+    // Global variables
+    let currentUser = null;
+    let userProfile = null;
+    let emergencyContacts = [];
+    let currentLocation = null;
+    let currentAddress = '';
+    let panicActive = false;
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeUser();
+      initializeContacts();
+      initializeLocation();
+      checkGeolocationPermission();
+      initializePanicButton();
+    });
+
+    // User initialization
+    function initializeUser() {
+      currentUser = localStorage.getItem('loggedInUser');
+      if (!currentUser) return;
+      try {
+        const users = JSON.parse(localStorage.getItem('users') || '{}');
+        userProfile = users[currentUser]?.profile || null;
+        if (userProfile) {
+          updateMedicalInfo(userProfile);
+        }
+      } catch (err) {
+        console.warn('Unable to load user profile for emergency tools', err);
+      }
+    }
+
+    // Initialize emergency contacts
+    function initializeContacts() {
+      emergencyContacts = JSON.parse(localStorage.getItem('emergencyContacts') || '[]');
+      
+      // Add default contacts if none exist
+      if (emergencyContacts.length === 0) {
+        emergencyContacts = [
+          {
+            id: '1',
+            name: 'Emergency Services',
+            phone: '911',
+            relation: 'Emergency',
+            favorite: true
+          },
+          {
+            id: '2',
+            name: 'Poison Control',
+            phone: '1-800-222-1222',
+            relation: 'Emergency',
+            favorite: true
+          }
+        ];
+        saveContacts();
+      }
+      
+      renderContacts();
+    }
+
+    // Render contacts
+    function renderContacts() {
+      const grid = document.getElementById('contactsGrid');
+      
+      grid.innerHTML = emergencyContacts.map(contact => `
+        <div class="contact-card ${contact.favorite ? 'favorite' : ''}">
+          <div class="contact-header">
+            <div class="contact-info">
+              <h4>${contact.name}</h4>
+              <div class="contact-relation">${contact.relation}</div>
+              <div class="contact-phone">${contact.phone}</div>
+            </div>
+            <div class="contact-actions">
+              <button class="contact-btn favorite-btn ${contact.favorite ? 'active' : ''}" 
+                      onclick="toggleFavorite('${contact.id}')">
+                <i class="fas fa-star"></i>
+              </button>
+              <button class="contact-btn call-btn" onclick="callContact('${contact.phone}')">
+                <i class="fas fa-phone"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Save contacts to localStorage
+    function saveContacts() {
+      localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+    }
+
+    // Toggle favorite
+    function toggleFavorite(contactId) {
+      const contact = emergencyContacts.find(c => c.id === contactId);
+      if (contact) {
+        contact.favorite = !contact.favorite;
+        saveContacts();
+        renderContacts();
+      }
+    }
+
+    // Call contact
+    function callContact(phone) {
+      window.location.href = `tel:${phone}`;
+    }
+
+    // Add contact
+    function addContact(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('contactName').value;
+      const phone = document.getElementById('contactPhone').value;
+      const relation = document.getElementById('contactRelation').value;
+      
+      const newContact = {
+        id: Date.now().toString(),
+        name: name,
+        phone: phone,
+        relation: relation || 'Contact',
+        favorite: false
+      };
+      
+      emergencyContacts.push(newContact);
+      saveContacts();
+      renderContacts();
+      closeModal();
+      
+      // Reset form
+      document.getElementById('contactForm').reset();
+    }
+
+    // Initialize location services
+    function initializeLocation() {
+      if (navigator.geolocation) {
+        getCurrentLocation();
+      } else {
+        updateLocationStatus('Geolocation not supported', 'error');
+      }
+    }
+
+    // Get current location
+    function getCurrentLocation() {
+      updateLocationStatus('Getting location...', 'loading');
+      
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          currentLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          };
+          
+          updateLocationStatus('Location acquired', 'success');
+          updateLocationDisplay();
+          saveLastLocation();
+          if (typeof getMapsApiKey === 'function') {
+            const k = getMapsApiKey();
+            if (k && k.trim()) {
+              const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=${encodeURIComponent(k.trim())}`;
+              fetch(url).then(r=>r.json()).then(d=>{
+                const addr = d && d.results && d.results[0] && d.results[0].formatted_address ? d.results[0].formatted_address : '';
+                if (addr) { currentAddress = addr; updateLocationDisplay(); saveLastLocation(); }
+              }).catch(()=>{});
+            }
+          }
+        },
+        error => {
+          const msg = (error && error.code === 1) ? 'Location access denied' : (error && error.code === 2) ? 'Location unavailable' : 'Location request timed out';
+          updateLocationStatus(msg, 'error');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000
+        }
+      );
+    }
+    
+    function checkGeolocationPermission() {
+      if (!navigator.permissions || !navigator.permissions.query) return;
+      try {
+        navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+          if (result.state === 'denied') {
+            updateLocationStatus('Location access denied. Use the lock icon (Site settings) to allow location.', 'error');
+          } else if (result.state === 'prompt') {
+            updateLocationStatus('Click Allow when prompted for location.', 'loading');
+          }
+          result.onchange = function() {
+            if (this.state === 'granted') getCurrentLocation();
+          };
+        }).catch(function(){});
+      } catch(e) {}
+    }
+
+    function enterAddress() {
+      const addr = prompt('Enter address or landmark to use as your location:');
+      if (!addr || !addr.trim()) return;
+      geocodeAddress(addr.trim());
+    }
+
+    function geocodeAddress(address) {
+      if (typeof getMapsApiKey !== 'function') { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      const k = getMapsApiKey();
+      if (!k || !k.trim()) { alert('Maps key not set. Use setMapsApiKey(KEY).'); return; }
+      updateLocationStatus('Resolving address...', 'loading');
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${encodeURIComponent(k.trim())}`;
+      fetch(url).then(r=>r.json()).then(d=>{
+        const res = d && d.results && d.results[0];
+        if (!res) { updateLocationStatus('Address not found. Try a more specific query.', 'error'); return; }
+        const loc = res.geometry && res.geometry.location;
+        if (!loc) { updateLocationStatus('Address not found. Try again.', 'error'); return; }
+        currentLocation = { latitude: loc.lat, longitude: loc.lng, accuracy: 0 };
+        currentAddress = res.formatted_address || address;
+        updateLocationStatus('Location set from address', 'success');
+        updateLocationDisplay();
+      }).catch(()=>{
+        updateLocationStatus('Geocoding failed. Check internet/API key.', 'error');
+      });
+    }
+
+    // Update location status
+    function updateLocationStatus(status, type) {
+      document.getElementById('locationStatus').textContent = status;
+      const indicator = document.getElementById('locationIndicator');
+      
+      indicator.className = 'location-indicator';
+      if (type === 'success') {
+        indicator.style.background = 'var(--secondary-color)';
+      } else if (type === 'error') {
+        indicator.style.background = 'var(--danger-color)';
+        indicator.classList.add('error');
+      }
+    }
+
+    // Update location display
+    function updateLocationDisplay() {
+      if (currentLocation) {
+        const ts = new Date().toLocaleString();
+        const addr = currentAddress ? `<br>${currentAddress}` : '';
+        document.getElementById('locationCoords').innerHTML = `
+          Latitude: ${currentLocation.latitude.toFixed(6)}<br>
+          Longitude: ${currentLocation.longitude.toFixed(6)}${addr}<br>
+          Updated: ${ts}
+        `;
+      }
+    }
+
+    // Share location
+    function shareLocation() {
+      sendLocation();
+    }
+
+    // Send location to emergency contacts
+    function sendLocation() {
+      // Use current location, or fall back to last saved location
+      if (!currentLocation) {
+        try {
+          const last = JSON.parse(localStorage.getItem('lastLocation') || 'null');
+          if (last && last.latitude && last.longitude) {
+            currentLocation = { latitude: last.latitude, longitude: last.longitude, accuracy: last.accuracy || null };
+            currentAddress = last.address || currentAddress;
+          }
+        } catch(e) {}
+      }
+      if (!currentLocation) { updateLocationStatus('No location available. Try Get Location or Enter Address.', 'error'); return; }
+
+      const targets = (emergencyContacts.filter(c => c.favorite).length ? emergencyContacts.filter(c => c.favorite) : emergencyContacts);
+      if (targets.length === 0) { alert('Please add emergency contacts first'); return; }
+
+      const mapLink = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+      const name = currentUser || 'A user';
+      const locationText = currentAddress ? `Emergency! ${name} has sent their current location: ${currentAddress} (${mapLink}).` : `Emergency! ${name} has sent their current location: ${mapLink}.`;
+      if (navigator.share) { try { navigator.share({ title: 'Emergency Alert', text: locationText, url: mapLink }); } catch(e) {} }
+      targets.forEach((c, idx) => {
+        const phone = String(c.phone || '').replace(/\s+/g,'');
+        if (!phone) return;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const smsUrl = isIOS ? `sms:${phone}&body=${encodeURIComponent(locationText)}` : `sms:${phone}?body=${encodeURIComponent(locationText)}`;
+        setTimeout(() => { try { window.location.href = smsUrl; } catch(e) {} }, idx * 250);
+      });
+      if (!navigator.share && targets.length === 0) {
+        navigator.clipboard.writeText(locationText).then(() => { alert('Location text copied. No favorite contacts found.'); });
+      }
+    }
+
+    // Open maps
+    function openMaps() {
+      if (!currentLocation) {
+        getCurrentLocation();
+        return;
+      }
+      
+      const mapUrl = `https://www.google.com/maps?q=${currentLocation.latitude},${currentLocation.longitude}`;
+      window.open(mapUrl, '_blank');
+    }
+
+    function saveLastLocation() {
+      try {
+        const data = {
+          user: currentUser || '',
+          latitude: currentLocation?.latitude || null,
+          longitude: currentLocation?.longitude || null,
+          accuracy: currentLocation?.accuracy || null,
+          address: currentAddress || '',
+          timestamp: Date.now()
+        };
+        localStorage.setItem('lastLocation', JSON.stringify(data));
+      } catch(e) {}
+    }
+
+    // Initialize panic button
+    function initializePanicButton() {
+      const panicButton = document.getElementById('panicButton');
+      
+      panicButton.addEventListener('mousedown', function() {
+        this.classList.add('active');
+      });
+      
+      panicButton.addEventListener('mouseup', function() {
+        this.classList.remove('active');
+      });
+    }
+
+    // Activate panic mode
+    function activatePanic() {
+      if (panicActive) {
+        deactivatePanic();
+        return;
+      }
+      
+      panicActive = true;
+      const panicButton = document.getElementById('panicButton');
+      
+      panicButton.classList.add('active');
+      panicButton.innerHTML = '<i class="fas fa-stop"></i> SENDING EMERGENCY ALERT...';
+      sendLocation();
+      setTimeout(() => {
+        panicActive = false;
+        panicButton.classList.remove('active');
+        panicButton.innerHTML = '<i class="fas fa-bell"></i> EMERGENCY PANIC ALERT';
+      }, 1500);
+    }
+
+    // Deactivate panic
+    function deactivatePanic() {
+      panicActive = false;
+      const panicButton = document.getElementById('panicButton');
+      panicButton.classList.remove('active');
+      panicButton.innerHTML = '<i class="fas fa-bell"></i> EMERGENCY PANIC ALERT';
+    }
+
+    // Emergency call
+    function callEmergency() {
+      if (confirm('Are you calling for a medical emergency?')) {
+        window.location.href = 'tel:911';
+      }
+    }
+
+    // Open medical info
+    function openMedicalInfo() {
+      alert('Medical information displayed. In a real app, this would show detailed medical history, medications, and emergency information.');
+    }
+
+    function updateMedicalInfo(profile) {
+      const bloodType = profile.bloodType || 'Not set';
+      const allergies = profile.allergies || 'Not listed';
+      const meds = profile.medications || 'No medications stored';
+      const contact = profile.emergencyContact || 'Add an emergency contact in your profile';
+      const notes = profile.medicalNotes || 'Add medical notes in your profile to keep responders informed.';
+
+      document.getElementById('bloodType').textContent = bloodType;
+      document.getElementById('allergies').textContent = allergies;
+      document.getElementById('medications').textContent = meds;
+      document.getElementById('emergencyContact').textContent = contact;
+      document.getElementById('medicalNotesDisplay').textContent = notes;
+    }
+
+    // Modal functions
+    function openAddContactModal() {
+      document.getElementById('addContactModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('addContactModal').classList.remove('show');
+    }
+
+    // Navigation
+    function goBack() {
+      window.history.back();
+    }
+
+    // Event listeners
+    document.getElementById('contactForm').addEventListener('submit', addContact);
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('addContactModal');
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,796 @@
+[
+  {
+    "id": 1,
+    "title": "Bleeding Control",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Apply direct pressure to the wound with a clean cloth or bandage",
+      "Elevate the injured area above the heart if possible",
+      "Apply additional pressure if bleeding continues",
+      "Call emergency services if bleeding is severe or doesn't stop",
+      "Do not remove objects embedded in the wound"
+    ],
+    "warnings": ["Seek immediate medical attention for severe bleeding", "Do not use tourniquet unless trained"],
+    "keywords": ["bleeding", "wound", "cut", "injury", "blood"]
+  },
+  {
+    "id": 2,
+    "title": "Minor Burns",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Cool the burn with cool running water for 10-15 minutes",
+      "Remove jewelry or tight clothing near the burn",
+      "Cover with a clean, dry cloth or sterile bandage",
+      "Do not apply ice, butter, or ointments",
+      "Take over-the-counter pain relievers if needed"
+    ],
+    "warnings": ["Seek medical attention for burns larger than 3 inches", "Do not break blisters"],
+    "keywords": ["burn", "heat", "fire", "hot", "scald"]
+  },
+  {
+    "id": 3,
+    "title": "Choking (Adult)",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Ask 'Are you choking?' and look for signs of distress",
+      "If conscious, perform Heimlich maneuver",
+      "Stand behind person, place hands above navel",
+      "Make quick upward thrusts until object is expelled",
+      "Call emergency services if person becomes unconscious"
+    ],
+    "warnings": ["Only perform Heimlich if person is conscious", "Seek immediate medical help"],
+    "keywords": ["choking", "blocked airway", "can't breathe", "foreign object"]
+  },
+  {
+    "id": 4,
+    "title": "CPR (Adult)",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Check for responsiveness and breathing",
+      "Call emergency services immediately",
+      "Place hands in center of chest",
+      "Push hard and fast (100-120 compressions per minute)",
+      "Give 2 rescue breaths after every 30 compressions",
+      "Continue until help arrives or person recovers"
+    ],
+    "warnings": ["Only perform if trained in CPR", "Call emergency services first"],
+    "keywords": ["cpr", "cardiac arrest", "not breathing", "unconscious"]
+  },
+  {
+    "id": 5,
+    "title": "Sprains and Strains",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rest the injured area",
+      "Apply ice for 15-20 minutes every 2-3 hours",
+      "Compress with elastic bandage",
+      "Elevate the injured area",
+      "Take anti-inflammatory medication if appropriate"
+    ],
+    "warnings": ["Seek medical attention if pain is severe", "Don't apply heat for first 48 hours"],
+    "keywords": ["sprain", "strain", "twisted", "ankle", "wrist", "muscle"]
+  },
+  {
+    "id": 6,
+    "title": "Nosebleed",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Sit upright and lean slightly forward",
+      "Pinch nostrils together for 10-15 minutes",
+      "Breathe through mouth",
+      "Apply ice pack to bridge of nose",
+      "Avoid blowing nose for several hours"
+    ],
+    "warnings": ["Seek medical attention if bleeding lasts more than 20 minutes", "Don't tilt head back"],
+    "keywords": ["nosebleed", "nose", "bleeding", "epistaxis"]
+  },
+  {
+    "id": 7,
+    "title": "Heat Exhaustion",
+    "category": "Environmental",
+    "severity": "High",
+    "steps": [
+      "Move to cool, shaded area",
+      "Remove excess clothing",
+      "Apply cool, wet cloths to skin",
+      "Drink cool water or sports drinks",
+      "Fan the person or use air conditioning",
+      "Monitor for signs of heat stroke"
+    ],
+    "warnings": ["Seek immediate medical attention if symptoms worsen", "Heat stroke is life-threatening"],
+    "keywords": ["heat", "exhaustion", "overheating", "dehydration", "hot weather"]
+  },
+  {
+    "id": 8,
+    "title": "Hypothermia",
+    "category": "Environmental",
+    "severity": "High",
+    "steps": [
+      "Move to warm, dry area",
+      "Remove wet clothing",
+      "Cover with warm blankets",
+      "Give warm, non-alcoholic drinks if conscious",
+      "Use body heat from another person if needed",
+      "Monitor breathing and pulse"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't use hot water or heating pads"],
+    "keywords": ["hypothermia", "cold", "freezing", "shivering", "exposure"]
+  },
+  {
+    "id": 9,
+    "title": "Allergic Reaction (Mild)",
+    "category": "Medical",
+    "severity": "Medium",
+    "steps": [
+      "Identify and remove allergen if possible",
+      "Take antihistamine medication",
+      "Apply cool compress to affected area",
+      "Monitor for worsening symptoms",
+      "Use epinephrine auto-injector if prescribed"
+    ],
+    "warnings": ["Seek immediate medical attention for severe reactions", "Anaphylaxis is life-threatening"],
+    "keywords": ["allergy", "allergic", "reaction", "hives", "swelling", "itchy"]
+  },
+  {
+    "id": 10,
+    "title": "Seizure",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Stay calm and time the seizure",
+      "Clear area of dangerous objects",
+      "Don't restrain the person",
+      "Place person on side to prevent choking",
+      "Don't put anything in mouth",
+      "Call emergency services if seizure lasts more than 5 minutes"
+    ],
+    "warnings": ["Seek immediate medical attention for prolonged seizures", "Don't leave person alone"],
+    "keywords": ["seizure", "convulsion", "epilepsy", "unconscious", "shaking"]
+  },
+  {
+    "id": 11,
+    "title": "Fracture (Suspected)",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Don't move the person unless necessary",
+      "Immobilize the injured area",
+      "Apply ice to reduce swelling",
+      "Don't try to straighten or realign bones",
+      "Call emergency services",
+      "Keep person warm and comfortable"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't move person with suspected spinal injury"],
+    "keywords": ["fracture", "broken bone", "injury", "pain", "swelling", "deformity"]
+  },
+  {
+    "id": 12,
+    "title": "Eye Injury",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Don't rub the eye",
+      "Rinse eye with clean water for 15 minutes",
+      "Don't remove objects embedded in eye",
+      "Cover both eyes with clean cloth",
+      "Seek immediate medical attention",
+      "Don't apply pressure to eye"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't delay treatment for eye injuries"],
+    "keywords": ["eye", "injury", "chemical", "foreign object", "vision", "pain"]
+  },
+  {
+    "id": 13,
+    "title": "Poisoning (Swallowed)",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call poison control center immediately",
+      "Don't induce vomiting unless instructed",
+      "Save container or label of substance",
+      "Note time of ingestion",
+      "Monitor breathing and consciousness",
+      "Call emergency services if unconscious"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't give anything by mouth unless instructed"],
+    "keywords": ["poison", "poisoning", "swallowed", "overdose", "chemical", "toxic"]
+  },
+  {
+    "id": 14,
+    "title": "Shock",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Keep person lying down",
+      "Elevate legs 12 inches if no head injury",
+      "Keep person warm with blankets",
+      "Don't give food or water",
+      "Monitor breathing and pulse"
+    ],
+    "warnings": ["Seek immediate medical attention", "Shock can be life-threatening"],
+    "keywords": ["shock", "pale", "weak", "dizzy", "rapid pulse", "unconscious"]
+  },
+  {
+    "id": 15,
+    "title": "Stroke (Suspected)",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Note time symptoms started",
+      "Keep person calm and comfortable",
+      "Don't give food or water",
+      "Monitor breathing and consciousness",
+      "Stay with person until help arrives"
+    ],
+    "warnings": ["Time is critical for stroke treatment", "Seek immediate medical attention"],
+    "keywords": ["stroke", "facial drooping", "arm weakness", "speech difficulty", "sudden onset"]
+  },
+  {
+    "id": 16,
+    "title": "Heart Attack (Suspected)",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Have person sit or lie down",
+      "Give aspirin if not allergic",
+      "Loosen tight clothing",
+      "Stay calm and reassure person",
+      "Monitor breathing and consciousness"
+    ],
+    "warnings": ["Seek immediate medical attention", "Time is critical for heart attack treatment"],
+    "keywords": ["heart attack", "chest pain", "pressure", "shortness of breath", "nausea"]
+  },
+  {
+    "id": 17,
+    "title": "Drowning (Near)",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Remove person from water immediately",
+      "Call emergency services",
+      "Check for breathing and pulse",
+      "Start CPR if not breathing",
+      "Keep person warm",
+      "Don't give water or food"
+    ],
+    "warnings": ["Seek immediate medical attention", "Even if person seems fine, get medical evaluation"],
+    "keywords": ["drowning", "water", "unconscious", "not breathing", "rescue"]
+  },
+  {
+    "id": 18,
+    "title": "Electric Shock",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Turn off power source if safe to do so",
+      "Don't touch person until power is off",
+      "Call emergency services",
+      "Check for breathing and pulse",
+      "Start CPR if needed",
+      "Treat burns if present"
+    ],
+    "warnings": ["Don't touch person while still connected to power", "Seek immediate medical attention"],
+    "keywords": ["electric shock", "electrical", "burn", "unconscious", "power"]
+  },
+  {
+    "id": 19,
+    "title": "Insect Sting (Severe Reaction)",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Remove stinger if present",
+      "Wash area with soap and water",
+      "Apply ice to reduce swelling",
+      "Monitor for signs of severe reaction",
+      "Use epinephrine auto-injector if prescribed",
+      "Call emergency services for severe reactions"
+    ],
+    "warnings": ["Seek immediate medical attention for severe reactions", "Anaphylaxis can be life-threatening"],
+    "keywords": ["insect sting", "bee", "wasp", "allergic reaction", "swelling", "difficulty breathing"]
+  },
+  {
+    "id": 20,
+    "title": "Snake Bite",
+    "category": "Emergency",
+    "severity": "High",
+    "steps": [
+      "Keep person calm and still",
+      "Remove jewelry and tight clothing",
+      "Position bitten area at or below heart level",
+      "Call emergency services immediately",
+      "Don't cut, suck, or apply tourniquet",
+      "Note time of bite and snake description"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't delay treatment for snake bites"],
+    "keywords": ["snake bite", "venom", "poisonous", "swelling", "pain", "reptile"]
+  },
+  {
+    "id": 21,
+    "title": "Concussion (Suspected)",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Stop activity immediately",
+      "Monitor for worsening symptoms",
+      "Don't leave person alone",
+      "Apply ice to head if no open wound",
+      "Seek medical attention",
+      "Don't return to activity until cleared by doctor"
+    ],
+    "warnings": ["Seek medical attention for any head injury", "Symptoms can worsen over time"],
+    "keywords": ["concussion", "head injury", "headache", "dizzy", "confused", "nausea"]
+  },
+  {
+    "id": 22,
+    "title": "Frostbite",
+    "category": "Environmental",
+    "severity": "High",
+    "steps": [
+      "Move to warm area immediately",
+      "Remove wet clothing",
+      "Don't rub affected area",
+      "Warm with body heat or warm water",
+      "Don't use hot water or heating pads",
+      "Seek medical attention"
+    ],
+    "warnings": ["Seek medical attention for frostbite", "Don't thaw if risk of refreezing"],
+    "keywords": ["frostbite", "cold", "freezing", "numb", "white", "hard skin"]
+  },
+  {
+    "id": 23,
+    "title": "Heat Stroke",
+    "category": "Environmental",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Move to cool area",
+      "Remove excess clothing",
+      "Cool with water, ice, or wet cloths",
+      "Fan the person",
+      "Monitor breathing and consciousness"
+    ],
+    "warnings": ["Heat stroke is life-threatening", "Seek immediate medical attention"],
+    "keywords": ["heat stroke", "overheating", "high temperature", "unconscious", "hot weather"]
+  },
+  {
+    "id": 24,
+    "title": "Diabetic Emergency (Low Blood Sugar)",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Give sugar if person is conscious",
+      "Use glucose tablets, juice, or candy",
+      "Don't give insulin",
+      "Monitor for improvement",
+      "Call emergency services if unconscious",
+      "Stay with person until help arrives"
+    ],
+    "warnings": ["Seek medical attention if person becomes unconscious", "Don't give food if unconscious"],
+    "keywords": ["diabetic", "low blood sugar", "hypoglycemia", "weak", "confused", "sweating"]
+  },
+  {
+    "id": 25,
+    "title": "Asthma Attack",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Help person sit upright",
+      "Use inhaler if available",
+      "Stay calm and reassure person",
+      "Call emergency services if severe",
+      "Monitor breathing",
+      "Don't lie down"
+    ],
+    "warnings": ["Seek immediate medical attention for severe attacks", "Don't delay treatment"],
+    "keywords": ["asthma", "breathing difficulty", "wheezing", "inhaler", "shortness of breath"]
+  },
+  {
+    "id": 26,
+    "title": "Fainting",
+    "category": "Medical",
+    "severity": "Medium",
+    "steps": [
+      "Catch person if possible to prevent injury",
+      "Lay person flat on back",
+      "Elevate legs 12 inches",
+      "Loosen tight clothing",
+      "Check breathing and pulse",
+      "Call emergency services if unconscious for more than 1 minute"
+    ],
+    "warnings": ["Seek medical attention if person doesn't regain consciousness", "Check for injuries from fall"],
+    "keywords": ["fainting", "unconscious", "dizzy", "weak", "pale", "fall"]
+  },
+  {
+    "id": 27,
+    "title": "Cuts and Scrapes",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Wash hands before treating",
+      "Clean wound with soap and water",
+      "Apply pressure to stop bleeding",
+      "Apply antibiotic ointment",
+      "Cover with clean bandage",
+      "Change bandage daily"
+    ],
+    "warnings": ["Seek medical attention for deep cuts", "Watch for signs of infection"],
+    "keywords": ["cut", "scrape", "wound", "bleeding", "injury", "bandage"]
+  },
+  {
+    "id": 28,
+    "title": "Splinter Removal",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Wash hands and affected area",
+      "Use tweezers to grasp splinter",
+      "Pull out in same direction it entered",
+      "Clean area with soap and water",
+      "Apply antibiotic ointment",
+      "Cover with bandage if needed"
+    ],
+    "warnings": ["Seek medical attention if splinter is deep or infected", "Don't dig with sharp objects"],
+    "keywords": ["splinter", "foreign object", "wood", "metal", "tweezers", "removal"]
+  },
+  {
+    "id": 29,
+    "title": "Blisters",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Don't pop or break blisters",
+      "Clean area with soap and water",
+      "Apply antibiotic ointment",
+      "Cover with clean bandage",
+      "Change bandage daily",
+      "Wear comfortable shoes"
+    ],
+    "warnings": ["Seek medical attention if blister becomes infected", "Don't remove skin over blister"],
+    "keywords": ["blister", "friction", "rubbing", "fluid", "pain", "foot"]
+  },
+  {
+    "id": 30,
+    "title": "Sunburn",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Get out of sun immediately",
+      "Take cool shower or bath",
+      "Apply aloe vera or moisturizer",
+      "Drink plenty of water",
+      "Take over-the-counter pain relievers",
+      "Avoid further sun exposure"
+    ],
+    "warnings": ["Seek medical attention for severe sunburn", "Watch for signs of heat illness"],
+    "keywords": ["sunburn", "sun", "uv", "red", "painful", "peeling"]
+  },
+  {
+    "id": 31,
+    "title": "Bruises",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Apply ice for 15-20 minutes",
+      "Elevate injured area",
+      "Rest the injured area",
+      "Take over-the-counter pain relievers",
+      "Apply heat after 48 hours",
+      "Monitor for signs of infection"
+    ],
+    "warnings": ["Seek medical attention for severe bruises", "Watch for signs of internal bleeding"],
+    "keywords": ["bruise", "contusion", "black and blue", "swelling", "pain", "injury"]
+  },
+  {
+    "id": 32,
+    "title": "Muscle Cramps",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Stop activity and rest",
+      "Gently stretch the muscle",
+      "Apply ice or heat",
+      "Massage the affected area",
+      "Drink water or sports drink",
+      "Take over-the-counter pain relievers"
+    ],
+    "warnings": ["Seek medical attention for severe or frequent cramps", "Stay hydrated"],
+    "keywords": ["muscle cramp", "spasm", "pain", "tight", "charley horse", "leg"]
+  },
+  {
+    "id": 33,
+    "title": "Back Pain (Acute)",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rest in comfortable position",
+      "Apply ice for first 48 hours",
+      "Apply heat after 48 hours",
+      "Take over-the-counter pain relievers",
+      "Gentle stretching when pain subsides",
+      "Avoid heavy lifting"
+    ],
+    "warnings": ["Seek medical attention for severe pain", "Watch for signs of nerve damage"],
+    "keywords": ["back pain", "spine", "muscle", "stiff", "ache", "injury"]
+  },
+  {
+    "id": 34,
+    "title": "Neck Pain",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rest neck in comfortable position",
+      "Apply ice for first 48 hours",
+      "Apply heat after 48 hours",
+      "Gentle neck stretches",
+      "Take over-the-counter pain relievers",
+      "Use supportive pillow"
+    ],
+    "warnings": ["Seek medical attention for severe pain", "Don't ignore neck pain after injury"],
+    "keywords": ["neck pain", "stiff neck", "cervical", "muscle", "ache", "injury"]
+  },
+  {
+    "id": 35,
+    "title": "Headache",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Rest in quiet, dark room",
+      "Apply cool compress to forehead",
+      "Drink plenty of water",
+      "Take over-the-counter pain relievers",
+      "Gentle neck and shoulder massage",
+      "Avoid triggers like bright lights"
+    ],
+    "warnings": ["Seek medical attention for severe or sudden headaches", "Watch for signs of serious condition"],
+    "keywords": ["headache", "head pain", "migraine", "tension", "throbbing", "ache"]
+  },
+  {
+    "id": 36,
+    "title": "Toothache",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rinse mouth with warm salt water",
+      "Apply ice pack to outside of cheek",
+      "Take over-the-counter pain relievers",
+      "Avoid hot, cold, or sweet foods",
+      "Use dental floss to remove food particles",
+      "See dentist as soon as possible"
+    ],
+    "warnings": ["Seek dental care for persistent toothache", "Don't ignore dental pain"],
+    "keywords": ["toothache", "dental pain", "tooth", "gum", "ache", "sensitive"]
+  },
+  {
+    "id": 37,
+    "title": "Earache",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Apply warm compress to ear",
+      "Take over-the-counter pain relievers",
+      "Keep ear dry",
+      "Don't insert objects in ear",
+      "Chew gum to help equalize pressure",
+      "See doctor if pain persists"
+    ],
+    "warnings": ["Seek medical attention for severe ear pain", "Don't ignore ear pain in children"],
+    "keywords": ["earache", "ear pain", "infection", "pressure", "ache", "hearing"]
+  },
+  {
+    "id": 38,
+    "title": "Sore Throat",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Gargle with warm salt water",
+      "Drink warm liquids",
+      "Use throat lozenges",
+      "Take over-the-counter pain relievers",
+      "Get plenty of rest",
+      "Stay hydrated"
+    ],
+    "warnings": ["Seek medical attention for severe sore throat", "Watch for signs of strep throat"],
+    "keywords": ["sore throat", "throat pain", "swallowing", "irritation", "scratchy", "infection"]
+  },
+  {
+    "id": 39,
+    "title": "Cough",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Stay hydrated",
+      "Use cough drops or lozenges",
+      "Use humidifier or steam",
+      "Avoid irritants like smoke",
+      "Get plenty of rest",
+      "Take over-the-counter cough medicine"
+    ],
+    "warnings": ["Seek medical attention for persistent cough", "Watch for signs of serious illness"],
+    "keywords": ["cough", "throat", "chest", "irritation", "tickling", "phlegm"]
+  },
+  {
+    "id": 40,
+    "title": "Fever",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rest and stay hydrated",
+      "Take over-the-counter fever reducers",
+      "Apply cool compress to forehead",
+      "Wear light clothing",
+      "Monitor temperature regularly",
+      "Seek medical attention if fever is high or persistent"
+    ],
+    "warnings": ["Seek medical attention for high fever", "Watch for signs of serious illness"],
+    "keywords": ["fever", "temperature", "hot", "sweating", "chills", "illness"]
+  },
+  {
+    "id": 41,
+    "title": "Nausea and Vomiting",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Rest and avoid sudden movements",
+      "Sip clear liquids slowly",
+      "Avoid solid foods initially",
+      "Use ginger or peppermint",
+      "Take over-the-counter anti-nausea medication",
+      "Seek medical attention if vomiting persists"
+    ],
+    "warnings": ["Seek medical attention for persistent vomiting", "Watch for signs of dehydration"],
+    "keywords": ["nausea", "vomiting", "sick", "stomach", "queasy", "upset"]
+  },
+  {
+    "id": 42,
+    "title": "Diarrhea",
+    "category": "Common",
+    "severity": "Medium",
+    "steps": [
+      "Stay hydrated with clear liquids",
+      "Avoid dairy and fatty foods",
+      "Eat bland foods like rice and bananas",
+      "Take over-the-counter anti-diarrheal medication",
+      "Wash hands frequently",
+      "Seek medical attention if severe or persistent"
+    ],
+    "warnings": ["Seek medical attention for severe diarrhea", "Watch for signs of dehydration"],
+    "keywords": ["diarrhea", "loose stools", "stomach", "digestive", "upset", "frequent"]
+  },
+  {
+    "id": 43,
+    "title": "Constipation",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Increase fiber intake",
+      "Drink plenty of water",
+      "Exercise regularly",
+      "Use over-the-counter laxatives if needed",
+      "Don't ignore the urge to go",
+      "Establish regular bathroom routine"
+    ],
+    "warnings": ["Seek medical attention for severe constipation", "Don't overuse laxatives"],
+    "keywords": ["constipation", "bowel", "stool", "hard", "difficult", "infrequent"]
+  },
+  {
+    "id": 44,
+    "title": "Indigestion",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Eat smaller, more frequent meals",
+      "Avoid spicy and fatty foods",
+      "Don't lie down after eating",
+      "Take over-the-counter antacids",
+      "Avoid smoking and alcohol",
+      "Manage stress"
+    ],
+    "warnings": ["Seek medical attention for severe indigestion", "Watch for signs of serious condition"],
+    "keywords": ["indigestion", "heartburn", "stomach", "upset", "full", "bloated"]
+  },
+  {
+    "id": 45,
+    "title": "Insomnia",
+    "category": "Common",
+    "severity": "Low",
+    "steps": [
+      "Establish regular sleep schedule",
+      "Create comfortable sleep environment",
+      "Avoid caffeine and alcohol before bed",
+      "Limit screen time before bed",
+      "Practice relaxation techniques",
+      "Exercise regularly but not before bed"
+    ],
+    "warnings": ["Seek medical attention for persistent insomnia", "Don't ignore sleep problems"],
+    "keywords": ["insomnia", "sleep", "tired", "restless", "awake", "difficulty"]
+  },
+  {
+    "id": 46,
+    "title": "Anxiety Attack",
+    "category": "Medical",
+    "severity": "Medium",
+    "steps": [
+      "Stay calm and breathe slowly",
+      "Find quiet, comfortable place",
+      "Use relaxation techniques",
+      "Focus on present moment",
+      "Get support from others",
+      "Seek professional help if needed"
+    ],
+    "warnings": ["Seek professional help for severe anxiety", "Don't ignore mental health concerns"],
+    "keywords": ["anxiety", "panic", "worried", "nervous", "fear", "overwhelmed"]
+  },
+  {
+    "id": 47,
+    "title": "Depression (Crisis)",
+    "category": "Medical",
+    "severity": "High",
+    "steps": [
+      "Stay with person",
+      "Listen without judgment",
+      "Encourage professional help",
+      "Remove means of self-harm",
+      "Call crisis hotline if needed",
+      "Don't leave person alone"
+    ],
+    "warnings": ["Seek immediate professional help", "Don't ignore suicidal thoughts"],
+    "keywords": ["depression", "sad", "hopeless", "suicidal", "crisis", "mental health"]
+  },
+  {
+    "id": 48,
+    "title": "Panic Attack",
+    "category": "Medical",
+    "severity": "Medium",
+    "steps": [
+      "Stay calm and reassuring",
+      "Help person breathe slowly",
+      "Remove from triggering situation",
+      "Use grounding techniques",
+      "Stay with person",
+      "Encourage professional help"
+    ],
+    "warnings": ["Seek professional help for frequent panic attacks", "Don't minimize the experience"],
+    "keywords": ["panic attack", "anxiety", "fear", "overwhelmed", "breathing", "rapid heart"]
+  },
+  {
+    "id": 49,
+    "title": "Substance Overdose",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Stay with person",
+      "Don't leave person alone",
+      "Monitor breathing and consciousness",
+      "Don't induce vomiting",
+      "Provide information about substance"
+    ],
+    "warnings": ["Seek immediate medical attention", "Don't delay treatment for overdoses"],
+    "keywords": ["overdose", "drug", "alcohol", "poisoning", "unconscious", "emergency"]
+  },
+  {
+    "id": 50,
+    "title": "Self-Harm",
+    "category": "Emergency",
+    "severity": "Critical",
+    "steps": [
+      "Call emergency services immediately",
+      "Stay with person",
+      "Don't leave person alone",
+      "Remove means of self-harm",
+      "Provide emotional support",
+      "Encourage professional help"
+    ],
+    "warnings": ["Seek immediate professional help", "Don't ignore self-harm behaviors"],
+    "keywords": ["self-harm", "suicide", "crisis", "emergency", "mental health", "danger"]
+  }
+]
