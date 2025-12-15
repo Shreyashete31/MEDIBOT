@@ -1,0 +1,702 @@
+[
+  {
+    "id": 1,
+    "question": "What is the first step when someone is bleeding heavily?",
+    "options": [
+      "Apply a tourniquet immediately",
+      "Apply direct pressure to the wound",
+      "Elevate the injured area",
+      "Give them water"
+    ],
+    "correct_answer": 1,
+    "explanation": "Direct pressure is the first and most important step to control bleeding. Apply firm pressure with a clean cloth or bandage directly on the wound.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 2,
+    "question": "For a minor burn, what should you do first?",
+    "options": [
+      "Apply ice directly",
+      "Pop any blisters",
+      "Run cool water over the burn",
+      "Apply butter or oil"
+    ],
+    "correct_answer": 2,
+    "explanation": "Cool running water helps reduce the temperature of the burn and prevents further tissue damage. Ice can cause frostbite, and butter/oil can trap heat.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 3,
+    "question": "What should you do if someone is choking?",
+    "options": [
+      "Give them water immediately",
+      "Perform the Heimlich maneuver",
+      "Pat them on the back gently",
+      "Wait for them to cough it out"
+    ],
+    "correct_answer": 1,
+    "explanation": "The Heimlich maneuver (abdominal thrusts) is the correct first aid technique for conscious choking victims. Water can make the situation worse.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 4,
+    "question": "How many compressions per minute should you perform during CPR?",
+    "options": [
+      "60-80",
+      "80-100",
+      "100-120",
+      "120-140"
+    ],
+    "correct_answer": 2,
+    "explanation": "The current guidelines recommend 100-120 compressions per minute for effective CPR. This rate helps maintain adequate blood circulation.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 5,
+    "question": "What is the RICE method used for?",
+    "options": [
+      "Treating burns",
+      "Managing sprains and strains",
+      "Handling poisoning",
+      "Dealing with heart attacks"
+    ],
+    "correct_answer": 1,
+    "explanation": "RICE stands for Rest, Ice, Compression, and Elevation - the standard treatment for sprains and strains to reduce swelling and pain.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 6,
+    "question": "What should you do for a nosebleed?",
+    "options": [
+      "Tilt the head back",
+      "Pinch the nostrils and lean forward",
+      "Blow the nose forcefully",
+      "Apply ice to the forehead"
+    ],
+    "correct_answer": 1,
+    "explanation": "Pinch the nostrils together and lean slightly forward to prevent blood from going down the throat. Tilting the head back can cause choking.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 7,
+    "question": "What are the signs of heat exhaustion?",
+    "options": [
+      "High fever and chills",
+      "Heavy sweating, weakness, and nausea",
+      "Blue lips and cold skin",
+      "Rapid heartbeat and high blood pressure"
+    ],
+    "correct_answer": 1,
+    "explanation": "Heat exhaustion symptoms include heavy sweating, weakness, nausea, dizziness, and cool, moist skin. It's a serious condition that can lead to heat stroke.",
+    "category": "Environmental",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 8,
+    "question": "What should you do if someone has hypothermia?",
+    "options": [
+      "Give them alcohol to warm up",
+      "Rub their skin vigorously",
+      "Move them to a warm area and remove wet clothing",
+      "Put them in a hot bath immediately"
+    ],
+    "correct_answer": 2,
+    "explanation": "Move the person to a warm, dry area, remove wet clothing, and cover with warm blankets. Avoid alcohol, vigorous rubbing, or hot water which can cause dangerous temperature changes.",
+    "category": "Environmental",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 9,
+    "question": "What is the first thing to do if someone is having a seizure?",
+    "options": [
+      "Hold them down",
+      "Put something in their mouth",
+      "Clear the area and time the seizure",
+      "Give them water"
+    ],
+    "correct_answer": 2,
+    "explanation": "Clear the area of dangerous objects, time the seizure, and don't restrain the person or put anything in their mouth. Call emergency services if it lasts more than 5 minutes.",
+    "category": "Medical",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 10,
+    "question": "What should you do if you suspect someone has a broken bone?",
+    "options": [
+      "Try to straighten the bone",
+      "Move the person immediately",
+      "Immobilize the area and call for help",
+      "Apply heat to reduce swelling"
+    ],
+    "correct_answer": 2,
+    "explanation": "Immobilize the injured area to prevent further damage, don't try to straighten bones, and call for emergency help. Moving the person could cause more injury.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 11,
+    "question": "What is the correct way to treat a chemical burn?",
+    "options": [
+      "Apply ice immediately",
+      "Rinse with cool water for 15-20 minutes",
+      "Apply butter or oil",
+      "Cover with a bandage right away"
+    ],
+    "correct_answer": 1,
+    "explanation": "Chemical burns should be rinsed with cool running water for 15-20 minutes to remove the chemical and stop the burning process. Remove contaminated clothing carefully.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 12,
+    "question": "What should you do if someone is unconscious and not breathing?",
+    "options": [
+      "Start CPR immediately",
+      "Wait for emergency services",
+      "Give them water",
+      "Shake them vigorously"
+    ],
+    "correct_answer": 0,
+    "explanation": "If someone is unconscious and not breathing, start CPR immediately while someone else calls emergency services. Time is critical for survival.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 13,
+    "question": "What is the best way to treat a minor cut?",
+    "options": [
+      "Apply alcohol directly",
+      "Wash with soap and water, then bandage",
+      "Use hydrogen peroxide",
+      "Leave it open to air"
+    ],
+    "correct_answer": 1,
+    "explanation": "Clean minor cuts with soap and water, apply pressure to stop bleeding, and cover with a clean bandage. Alcohol and hydrogen peroxide can damage healthy tissue.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 14,
+    "question": "What should you do if someone is having an allergic reaction?",
+    "options": [
+      "Give them antihistamine immediately",
+      "Wait to see if it gets worse",
+      "Identify and remove the allergen if possible",
+      "Give them water to flush it out"
+    ],
+    "correct_answer": 2,
+    "explanation": "First, identify and remove the allergen if possible. Then give antihistamine if available and monitor for signs of severe reaction (anaphylaxis) which requires immediate medical attention.",
+    "category": "Medical",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 15,
+    "question": "What is the correct position for someone in shock?",
+    "options": [
+      "Sitting upright",
+      "Lying flat on back",
+      "Lying with legs elevated 12 inches",
+      "Standing up"
+    ],
+    "correct_answer": 2,
+    "explanation": "Someone in shock should lie flat with legs elevated about 12 inches (unless there's a head injury). This helps blood flow back to vital organs.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 16,
+    "question": "What should you do if someone is having a heart attack?",
+    "options": [
+      "Give them aspirin immediately",
+      "Have them lie down and rest",
+      "Give them water",
+      "Wait for symptoms to pass"
+    ],
+    "correct_answer": 0,
+    "explanation": "If someone is having a heart attack, call emergency services immediately and give them aspirin (if not allergic) to help prevent blood clots. Have them rest in a comfortable position.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 17,
+    "question": "What is the first step in treating a suspected stroke?",
+    "options": [
+      "Give them water",
+      "Call emergency services immediately",
+      "Have them lie down",
+      "Give them aspirin"
+    ],
+    "correct_answer": 1,
+    "explanation": "Time is critical for stroke treatment. Call emergency services immediately and note the time symptoms started. Don't give aspirin unless directed by medical professionals.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 18,
+    "question": "What should you do if someone is drowning?",
+    "options": [
+      "Jump in immediately",
+      "Throw them a flotation device",
+      "Swim out to them",
+      "Wait for lifeguards"
+    ],
+    "correct_answer": 1,
+    "explanation": "If someone is drowning, throw them a flotation device or extend something they can grab. Only enter the water if you're trained in water rescue to avoid becoming a victim yourself.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 19,
+    "question": "What is the correct way to treat frostbite?",
+    "options": [
+      "Rub the affected area vigorously",
+      "Apply hot water immediately",
+      "Warm gradually with body heat",
+      "Put the affected area in hot water"
+    ],
+    "correct_answer": 2,
+    "explanation": "Frostbite should be warmed gradually using body heat or warm (not hot) water. Rubbing or using hot water can cause further tissue damage.",
+    "category": "Environmental",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 20,
+    "question": "What should you do if someone has been electrocuted?",
+    "options": [
+      "Touch them immediately",
+      "Turn off the power source first",
+      "Pull them away with your hands",
+      "Give them water"
+    ],
+    "correct_answer": 1,
+    "explanation": "Never touch someone who's being electrocuted. First, turn off the power source if safe to do so, then call emergency services and check for breathing and pulse.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 21,
+    "question": "What is the best way to treat a sprained ankle?",
+    "options": [
+      "Apply heat immediately",
+      "Use the RICE method",
+      "Walk it off",
+      "Apply ice for 2 hours straight"
+    ],
+    "correct_answer": 1,
+    "explanation": "Use the RICE method: Rest, Ice (15-20 minutes at a time), Compression (with elastic bandage), and Elevation. Heat should be avoided for the first 48 hours.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 22,
+    "question": "What should you do if someone is having a panic attack?",
+    "options": [
+      "Tell them to calm down",
+      "Help them breathe slowly and stay with them",
+      "Leave them alone",
+      "Give them water"
+    ],
+    "correct_answer": 1,
+    "explanation": "Stay with the person, speak calmly, help them breathe slowly, and remove them from the triggering situation. Don't minimize their experience or leave them alone.",
+    "category": "Mental Health",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 23,
+    "question": "What is the correct way to treat a bee sting?",
+    "options": [
+      "Squeeze out the stinger",
+      "Scrape out the stinger with a credit card",
+      "Leave the stinger in place",
+      "Apply ice immediately"
+    ],
+    "correct_answer": 1,
+    "explanation": "Scrape out the stinger with a credit card or fingernail. Don't squeeze as this can inject more venom. Then wash the area and apply ice to reduce swelling.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 24,
+    "question": "What should you do if someone has swallowed poison?",
+    "options": [
+      "Induce vomiting immediately",
+      "Call poison control and follow their instructions",
+      "Give them water to dilute it",
+      "Wait to see if symptoms develop"
+    ],
+    "correct_answer": 1,
+    "explanation": "Call poison control immediately and follow their specific instructions. Don't induce vomiting unless instructed, as this can cause more harm with certain substances.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 25,
+    "question": "What is the correct way to treat a snake bite?",
+    "options": [
+      "Cut and suck the wound",
+      "Apply a tourniquet",
+      "Keep the person calm and immobilize the area",
+      "Give them alcohol"
+    ],
+    "correct_answer": 2,
+    "explanation": "Keep the person calm, immobilize the bitten area at or below heart level, and call emergency services. Don't cut, suck, or apply tourniquets as these can cause more harm.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 26,
+    "question": "What should you do if someone is having a diabetic emergency (low blood sugar)?",
+    "options": [
+      "Give them insulin",
+      "Give them sugar if conscious",
+      "Give them water",
+      "Wait for symptoms to pass"
+    ],
+    "correct_answer": 1,
+    "explanation": "If conscious, give them sugar (glucose tablets, juice, or candy). Don't give insulin as this will make low blood sugar worse. Call emergency services if they become unconscious.",
+    "category": "Medical",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 27,
+    "question": "What is the best way to treat a concussion?",
+    "options": [
+      "Let them sleep immediately",
+      "Keep them awake for 24 hours",
+      "Stop activity and monitor for worsening symptoms",
+      "Give them pain medication"
+    ],
+    "correct_answer": 2,
+    "explanation": "Stop all activity immediately, monitor for worsening symptoms, and seek medical attention. Don't let them sleep for the first few hours, and avoid pain medication unless directed by a doctor.",
+    "category": "Medical",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 28,
+    "question": "What should you do if someone is having an asthma attack?",
+    "options": [
+      "Give them water",
+      "Help them use their inhaler if available",
+      "Have them lie down",
+      "Give them cough medicine"
+    ],
+    "correct_answer": 1,
+    "explanation": "Help them sit upright, use their inhaler if available, stay calm, and call emergency services if severe. Don't have them lie down as this can make breathing more difficult.",
+    "category": "Medical",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 29,
+    "question": "What is the correct way to treat a jellyfish sting?",
+    "options": [
+      "Rinse with fresh water",
+      "Rinse with vinegar or salt water",
+      "Apply alcohol",
+      "Rub with sand"
+    ],
+    "correct_answer": 1,
+    "explanation": "Rinse with vinegar or salt water to neutralize the venom. Fresh water can cause more stinging cells to fire. Remove tentacles with tweezers, not your hands.",
+    "category": "Environmental",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 30,
+    "question": "What should you do if someone faints?",
+    "options": [
+      "Sit them up immediately",
+      "Catch them if possible and lay them flat",
+      "Give them water",
+      "Shake them to wake them up"
+    ],
+    "correct_answer": 1,
+    "explanation": "If possible, catch them to prevent injury, then lay them flat and elevate their legs 12 inches. Check breathing and pulse, and call emergency services if they don't regain consciousness quickly.",
+    "category": "Medical",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 31,
+    "question": "What is the first step in treating a heat stroke?",
+    "options": [
+      "Give them water",
+      "Call emergency services immediately",
+      "Have them rest in shade",
+      "Apply ice to their head"
+    ],
+    "correct_answer": 1,
+    "explanation": "Heat stroke is a medical emergency. Call emergency services immediately, then move the person to a cool area and cool them down with water, ice, or wet cloths.",
+    "category": "Environmental",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 32,
+    "question": "What should you do if someone has a foreign object in their eye?",
+    "options": [
+      "Rub the eye",
+      "Rinse with water for 15 minutes",
+      "Use tweezers to remove it",
+      "Leave it alone"
+    ],
+    "correct_answer": 1,
+    "explanation": "Rinse the eye with clean water for 15 minutes, don't rub, and don't try to remove embedded objects. Seek medical attention if the object doesn't come out or if there's pain.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 33,
+    "question": "What is the correct way to treat a dislocated joint?",
+    "options": [
+      "Try to pop it back in place",
+      "Immobilize the joint and seek medical help",
+      "Apply heat immediately",
+      "Have them move it gently"
+    ],
+    "correct_answer": 1,
+    "explanation": "Don't try to relocate a dislocated joint yourself. Immobilize the joint in its current position and seek immediate medical attention. Moving it can cause further damage.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 34,
+    "question": "What should you do if someone is having a severe allergic reaction (anaphylaxis)?",
+    "options": [
+      "Give them antihistamine and wait",
+      "Use their epinephrine auto-injector if available",
+      "Give them water",
+      "Have them lie down and rest"
+    ],
+    "correct_answer": 1,
+    "explanation": "Anaphylaxis is life-threatening. Use their epinephrine auto-injector if available, call emergency services immediately, and help them into a comfortable position for breathing.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 35,
+    "question": "What is the best way to treat a minor burn at home?",
+    "options": [
+      "Apply butter or oil",
+      "Pop any blisters",
+      "Cool with running water for 10-15 minutes",
+      "Apply ice directly"
+    ],
+    "correct_answer": 2,
+    "explanation": "Cool minor burns with cool running water for 10-15 minutes. Don't use butter, oil, or ice directly. Don't pop blisters as this can cause infection.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 36,
+    "question": "What should you do if someone is choking and becomes unconscious?",
+    "options": [
+      "Start CPR immediately",
+      "Give them water",
+      "Pat them on the back",
+      "Wait for emergency services"
+    ],
+    "correct_answer": 0,
+    "explanation": "If someone becomes unconscious while choking, start CPR immediately. The chest compressions may dislodge the object. Call emergency services and continue CPR until help arrives.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 37,
+    "question": "What is the correct way to treat a splinter?",
+    "options": [
+      "Dig it out with a needle",
+      "Use tweezers to grasp and pull it out",
+      "Leave it alone",
+      "Apply heat to bring it to the surface"
+    ],
+    "correct_answer": 1,
+    "explanation": "Use clean tweezers to grasp the splinter and pull it out in the same direction it entered. Don't dig with sharp objects as this can cause infection or push it deeper.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 38,
+    "question": "What should you do if someone has a severe nosebleed?",
+    "options": [
+      "Tilt their head back",
+      "Pinch nostrils and lean forward for 20 minutes",
+      "Give them water",
+      "Apply ice to the back of the neck"
+    ],
+    "correct_answer": 1,
+    "explanation": "Pinch the nostrils together and have them lean forward for 20 minutes. Tilting the head back can cause blood to go down the throat. Seek medical attention if bleeding doesn't stop.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 39,
+    "question": "What is the first thing to do if someone is having a seizure in water?",
+    "options": [
+      "Pull them out immediately",
+      "Support their head above water",
+      "Give them water",
+      "Wait for the seizure to end"
+    ],
+    "correct_answer": 1,
+    "explanation": "Support their head above water to prevent drowning, but don't try to pull them out during the seizure as this could cause injury. Call for help and continue supporting them.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 40,
+    "question": "What should you do if someone is having chest pain?",
+    "options": [
+      "Give them aspirin immediately",
+      "Have them rest and call emergency services",
+      "Give them water",
+      "Wait to see if it gets worse"
+    ],
+    "correct_answer": 1,
+    "explanation": "Chest pain can be a sign of a heart attack. Have them rest in a comfortable position and call emergency services immediately. Don't give aspirin unless directed by medical professionals.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 41,
+    "question": "What is the correct way to treat a sprain?",
+    "options": [
+      "Apply heat immediately",
+      "Use the RICE method",
+      "Walk it off",
+      "Apply ice for 2 hours straight"
+    ],
+    "correct_answer": 1,
+    "explanation": "Use the RICE method: Rest, Ice (15-20 minutes at a time), Compression (with elastic bandage), and Elevation. Heat should be avoided for the first 48 hours.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 42,
+    "question": "What should you do if someone is having difficulty breathing?",
+    "options": [
+      "Give them water",
+      "Help them sit up and call emergency services",
+      "Have them lie down",
+      "Give them cough medicine"
+    ],
+    "correct_answer": 1,
+    "explanation": "Help them sit up in a comfortable position, call emergency services immediately, and stay with them. Don't give water or medication unless directed by medical professionals.",
+    "category": "Emergency",
+    "difficulty": "Medium"
+  },
+  {
+    "id": 43,
+    "question": "What is the best way to treat a minor cut that won't stop bleeding?",
+    "options": [
+      "Apply more pressure",
+      "Give them water",
+      "Apply ice",
+      "Wait for it to stop"
+    ],
+    "correct_answer": 0,
+    "explanation": "Apply firm, direct pressure to the wound with a clean cloth or bandage. If bleeding continues, apply more pressure and seek medical attention if it doesn't stop after 10-15 minutes.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 44,
+    "question": "What should you do if someone is having a severe headache with neck stiffness?",
+    "options": [
+      "Give them pain medication",
+      "Call emergency services immediately",
+      "Have them rest",
+      "Apply ice to their head"
+    ],
+    "correct_answer": 1,
+    "explanation": "A severe headache with neck stiffness can be a sign of meningitis or other serious conditions. Call emergency services immediately as this requires urgent medical attention.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 45,
+    "question": "What is the correct way to treat a blister?",
+    "options": [
+      "Pop it immediately",
+      "Leave it intact and cover with a bandage",
+      "Apply heat",
+      "Rub it with alcohol"
+    ],
+    "correct_answer": 1,
+    "explanation": "Leave small blisters intact and cover with a clean bandage. Don't pop them as this can cause infection. Large or painful blisters should be evaluated by a healthcare provider.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 46,
+    "question": "What should you do if someone is having a panic attack?",
+    "options": [
+      "Tell them to stop being dramatic",
+      "Stay with them and help them breathe slowly",
+      "Leave them alone",
+      "Give them water"
+    ],
+    "correct_answer": 1,
+    "explanation": "Stay with the person, speak calmly, help them breathe slowly, and remove them from the triggering situation. Don't minimize their experience or leave them alone.",
+    "category": "Mental Health",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 47,
+    "question": "What is the first step in treating a suspected overdose?",
+    "options": [
+      "Induce vomiting",
+      "Call emergency services immediately",
+      "Give them water",
+      "Wait for symptoms to develop"
+    ],
+    "correct_answer": 1,
+    "explanation": "Call emergency services immediately for any suspected overdose. Don't induce vomiting unless specifically instructed by poison control or medical professionals, as this can cause more harm.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 48,
+    "question": "What should you do if someone is having a severe allergic reaction?",
+    "options": [
+      "Give them antihistamine and wait",
+      "Use their epinephrine auto-injector and call emergency services",
+      "Give them water",
+      "Have them lie down and rest"
+    ],
+    "correct_answer": 1,
+    "explanation": "Anaphylaxis is life-threatening. Use their epinephrine auto-injector if available, call emergency services immediately, and help them into a comfortable position for breathing.",
+    "category": "Emergency",
+    "difficulty": "Hard"
+  },
+  {
+    "id": 49,
+    "question": "What is the best way to treat a minor burn from hot water?",
+    "options": [
+      "Apply ice immediately",
+      "Cool with running water for 10-15 minutes",
+      "Apply butter or oil",
+      "Pop any blisters"
+    ],
+    "correct_answer": 1,
+    "explanation": "Cool minor burns with cool running water for 10-15 minutes. Don't use ice, butter, or oil. Don't pop blisters as this can cause infection.",
+    "category": "Common",
+    "difficulty": "Easy"
+  },
+  {
+    "id": 50,
+    "question": "What should you do if someone is having a seizure?",
+    "options": [
+      "Hold them down",
+      "Put something in their mouth",
+      "Clear the area and time the seizure",
+      "Give them water"
+    ],
+    "correct_answer": 2,
+    "explanation": "Clear the area of dangerous objects, time the seizure, and don't restrain the person or put anything in their mouth. Call emergency services if it lasts more than 5 minutes.",
+    "category": "Medical",
+    "difficulty": "Medium"
+  }
+]

@@ -4,7 +4,6 @@ const firstAidRoutes = require('./firstAid');
 const symptomsRoutes = require('./symptoms');
 const usersRoutes = require('./users');
 const emergencyRoutes = require('./emergency');
-const chatRoutes = require('./chat');
 const quizRoutes = require('./quiz');
 const adminRoutes = require('./admin');
 
@@ -22,7 +21,6 @@ router.get('/', (req, res) => {
       symptoms: '/api/symptoms',
       users: '/api/users',
       emergency: '/api/emergency',
-      chat: '/api/chat',
       quiz: '/api/quiz',
       admin: '/api/admin',
       health: '/health'
@@ -37,7 +35,6 @@ router.use('/first-aid', firstAidRoutes);
 router.use('/symptoms', symptomsRoutes);
 router.use('/users', usersRoutes);
 router.use('/emergency', emergencyRoutes);
-router.use('/chat', chatRoutes);
 router.use('/quiz', quizRoutes);
 router.use('/admin', adminRoutes);
 
